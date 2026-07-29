@@ -1,0 +1,196 @@
+.login-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 20px 0;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo */
+.login-logo-section {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-logo-img {
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
+  margin-bottom: 16px;
+}
+
+.login-logo-circle {
+  width: 112px;
+  height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 4px solid #16a34a;
+  margin-bottom: 16px;
+}
+
+.login-logo-icon {
+  color: #16a34a;
+}
+
+.login-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.login-title-accent {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.login-title-divider {
+  width: 64px;
+  height: 4px;
+  background-color: #22c55e;
+  border-radius: 999px;
+  margin-top: 12px;
+}
+
+/* Formulario */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.login-input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #f3f4f6;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.login-input-icon {
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.login-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: #374151;
+  font-size: 15px;
+}
+
+.login-input::placeholder {
+  color: #9ca3af;
+}
+
+.login-eye-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Olvidaste tu contraseña */
+.login-forgot-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}
+
+.login-forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  color: #16a34a;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.login-forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Botón principal */
+.login-submit-btn {
+  width: 100%;
+  background-color: #16a34a;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login-submit-btn:hover {
+  background-color: #15803d;
+}
+
+/* Divisor */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 24px 0;
+}
+
+.login-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.login-divider-text {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Crear cuenta */
+.login-signup-text {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.login-signup-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #16a34a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-signup-link:hover {
+  text-decoration: underline;
+}

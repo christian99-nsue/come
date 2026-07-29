@@ -1,0 +1,27 @@
+.mobile-frame-outer {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: #e5e7eb; /* fondo gris fuera del "teléfono" en pantallas grandes */
+}
+
+.mobile-frame-inner {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+}
+
+/* En pantallas realmente móviles, que ocupe todo sin sombra ni fondo gris */
+@media (max-width: 430px) {
+  .mobile-frame-outer {
+    background-color: #ffffff;
+  }
+  .mobile-frame-inner {
+    box-shadow: none;
+  }
+}
