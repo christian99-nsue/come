@@ -1,11 +1,11 @@
-import Login from "./pages/auth/Login";
+import AppRoutes from "./routes/AppRoutes";
 import MobileFrame from "./components/MobileFrame/MobileFrame";
 import "./App.css";
 
 function App() {
   return (
     <MobileFrame>
-      <Login />
+      <AppRoutes />
     </MobileFrame>
   );
 }

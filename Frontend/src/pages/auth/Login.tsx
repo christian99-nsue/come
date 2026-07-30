@@ -1,12 +1,79 @@
 import { useState } from "react";
 import { Phone, Lock, Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import axios, { AxiosError } from "axios";
 import "../../styles/Login.css";
 import logo from "../../assets/Logo.png";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [telefono, setTelefono] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  //Funcion de redirigir por role
+  const handleRedirectByRole = (rol: string) => {
+    if (rol === "admin") navigate("/admin");
+    else if (rol === "repartidor") navigate("/repartidor");
+    else navigate("/cliente");
+  };
+
+  //Funcion terminar login que almacena el token en local storage
+  const finishLogin = (data: LoginResponse) => {
+    const { token, user } = data;
+
+    localStorage.setItem("token", token);
+    const rol = user.rol;
+
+    localStorage.setItem("user", JSON.stringify(user));
+
+    handleRedirectByRole(rol);
+  };
+
+  type LoginResponse = {
+    token: string;
+    user: {
+      id: number;
+      email: string;
+      telefono: string;
+      rol: string;
+      nombre: string;
+    };
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    const cleanIdentifier = telefono.trim();
+
+    if (!cleanIdentifier || !password) {
+      setError("Introduce tu telefono y contraseña");
+      return;
+    }
+
+    if (/^\$2[aby]\$\d{2}\$/.test(password)) {
+      setError(
+        "Introduce la contrasena real, no el hash guardado en la base de datos",
+      );
+      return;
+    }
+
+    try {
+      const res = await axios.post(`${API_URL}/api/auth/login`, {
+        telefono: cleanIdentifier,
+        password,
+      });
+
+      finishLogin(res.data);
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      setError(axiosError.response?.data?.message || "Error inesperado");
+    }
+  };
 
   return (
     <div className="login-wrapper">
@@ -23,7 +90,7 @@ export default function Login() {
         </div>
 
         {/* Formulario */}
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleLogin}>
           {/* Teléfono */}
           <div className="login-input-group">
             <Phone size={20} className="login-input-icon" />
@@ -61,6 +128,7 @@ export default function Login() {
 
           {/* Olvidaste tu contraseña */}
           <div className="login-forgot-wrapper">
+            <span className="login-error">{error || "\u00A0"}</span>
             <button type="button" className="login-forgot-link">
               ¿Olvidaste tu contraseña?
             </button>
