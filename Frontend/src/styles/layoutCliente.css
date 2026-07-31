@@ -1,0 +1,156 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.header {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+.header-icon-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1f2937;
+  cursor: pointer;
+  border-radius: 8px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-icon-btn:active {
+  background-color: #f3f4f6;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+}
+
+.header-center img {
+  width: 45px;
+  height: 45px;
+}
+
+.header-center span,
+.header-center small {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.header-center span {
+  color: #16a34a;
+}
+
+.header-center small {
+  color: #ffac39;
+}
+
+.header-logo-icon {
+  color: #16a34a;
+}
+
+.header-notification-btn {
+  position: relative;
+}
+
+.header-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #16a34a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+}
+
+.bottom-nav {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #fff;
+  border-color: 1px solid #eef0f2;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background-blend-mode: normal;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #6b7280;
+  flex: 1;
+  height: 100%;
+}
+
+.bottom-nav-icon {
+  color: #6b7280;
+}
+
+.bottom-nav-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.bottom-nav-item.active .bottom-nav-icon {
+  color: #16a34a;
+}
+
+.bottom-nav-item.active .bottom-nav-label {
+  color: #16a34a;
+}
+
+.center {
+  padding-bottom: 80px;
+}
+
+@media (max-width: 430px) {
+  .header {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .bottom-nav {
+    max-width: 100%;
+  }
+}
