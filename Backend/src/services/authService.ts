@@ -10,7 +10,7 @@ export const loginUser = async (telefono: string, password: string) => {
   }
 
   const sql = `
-    SELECT * FROM usuarios 
+    SELECT * FROM usuarios
     WHERE telefono = ?
   `;
 
@@ -41,7 +41,6 @@ export const loginUser = async (telefono: string, password: string) => {
       id: user.id,
       email: user.email,
       nombre: user.nombre,
-      apellidos: user.apellidos,
       telefono: user.telefono,
       rol: user.rol,
     },

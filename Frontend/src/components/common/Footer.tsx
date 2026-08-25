@@ -12,8 +12,7 @@ const Footer = () => {
   return (
     <nav className="bottom-nav">
       <NavLink
-        to="/cliente"
-        end
+        to="inicio"
         className={({ isActive }) =>
           isActive ? "bottom-nav-item active" : "bottom-nav-item"
         }

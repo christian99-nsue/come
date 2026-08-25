@@ -5,6 +5,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import banner from "../../assets/banner23.png";
 import pizza from "../../assets/pizza.png";
 import { Star } from "lucide-react";
@@ -19,53 +20,58 @@ interface BannerItem {
   bgColor?: string;
 }
 
-const banners: BannerItem[] = [
-  {
-    id: "banner-1",
-    title: ["Comida rapida,", "entrega rapida"],
-    subtitle: "Tus restaurantes favoritos en minutos",
-    buttonText: "Ver restaurantes",
-    visual: {
-      type: "image",
-      src: banner,
-    },
-    bgColor: "#d9f7e3",
-  },
-  {
-    id: "banner-2",
-    title: ["Envío gratuito"],
-    subtitle: "Durante hoy.",
-    buttonText: "Pedir ahora",
-    visual: { type: "image", src: pizza },
-    bgColor: "#dbeafe",
-  },
-  {
-    id: "banner-3",
-    title: ["Restaurantes destacados"],
-    subtitle: "Los mejores valorados.",
-    buttonText: "Explorar",
-    visual: {
-      type: "icono",
-      value: <Star color="#f8c822" fill="#f8c822" size={70} />,
-    },
-    bgColor: "#fef3c7",
-  },
-];
-
 const AUTO_ADVANCE_MS = 4000;
 
 export default function BannerCarousel() {
+  const navigate = useNavigate();
+
+  const banners: BannerItem[] = [
+    {
+      id: "banner-1",
+      title: ["Comida rapida,", "entrega rapida"],
+      subtitle: "Tus restaurantes favoritos en minutos",
+      buttonText: "Ver restaurantes",
+      onButtonClick: () => navigate("/cliente/inicio/restaurantes"),
+      visual: {
+        type: "image",
+        src: banner,
+      },
+      bgColor: "#FF9400",
+    },
+    {
+      id: "banner-2",
+      title: ["Envío gratuito"],
+      subtitle: "Durante hoy.",
+      buttonText: "Pedir ahora",
+      visual: { type: "image", src: pizza },
+      bgColor: "#FF9400",
+    },
+    {
+      id: "banner-3",
+      title: ["Restaurantes destacados"],
+      subtitle: "Los mejores valorados.",
+      buttonText: "Explorar",
+      visual: {
+        type: "icono",
+        value: <Star color="#f8c822" fill="#f8c822" size={70} />,
+      },
+      bgColor: "#FF9400",
+    },
+  ];
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
   const isDragging = useRef(false);
   const autoAdvanceTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const goTo = useCallback((index: number) => {
-    const total = banners.length;
-    const next = (index + total) % total;
-    setActiveIndex(next);
-  }, []);
+  const goTo = useCallback(
+    (index: number) => {
+      const total = banners.length;
+      const next = (index + total) % total;
+      setActiveIndex(next);
+    },
+    [banners.length],
+  );
 
   // Auto-avance
   useEffect(() => {
@@ -76,7 +82,7 @@ export default function BannerCarousel() {
     return () => {
       if (autoAdvanceTimer.current) clearInterval(autoAdvanceTimer.current);
     };
-  }, []);
+  }, [banners.length]);
 
   const resetAutoAdvance = () => {
     if (autoAdvanceTimer.current) clearInterval(autoAdvanceTimer.current);

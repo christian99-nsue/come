@@ -191,7 +191,7 @@
 
 .banner-dot.active {
   width: 18px;
-  background-color: #16a34a;
+  background-color: #ff9400;
 }
 
 .home-banner {
@@ -322,19 +322,14 @@
 
 .restaurant-card {
   flex: 0 0 auto;
-  width: 125px;
-  border-radius: 14px;
-  overflow: hidden;
-  background-color: #ffffff;
-  border: 1px solid #f0f0f0;
-  background-blend-mode: normal;
-  box-shadow: 0px 2px 4px rgba(100, 100, 100, 0.5);
+  width: 110px;
   cursor: pointer;
 }
 
 .restaurant-card-img {
-  width: 100%;
+  width: 100px;
   height: 100px;
+  border-radius: 50%;
   object-fit: cover;
   display: block;
 }

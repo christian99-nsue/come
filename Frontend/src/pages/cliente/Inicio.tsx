@@ -4,6 +4,7 @@ import { getUser } from "../../utils/auth";
 import BannerCarousel from "../../components/common/Banner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import banner from "../../assets/banner23.png";
 import burgerHouse from "../../assets/burger-house.jpg";
 import pizzaTop from "../../assets/pizza-top.jpg";
@@ -61,6 +62,7 @@ const categoriasMock: Categoria[] = [
 export default function Inicio() {
   const [categoriaActiva, setCategoriaActiva] = useState("todos");
   const [busqueda, setBusqueda] = useState("");
+  const navigate = useNavigate();
 
   const user = getUser();
 
@@ -103,7 +105,11 @@ export default function Inicio() {
         </div>
         <div className="home-restaurants-scroll">
           {restaurantesMock.map((r) => (
-            <div key={r.id} className="restaurant-card">
+            <div
+              key={r.id}
+              className="restaurant-card"
+              onClick={() => navigate(`/cliente/restaurante/${r.id}`)}
+            >
               <img
                 src={r.imagen}
                 alt={r.nombre}

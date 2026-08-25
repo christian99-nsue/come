@@ -18,7 +18,7 @@ export default function Login() {
   const handleRedirectByRole = (rol: string) => {
     if (rol === "admin") navigate("/admin");
     else if (rol === "repartidor") navigate("/repartidor");
-    else navigate("/cliente");
+    else navigate("/cliente/inicio");
   };
 
   //Funcion terminar login que almacena el token en local storage
