@@ -9,6 +9,7 @@ import {
   MapPin,
   Clock,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import burgerHouse from "../../assets/burger-house.jpg";
 import combo from "../../assets/combo.png";
 import "../../styles/carrito.css";
@@ -26,12 +27,14 @@ interface Restaurante {
   nombre: string;
   minimo: number;
   imagen: string;
+  id: string;
 }
 
 const restauranteMock: Restaurante = {
   nombre: "Burger House",
   minimo: 3000,
   imagen: burgerHouse,
+  id: "1",
 };
 
 const itemsIniciales: CartItem[] = [
@@ -53,7 +56,7 @@ export default function Carrito() {
   const [items, setItems] = useState<CartItem[]>(itemsIniciales);
   const [direccion] = useState("Malabo, Centro- Calle Acacio Mañe");
   const [tiempoEntrega] = useState("Lo antes posible (20 - 30 min)");
-
+  const navigate = useNavigate();
   const subtotal = items.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
     0,
@@ -188,7 +191,11 @@ export default function Carrito() {
           </div>
         ))}
 
-        <button type="button" className="add-more-row">
+        <button
+          type="button"
+          className="add-more-row"
+          onClick={() => navigate(`/cliente/restaurante/${restauranteMock.id}`)}
+        >
           <span className="add-more-icon">
             <PackagePlus size={18} />
           </span>
@@ -203,7 +210,11 @@ export default function Carrito() {
       </section>
 
       {/* Cupón */}
-      <button type="button" className="coupon-row">
+      <button
+        type="button"
+        className="coupon-row"
+        onClick={() => navigate("/cliente/cupon")}
+      >
         <span className="coupon-icon">
           <Ticket size={18} />
         </span>
@@ -239,7 +250,11 @@ export default function Carrito() {
       </section>
 
       {/* Dirección de entrega */}
-      <button type="button" className="info-row">
+      <button
+        type="button"
+        className="info-row"
+        onClick={() => navigate("/cliente/direccion-entrega")}
+      >
         <span className="info-row-icon">
           <MapPin size={18} />
         </span>
@@ -251,7 +266,11 @@ export default function Carrito() {
       </button>
 
       {/* Tiempo de entrega */}
-      <button type="button" className="info-row">
+      <button
+        type="button"
+        className="info-row"
+        onClick={() => navigate("/cliente/tiempo-entrega")}
+      >
         <span className="info-row-icon">
           <Clock size={18} />
         </span>
@@ -263,7 +282,11 @@ export default function Carrito() {
       </button>
 
       {/* Botón finalizar pedido */}
-      <button type="button" className="checkout-btn">
+      <button
+        type="button"
+        className="checkout-btn"
+        onClick={() => navigate("/cliente/finalizar-pedido")}
+      >
         <span>Finalizar pedido</span>
         <span>{formatXAF(total)}</span>
       </button>

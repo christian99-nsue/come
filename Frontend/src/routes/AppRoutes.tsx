@@ -8,6 +8,11 @@ import Pedidos from "../pages/cliente/Pedidos";
 import Perfil from "../pages/cliente/Perfil";
 import Restaurantes from "../pages/cliente/Restaurantes";
 import RestauranteDetalle from "../pages/cliente/RestauranteDetalle";
+import Cupon from "../pages/cliente/Cupon_1";
+import DireccionEntrega from "../pages/cliente/DireccionEntrega";
+import PedidoRealizado from "../pages/cliente/PedidoRealizado";
+import TiempoEntrega from "../pages/cliente/TiempoEntrega";
+import FinalizarPedido from "../pages/cliente/FinalizarPedido";
 
 export default function AppRoutes() {
   return (
@@ -21,7 +26,12 @@ export default function AppRoutes() {
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="perfil" element={<Perfil />} />
           <Route path="inicio/restaurantes" element={<Restaurantes />} />
-          <Route path="restaurante/:id" element={<RestauranteDetalle />} />{" "}
+          <Route path="restaurante/:id" element={<RestauranteDetalle />} />
+          <Route path="cupon" element={<Cupon />} />
+          <Route path="direccion-entrega" element={<DireccionEntrega />} />
+          <Route path="tiempo-entrega" element={<TiempoEntrega />} />
+          <Route path="finalizar-pedido" element={<FinalizarPedido />} />
+          <Route path="pedido-realizado" element={<PedidoRealizado />} />
         </Route>
       </Routes>
     </HashRouter>
