@@ -11,9 +11,12 @@ import {
   ChevronRight,
   Phone,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { getUser } from "../../utils/auth";
 import avatar from "../../assets/6.jpg";
-import "../../styles/perfil.css";
+import ConfirmModal from "../../components/common/ConfirmModal";
+import "../../styles/cliente/perfil.css";
+import { useState } from "react";
 
 interface MenuItem {
   icon: typeof User;
@@ -31,64 +34,79 @@ interface Usuario {
 }
 
 const usuarioMock: Usuario = {
-  nombre: "Juan carlos ndong",
-  email: "juan.carlos@gmail.com",
+  nombre: "Christian Nsue",
+  email: "christian.nsuе00@gmail.com",
   telefono: "222123456",
   avatar: avatar,
 };
 
-const cuentaItems: MenuItem[] = [
-  {
-    icon: User,
-    title: "Informacion personal",
-    subtitle: "Edita tu nombre, correo y telefono",
-  },
-  {
-    icon: MapPin,
-    title: "Mis direcciones",
-    subtitle: "Gestiona tus direcciones de entrega",
-  },
-  {
-    icon: Wallet,
-    title: "Metodos de pago",
-    subtitle: "Tarjetas, efectivo y mas",
-  },
-];
-
-const preferenciasItems: MenuItem[] = [
-  {
-    icon: BellRing,
-    title: "Notificaciones",
-    subtitle: "Configura tus notificaciones",
-  },
-  {
-    icon: Globe,
-    title: "Idioma",
-    subtitle: "Español",
-  },
-  {
-    icon: Moon,
-    title: "Tema de la aplicacion",
-    subtitle: "Claro",
-  },
-];
-
-const ayudaItems: MenuItem[] = [
-  {
-    icon: HelpCircle,
-    title: "Centro de ayuda",
-    subtitle: "Preguntas frecuentes y guias",
-  },
-  {
-    icon: MessageSquare,
-    title: "Contactanos",
-    subtitle: "Escribenos, estamos para ayudarte",
-  },
-];
-
 export default function Perfil() {
-  const handleLogout = () => {
-    console.log("Cerrar sesión");
+  const navigate = useNavigate();
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+
+  const cuentaItems: MenuItem[] = [
+    {
+      icon: User,
+      title: "Informacion personal",
+      subtitle: "Edita tu nombre, correo y telefono",
+      onClick: () => navigate("/cliente/perfil/editar-perfil"),
+    },
+    {
+      icon: MapPin,
+      title: "Mis direcciones",
+      subtitle: "Gestiona tus direcciones de entrega",
+      onClick: () => navigate("/cliente/perfil/mis-direcciones"),
+    },
+    {
+      icon: Wallet,
+      title: "Metodos de pago",
+      subtitle: "Tarjetas, efectivo y mas",
+      onClick: () => navigate("/cliente/perfil/metodos-pago"),
+    },
+  ];
+
+  const preferenciasItems: MenuItem[] = [
+    {
+      icon: BellRing,
+      title: "Notificaciones",
+      subtitle: "Configura tus notificaciones",
+      onClick: () => navigate("/cliente/perfil/notificaciones"),
+    },
+    {
+      icon: Globe,
+      title: "Idioma",
+      subtitle: "Español",
+      onClick: () => navigate("/cliente/perfil/idioma"),
+    },
+    {
+      icon: Moon,
+      title: "Tema de la aplicacion",
+      subtitle: "Claro",
+      onClick: () => navigate("/cliente/perfil/tema-aplicacion"),
+    },
+  ];
+
+  const ayudaItems: MenuItem[] = [
+    {
+      icon: HelpCircle,
+      title: "Centro de ayuda",
+      subtitle: "Preguntas frecuentes y guias",
+      onClick: () => navigate("/cliente/perfil/centro-ayuda"),
+    },
+    {
+      icon: MessageSquare,
+      title: "Contactanos",
+      subtitle: "Escribenos, estamos para ayudarte",
+      onClick: () => navigate("/cliente/perfil/contactanos"),
+    },
+  ];
+
+  // Se ejecuta solo cuando el usuario CONFIRMA en el modal
+  const cerrarSesion = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setMostrarConfirmacion(false);
+    navigate("/", { replace: true });
   };
 
   const user = getUser();
@@ -106,7 +124,11 @@ export default function Perfil() {
       </section>
 
       {/* Card del usuario */}
-      <button type="button" className="user-card">
+      <button
+        type="button"
+        className="user-card"
+        onClick={() => navigate("/cliente/perfil/editar-perfil")}
+      >
         <img
           src={usuarioMock.avatar}
           alt={usuarioMock.nombre}
@@ -134,7 +156,11 @@ export default function Perfil() {
       <ProfileSection title="Ayuda y soporte" items={ayudaItems} />
 
       {/* Cerrar sesión */}
-      <button type="button" className="logout-row" onClick={handleLogout}>
+      <button
+        type="button"
+        className="logout-row"
+        onClick={() => setMostrarConfirmacion(true)}
+      >
         <span className="logout-icon">
           <LogOut size={18} />
         </span>
@@ -146,6 +172,18 @@ export default function Perfil() {
         </div>
         <ChevronRight size={18} className="logout-chevron" />
       </button>
+
+      {/* Modal de confirmación */}
+      <ConfirmModal
+        open={mostrarConfirmacion}
+        title="¿Cerrar sesión?"
+        message="Tendrás que volver a iniciar sesión con tu número de teléfono y contraseña para acceder de nuevo."
+        confirmLabel="Cerrar sesión"
+        cancelLabel="Cancelar"
+        danger
+        onConfirm={cerrarSesion}
+        onCancel={() => setMostrarConfirmacion(false)}
+      />
     </div>
   );
 }

@@ -9,7 +9,7 @@ import {
   CreditCard,
   ChevronRight,
 } from "lucide-react";
-import "../../styles/finalizarPedido.css";
+import "../../styles/cliente/finalizarPedido.css";
 import burgerHouse from "../../assets/burger-house.jpg";
 
 interface ProductoPedido {

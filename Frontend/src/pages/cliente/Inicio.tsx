@@ -14,7 +14,7 @@ import pizza from "../../assets/pizza.png";
 import bebida from "../../assets/bebida.jpg";
 import postre from "../../assets/postre1.png";
 import saludable from "../../assets/saludable.jpg";
-import "../../styles/inicio.css";
+import "../../styles/cliente/inicio.css";
 
 interface Restaurante {
   id: string;

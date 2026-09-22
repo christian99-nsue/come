@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Bike, Zap, CalendarClock } from "lucide-react";
-import "../../styles/tiempoEntrega.css";
+import "../../styles/cliente/tiempoEntrega.css";
 import delivery from "../../assets/delivery.jfif";
 
 type OpcionEntrega = "estandar" | "rapida" | "programada";

@@ -1,0 +1,190 @@
+.ayuda-page {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+  box-sizing: border-box;
+}
+
+.ayuda-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ayuda-back-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #1f2937;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ayuda-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.ayuda-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.ayuda-search-icon {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.ayuda-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.ayuda-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.ayuda-categories-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 18px;
+  padding-bottom: 2px;
+}
+
+.ayuda-categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.ayuda-category-chip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ayuda-category-chip.active {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+.ayuda-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.ayuda-empty-text {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 30px 0;
+}
+
+.ayuda-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 4px 14px;
+}
+
+.ayuda-faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ayuda-faq-answer {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 14px;
+  text-align: justify;
+}
+
+.ayuda-contact-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background-color: #ecfdf3;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ayuda-contact-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: #16a34a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ayuda-contact-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ayuda-contact-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.ayuda-contact-subtitle {
+  font-size: 12px;
+  color: #4b5563;
+}
+
+@media (max-width: 430px) {
+  .ayuda-page {
+    max-width: 100%;
+  }
+}

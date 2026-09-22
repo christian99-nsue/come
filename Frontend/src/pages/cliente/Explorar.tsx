@@ -20,7 +20,7 @@ import shawarma from "../../assets/shawarma.png";
 import bites from "../../assets/bites.png";
 import chicken from "../../assets/chicken.png";
 import sweet from "../../assets/sweet.png";
-import "../../styles/explorar.css";
+import "../../styles/cliente/explorar.css";
 
 interface Categoria {
   id: string;

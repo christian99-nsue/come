@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Home, Briefcase, Plus } from "lucide-react";
-import "../../styles/direccionEntrega.css";
+import "../../styles/cliente/direccionEntrega.css";
 
 
 interface Direccion {

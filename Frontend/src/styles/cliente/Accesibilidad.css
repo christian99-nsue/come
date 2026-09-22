@@ -1,0 +1,151 @@
+.accesibilidad-page {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+  box-sizing: border-box;
+}
+
+.accesibilidad-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.accesibilidad-back-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #1f2937;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.accesibilidad-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.accesibilidad-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7280;
+  margin: 0 0 10px;
+}
+
+.accesibilidad-list {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.accesibilidad-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #ffffff;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.accesibilidad-row:last-child {
+  border-bottom: none;
+}
+
+.accesibilidad-aa {
+  font-weight: 700;
+  color: #1f2937;
+  width: 26px;
+  flex-shrink: 0;
+}
+
+.accesibilidad-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: #ecfdf3;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.accesibilidad-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.accesibilidad-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  flex-shrink: 0;
+}
+
+.accesibilidad-radio.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  box-shadow: inset 0 0 0 3px #ffffff;
+}
+
+.accesibilidad-row-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.accesibilidad-row-toggle:last-child {
+  border-bottom: none;
+}
+
+.accesibilidad-toggle-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.accesibilidad-subtitle {
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1.35;
+}
+
+.accesibilidad-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+  line-height: 1.4;
+}
+
+.accesibilidad-note-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+@media (max-width: 430px) {
+  .accesibilidad-page {
+    max-width: 100%;
+  }
+}

@@ -16,7 +16,7 @@ import bites from "../../assets/bites.png";
 import chicken from "../../assets/chicken.png";
 import combo from "../../assets/combo.png";
 import repartidor from "../../assets/repartidor.png";
-import "../../styles/pedidos.css";
+import "../../styles/cliente/pedidos.css";
 
 type Tab = "activos" | "historial" | "cancelados";
 type EstadoPedido =

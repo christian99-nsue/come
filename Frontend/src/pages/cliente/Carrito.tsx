@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import burgerHouse from "../../assets/burger-house.jpg";
 import combo from "../../assets/combo.png";
-import "../../styles/carrito.css";
+import "../../styles/cliente/carrito.css";
 
 interface CartItem {
   id: string;

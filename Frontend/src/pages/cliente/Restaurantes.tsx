@@ -20,7 +20,7 @@ import pizzaTop from "../../assets/pizza-top.jpg";
 import wokExpress from "../../assets/wok-express.jpg";
 import shawarma from "../../assets/shawarma.png";
 import chicken from "../../assets/chicken.png";
-import "../../styles/restaurantes.css";
+import "../../styles/cliente/restaurantes.css";
 
 interface Categoria {
   id: string;

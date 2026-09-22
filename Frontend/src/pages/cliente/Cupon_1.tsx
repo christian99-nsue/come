@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Ticket, Tag } from "lucide-react";
-import "../../styles/cupon.css";
+import "../../styles/cliente/cupon.css";
 
 interface Cupon {
   id: string;

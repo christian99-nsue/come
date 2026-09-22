@@ -6,7 +6,7 @@ import {
   Phone,
   MessageCircle,
 } from "lucide-react";
-import "../../styles/pedidoRealizado.css";
+import "../../styles/cliente/pedidoRealizado.css";
 import delivery from "../../assets/delivery.jfif";
 import burgerHouse from "../../assets/burger-house.jpg";
 import burger from "../../assets/burger1.png";
