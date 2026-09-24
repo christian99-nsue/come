@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Sun, CircleDot, Zap, Eye, Info } from "lucide-react";
-import "../../styles/clientes/Accesibilidad.css";
+import "../../styles/cliente/Accesibilidad.css";
 
 type TamanoTexto = "pequeno" | "normal" | "grande" | "muy_grande";
 type Contraste = "normal" | "alto";

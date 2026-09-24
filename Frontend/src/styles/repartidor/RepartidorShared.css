@@ -1,0 +1,1100 @@
+/* ===== Compartido para todas las pantallas del repartidor ===== */
+.rep-page {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 16px 16px 100px;
+  box-sizing: border-box;
+}
+
+.rep-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.rep-back-btn,
+.rep-icon-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #1f2937;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.rep-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.rep-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 2px 0 0;
+}
+
+/* Cards genéricas */
+.rep-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  background-blend-mode: normal;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+}
+
+.rep-card-green {
+  background-color: #ecfdf3;
+  border-color: #bbf7d0;
+}
+
+/* Badges de estado */
+.rep-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.rep-chevron {
+  color: #1f2937;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.rep-badge-green {
+  background-color: #d9f7e3;
+  color: #16a34a;
+}
+
+.rep-badge-gray {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Botones */
+.rep-btn-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rep-btn-secondary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #ffffff;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rep-btn-sm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Filas de info (dirección, contacto, etc.) */
+.rep-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  background-blend-mode: normal;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.rep-info-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: #ecfdf3;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rep-info-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rep-info-label {
+  font-size: 11px;
+  color: #9ca3af;
+  text-align: left;
+}
+
+.rep-info-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: left;
+}
+
+.rep-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2937;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+/* Stepper vertical (mi entrega actual) */
+.rep-stepper {
+  display: flex;
+  flex-direction: column;
+}
+
+.rep-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+  padding-bottom: 22px;
+}
+
+.rep-step:last-child {
+  padding-bottom: 0;
+}
+
+.rep-step-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  border: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.rep-step-dot.done {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+}
+
+.rep-step-line {
+  position: absolute;
+  top: 22px;
+  left: 10px;
+  width: 2px;
+  height: calc(100% - 22px);
+  background-color: #e5e7eb;
+}
+
+.rep-step-line.done {
+  background-color: #16a34a;
+}
+
+.rep-step-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
+  padding-top: 2px;
+}
+
+.rep-step-label.done {
+  color: #1f2937;
+  font-weight: 700;
+}
+
+/* Toggle switch (reutilizado del cliente) */
+.toggle-switch {
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background-color: #e5e7eb;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  padding: 0;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-switch.active {
+  background-color: #16a34a;
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.toggle-switch.active .toggle-knob {
+  transform: translateX(18px);
+}
+
+/* Radio (estado de disponibilidad) */
+.rep-radio-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.rep-radio-card.active {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+}
+
+.rep-radio-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rep-radio-card.active .rep-radio-icon {
+  background-color: #ffffff;
+  color: #16a34a;
+}
+
+.rep-radio-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rep-radio-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.rep-radio-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.rep-radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  flex-shrink: 0;
+}
+
+.rep-radio-dot.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  box-shadow: inset 0 0 0 3px #ffffff;
+}
+
+.rep-menu-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  background-blend-mode: normal;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+}
+
+.rep-menu-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.rep-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Saludo (Panel principal) */
+.rep-greeting {
+  margin-bottom: 18px;
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+}
+
+.rep-greeting-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px;
+  text-align: left;
+}
+
+/* Banner clicable (pedidos disponibles) */
+.rep-banner-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rep-banner-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.rep-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 20px 0 12px;
+  text-align: left;
+}
+
+.rep-section-title-sm {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 10px;
+  text-align: left;
+}
+
+/* Card de pedido en la lista (Panel principal) */
+.rep-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rep-order-card {
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.rep-order-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-right: 15px;
+}
+
+.rep-order-info {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.rep-order-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: left;
+}
+
+.rep-order-number {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: left;
+}
+
+.rep-order-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.rep-order-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-top: 2px;
+  text-align: left;
+}
+
+.rep-order-action {
+  align-self: center;
+}
+
+/* Fila superior de datos rápidos (distancia, tiempo, pago) */
+.rep-quick-row {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.rep-quick-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rep-quick-price {
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* Cabecera de card con logo + nombre */
+.rep-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rep-card-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.rep-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Lista simple de productos */
+.rep-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rep-product-item {
+  font-size: 13px;
+  color: #4b5563;
+  text-align: left;
+}
+
+/* Botones de contacto en fila */
+.rep-contact-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.rep-contact-row .rep-btn-secondary {
+  flex: 1;
+}
+
+/* Imagen hero (En viaje, entrega) */
+.rep-hero-img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+.rep-hero-img-lg {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+/* Pantalla de éxito (Entrega completada) */
+.rep-success-page {
+  text-align: center;
+  padding-top: 60px;
+}
+
+.rep-success-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ecfdf3;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.rep-success-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px;
+}
+
+.rep-success-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 20px;
+}
+
+.rep-success-amount {
+  font-size: 26px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 6px;
+}
+
+.rep-success-note {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 32px;
+}
+
+/* Tabs de rango (Historial) */
+.rep-tabs-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.rep-tab-btn {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #6b7280;
+  border-radius: 999px;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rep-tab-btn.active {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+/* Historial de entregas */
+.rep-history-group {
+  margin-bottom: 20px;
+}
+
+.rep-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rep-history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  background-blend-mode: normal;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+}
+
+.rep-history-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.rep-history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rep-history-number {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.rep-history-restaurant {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.rep-history-meta {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+/* Notificaciones */
+.rep-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rep-notif-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  background-blend-mode: normal;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+}
+
+.rep-notif-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rep-notif-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.rep-notif-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.rep-notif-time {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+/* Perfil del repartidor */
+.rep-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rep-profile-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.rep-profile-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: left;
+}
+
+.rep-profile-role {
+  font-size: 12px;
+  color: #6b7280;
+  text-align: left;
+}
+
+.rep-status-badge {
+  width: fit-content;
+}
+
+.rep-logout-row {
+  border-color: #fecaca;
+  background-color: #fef2f2;
+}
+
+.rep-logout-icon {
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+.rep-logout-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+.rep-radio-card-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rep-inline-note {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.rep-inline-note-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.rep-info-sub {
+  font-size: 12px;
+  color: #6b7280;
+  text-align: left;
+}
+
+.rep-info-row-last {
+  margin-bottom: 22px;
+}
+
+.rep-btn-block-margin {
+  margin-bottom: 10px;
+}
+
+/* Avatar editable (Editar perfil) */
+.rep-avatar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.rep-avatar-box {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+
+.rep-avatar-box img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.rep-avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Formulario genérico (Editar perfil) */
+.rep-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.rep-form-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+.rep-form-icon {
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.rep-form-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rep-form-label {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 2px;
+  text-align: left;
+}
+
+.rep-form-input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #1f2937;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+}
+
+.rep-form-select-wrapper {
+  position: relative;
+}
+
+.rep-form-select {
+  appearance: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #1f2937;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+}
+
+.rep-form-select-chevron {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.rep-menu-label-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rep-menu-sublabel {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Cambiar contraseña */
+.rep-lock-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.rep-lock-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #ecfdf3;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.rep-lock-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px;
+}
+
+.rep-lock-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  max-width: 260px;
+}
+
+.rep-password-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rep-password-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.rep-password-icon {
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.rep-password-input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #1f2937;
+  background: transparent;
+  width: 100%;
+}
+
+.rep-password-eye {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.rep-password-rules {
+  background-color: #ecfdf3;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.rep-password-rules-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 8px;
+}
+
+.rep-password-rules-list {
+  margin: 0;
+  padding-left: 24px;
+  font-size: 12px;
+  color: #4b5563;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+/* Información de la cuenta */
+.rep-account-top-card {
+  width: 100%;
+  cursor: pointer;
+  border: none;
+}
+
+.rep-account-top-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Filas con toggle (Configuración, Información de cuenta) */
+.rep-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+/* Configuración: título de grupo con ícono */
+.rep-config-group-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rep-config-value {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-right: 4px;
+}
+
+@media (max-width: 430px) {
+  .rep-page {
+    max-width: 100%;
+  }
+}

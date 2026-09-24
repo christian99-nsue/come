@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Phone, Lock, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
-import "../../styles/Login.css";
+import "../../styles/cliente/Login.css";
 import logo from "../../assets/Logo.png";
 
 const API_URL = import.meta.env.VITE_API_URL;

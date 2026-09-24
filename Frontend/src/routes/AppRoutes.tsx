@@ -23,6 +23,24 @@ import Notificaciones from "../pages/cliente/Notificaciones";
 import CentroAyuda from "../pages/cliente/CentroAyuda";
 import Contactanos from "../pages/cliente/Contactanos";
 import TerminosCondiciones from "../pages/cliente/TerminosCondiciones";
+import LayoutRepartidor from "../components/layouts/LayoutRepartidor";
+import ConfirmarEntrega from "../pages/repartidor/ConfirmarEntrega";
+import EntregaCompletada from "../pages/repartidor/EntregaCompletada";
+import EstadoDisponibilidad from "../pages/repartidor/EstadoDisponibilidad";
+import HistorialEntregas from "../pages/repartidor/HistorialEntregas";
+import MapaRuta from "../pages/repartidor/MapaRuta";
+import MiEntregaActual from "../pages/repartidor/MiEntregaActual";
+import MiPerfilRepartidor from "../pages/repartidor/MiPerfilRepartidor";
+import NotificacionesRepartidor from "../pages/repartidor/NotificacionesRepartidor";
+import PanelRepartidor from "../pages/repartidor/PanelRepartidor";
+import PedidoDisponible from "../pages/repartidor/PedidoDisponible";
+import PedidoEnViaje from "../pages/repartidor/PedidoEnViaje";
+import Favoritos from "../pages/cliente/Favoritos";
+import NotificacionesFeed from "../pages/cliente/NotificacionesFeed";
+import CambiarContrasenaRepartidor from "../pages/repartidor/CambiarContrasenaRepartidor";
+import ConfiguracionRepartidor from "../pages/repartidor/ConfiguracionRepartidor";
+import EditarPerfilRepartidor from "../pages/repartidor/EditarPerfilRepartidor";
+import InfoCuentaRepartidor from "../pages/repartidor/InfoCuentaRepartidor";
 
 export default function AppRoutes() {
   return (
@@ -51,10 +69,39 @@ export default function AppRoutes() {
           <Route path="perfil/accesibilidad" element={<Accesibilidad />} />
           <Route path="perfil/centro-ayuda" element={<CentroAyuda />} />
           <Route path="perfil/contactanos" element={<Contactanos />} />
+          <Route path="notificaciones" element={<NotificacionesFeed />} />
+          <Route
+            path="notificaciones/preferencias"
+            element={<Notificaciones />}
+          />
+          <Route path="favoritos" element={<Favoritos />} />
           <Route
             path="terminos-condiciones"
             element={<TerminosCondiciones />}
           />
+        </Route>
+        <Route path="/repartidor" element={<LayoutRepartidor />}>
+          <Route index element={<PanelRepartidor />} />
+          <Route
+            path="estado-disponibilidad"
+            element={<EstadoDisponibilidad />}
+          />
+          <Route path="pedido/:id" element={<PedidoDisponible />} />
+          <Route path="mi-entrega" element={<MiEntregaActual />} />
+          <Route path="en-viaje" element={<PedidoEnViaje />} />
+          <Route path="ruta" element={<MapaRuta />} />
+          <Route path="confirmar-entrega" element={<ConfirmarEntrega />} />
+          <Route path="entrega-completada" element={<EntregaCompletada />} />
+          <Route path="historial" element={<HistorialEntregas />} />
+          <Route path="notificaciones" element={<NotificacionesRepartidor />} />
+          <Route path="perfil" element={<MiPerfilRepartidor />} />
+          <Route path="editar-perfil" element={<EditarPerfilRepartidor />} />
+          <Route
+            path="cambiar-contrasena"
+            element={<CambiarContrasenaRepartidor />}
+          />
+          <Route path="info-cuenta" element={<InfoCuentaRepartidor />} />
+          <Route path="configuracion" element={<ConfiguracionRepartidor />} />
         </Route>
       </Routes>
     </HashRouter>

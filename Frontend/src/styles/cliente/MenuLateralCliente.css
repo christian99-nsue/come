@@ -1,0 +1,176 @@
+.cliente-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  display: flex;
+}
+
+.cliente-drawer-close-btn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  margin-bottom: 8px;
+}
+
+.cliente-drawer-panel {
+  width: 82%;
+  max-width: 320px;
+  height: 100%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  animation: cliente-drawer-slide-in 0.2s ease;
+}
+
+@keyframes cliente-drawer-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Card de usuario */
+.cliente-drawer-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background-color: #ecfdf3;
+  border: none;
+  border-radius: 16px;
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.cliente-drawer-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cliente-drawer-user-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cliente-drawer-user-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.cliente-drawer-user-role {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.cliente-drawer-user-phone {
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cliente-drawer-user-phone svg {
+  fill: #1f2937;
+  color: #1f2937;
+}
+
+.cliente-drawer-chevron {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+/* Navegación */
+.cliente-drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cliente-drawer-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: none;
+  border: none;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+}
+
+.cliente-drawer-item:hover {
+  background-color: #f9fafb;
+}
+
+.cliente-drawer-item.active {
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+.cliente-drawer-badge {
+  position: absolute;
+  right: 10px;
+  background-color: #dc2626;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.cliente-drawer-divider {
+  height: 1px;
+  background-color: #f0f0f0;
+  margin: 12px 0;
+}
+
+.cliente-drawer-logout {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: none;
+  border: none;
+  color: #dc2626;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cliente-drawer-illustration {
+  width: 100%;
+  max-width: 220px;
+  margin: 20px auto 0;
+  display: block;
+  opacity: 0.9;
+}
