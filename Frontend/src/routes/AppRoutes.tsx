@@ -41,6 +41,12 @@ import CambiarContrasenaRepartidor from "../pages/repartidor/CambiarContrasenaRe
 import ConfiguracionRepartidor from "../pages/repartidor/ConfiguracionRepartidor";
 import EditarPerfilRepartidor from "../pages/repartidor/EditarPerfilRepartidor";
 import InfoCuentaRepartidor from "../pages/repartidor/InfoCuentaRepartidor";
+import AyudaSoporteRepartidor from "../pages/repartidor/AyudaSoporteRepartidor";
+import General from "../pages/repartidor/General";
+import IdiomaRepartidor from "../pages/repartidor/IdiomaRepartidor";
+import NavegacionExterna from "../pages/repartidor/NavegacionExterna";
+import TemaAplicacionRepartidor from "../pages/repartidor/TemaAplicacionRepartidor";
+import TerminosCondicionesRepartidor from "../pages/repartidor/TerminosCondicionesRepartidor";
 
 export default function AppRoutes() {
   return (
@@ -102,6 +108,21 @@ export default function AppRoutes() {
           />
           <Route path="info-cuenta" element={<InfoCuentaRepartidor />} />
           <Route path="configuracion" element={<ConfiguracionRepartidor />} />
+          <Route path="configuracion/general" element={<General />} />
+          <Route path="configuracion/idioma" element={<IdiomaRepartidor />} />
+          <Route
+            path="configuracion/tema"
+            element={<TemaAplicacionRepartidor />}
+          />
+          <Route
+            path="configuracion/navegacion-externa"
+            element={<NavegacionExterna />}
+          />
+          <Route path="centro-ayuda" element={<AyudaSoporteRepartidor />} />
+          <Route
+            path="terminos-condiciones"
+            element={<TerminosCondicionesRepartidor />}
+          />
         </Route>
       </Routes>
     </HashRouter>

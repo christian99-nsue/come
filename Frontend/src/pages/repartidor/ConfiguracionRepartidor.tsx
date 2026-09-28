@@ -43,7 +43,11 @@ export default function ConfiguracionRepartidor() {
         <Settings size={15} /> General
       </h3>
       <div className="rep-menu-list">
-        <button type="button" className="rep-menu-row">
+        <button
+          type="button"
+          className="rep-menu-row"
+          onClick={() => navigate("/repartidor/configuracion/idioma")}
+        >
           <span className="rep-info-icon">
             <Globe size={17} />
           </span>
@@ -51,7 +55,11 @@ export default function ConfiguracionRepartidor() {
           <span className="rep-config-value">Español</span>
           <ChevronRight size={17} color="#9ca3af" />
         </button>
-        <button type="button" className="rep-menu-row">
+        <button
+          type="button"
+          className="rep-menu-row"
+          onClick={() => navigate("/repartidor/configuracion/tema")}
+        >
           <span className="rep-info-icon">
             <Moon size={17} />
           </span>
@@ -115,7 +123,12 @@ export default function ConfiguracionRepartidor() {
           <span className="rep-info-icon">
             <Navigation size={17} />
           </span>
-          <div className="rep-menu-label-col">
+          <div
+            className="rep-menu-label-col"
+            onClick={() =>
+              navigate("/repartidor/configuracion/navegacion-externa")
+            }
+          >
             <span className="rep-menu-label">Navegación externa</span>
             <span className="rep-menu-sublabel">Abrir en Google Maps</span>
           </div>
@@ -172,7 +185,11 @@ export default function ConfiguracionRepartidor() {
           <span className="rep-menu-label">Ayuda y soporte</span>
           <ChevronRight size={17} color="#9ca3af" />
         </button>
-        <button type="button" className="rep-menu-row">
+        <button
+          type="button"
+          className="rep-menu-row"
+          onClick={() => navigate("/repartidor/terminos-condiciones")}
+        >
           <span className="rep-info-icon">
             <FileText size={17} />
           </span>
