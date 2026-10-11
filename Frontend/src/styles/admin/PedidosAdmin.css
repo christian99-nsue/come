@@ -1,0 +1,142 @@
+.pedidos-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 11px 14px;
+  margin-bottom: 14px;
+}
+
+.pedidos-search-icon {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.pedidos-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.pedidos-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.pedidos-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pedidos-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.pedidos-tab {
+  flex: 0 0 auto;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #6b7280;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pedidos-tab.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.pedidos-status-text {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 30px 0;
+}
+
+.pedidos-status-error {
+  color: #dc2626;
+}
+
+.pedidos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pedido-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  justify-content: space-between;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+}
+
+.pedido-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.pedido-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.pedido-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 100%;
+}
+
+.pedido-card-codigo {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.pedido-card-cliente {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.pedido-card-meta {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.pedido-card-link {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #16a34a;
+  align-self: center;
+}

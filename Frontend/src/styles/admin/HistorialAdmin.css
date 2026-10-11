@@ -1,0 +1,90 @@
+.historial-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.historial-tab {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #6b7280;
+  border-radius: 12px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.historial-tab.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.historial-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.historial-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
+}
+
+.historial-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.historial-card-codigo {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.historial-card-cliente {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.historial-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.historial-card-metodo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.historial-card-fecha {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.historial-card-total {
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+}

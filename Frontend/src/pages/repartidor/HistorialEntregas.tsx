@@ -1,76 +1,108 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronRight } from "lucide-react";
-import burger from "../../assets/burger1.png";
-import chicken from "../../assets/chicken.png";
-import pizza from "../../assets/shawarma.png";
+import axios from "axios";
+import { ArrowLeft } from "lucide-react";
 import "../../styles/repartidor/RepartidorShared.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 type Rango = "hoy" | "semana" | "mes";
 
 interface EntregaHistorial {
-  id: string;
-  numero: string;
-  restaurante: string;
-  logo: string;
-  hora: string;
-  estado: "Entregado";
-  grupo: "Hoy" | "Ayer";
+  id: number;
+  codigo: string;
+  restaurante_nombre: string;
+  restaurante_logo: string | null;
+  pago: number;
+  fecha: string;
 }
 
-const historialMock: EntregaHistorial[] = [
-  {
-    id: "1",
-    numero: "#FL-2841",
-    restaurante: "Burger House",
-    logo: burger,
-    hora: "23:15",
-    estado: "Entregado",
-    grupo: "Hoy",
-  },
-  {
-    id: "2",
-    numero: "#FL-2842",
-    restaurante: "Pizza Top",
-    logo: pizza,
-    hora: "21:42",
-    estado: "Entregado",
-    grupo: "Hoy",
-  },
-  {
-    id: "3",
-    numero: "#FL-2843",
-    restaurante: "Sabor Africano",
-    logo: chicken,
-    hora: "19:30",
-    estado: "Entregado",
-    grupo: "Hoy",
-  },
-  {
-    id: "4",
-    numero: "#FL-2819",
-    restaurante: "Chicken Spot",
-    logo: chicken,
-    hora: "19:12",
-    estado: "Entregado",
-    grupo: "Ayer",
-  },
-  {
-    id: "5",
-    numero: "#FL-2818",
-    restaurante: "Pizza Top",
-    logo: pizza,
-    hora: "17:45",
-    estado: "Entregado",
-    grupo: "Ayer",
-  },
-];
+interface HistorialData {
+  resumen: { entregas: number; ganancias: number };
+  entregas: EntregaHistorial[];
+}
+
+const etiquetasRango: Record<Rango, string> = {
+  hoy: "Hoy",
+  semana: "Esta semana",
+  mes: "Este mes",
+};
+
+function formatXAF(v: number) {
+  return `${v.toLocaleString("es-ES")} XAF`;
+}
+
+function etiquetaDia(fecha: Date) {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const dia = new Date(fecha);
+  dia.setHours(0, 0, 0, 0);
+
+  const diff = Math.round((hoy.getTime() - dia.getTime()) / 86400000);
+  if (diff === 0) return "Hoy";
+  if (diff === 1) return "Ayer";
+  return dia.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
+}
+
+function formatHora(fecha: Date) {
+  return fecha.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default function HistorialEntregas() {
   const navigate = useNavigate();
-  const [rango, setRango] = useState<Rango>("hoy");
+  const token = localStorage.getItem("token");
 
-  const grupos = Array.from(new Set(historialMock.map((h) => h.grupo)));
+  const [rango, setRango] = useState<Rango>("hoy");
+  const [rangoCargado, setRangoCargado] = useState<Rango | null>(null);
+  const [data, setData] = useState<HistorialData | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelado = false;
+
+    axios
+      .get(`${API_URL}/api/repartidor/historial`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { rango },
+      })
+      .then((res) => {
+        if (!cancelado) {
+          setData(res.data);
+          setRangoCargado(rango);
+          setError("");
+        }
+      })
+      .catch(() => {
+        if (!cancelado) {
+          setError("No se pudo cargar el historial");
+          setRangoCargado(rango);
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rango]);
+
+  // Las entregas ya vienen ordenadas de más reciente a más antigua,
+  // así que las del mismo día quedan juntas.
+  const grupos: { titulo: string; items: EntregaHistorial[] }[] = [];
+  (data?.entregas || []).forEach((e) => {
+    const titulo = etiquetaDia(new Date(e.fecha));
+    const ultimo = grupos[grupos.length - 1];
+    if (ultimo && ultimo.titulo === titulo) {
+      ultimo.items.push(e);
+    } else {
+      grupos.push({ titulo, items: [e] });
+    }
+  });
+
+  const cargandoActual = rangoCargado !== rango;
+  const errorActual = cargandoActual ? "" : error;
 
   return (
     <div className="rep-page">
@@ -94,39 +126,78 @@ export default function HistorialEntregas() {
             className={rango === r ? "rep-tab-btn active" : "rep-tab-btn"}
             onClick={() => setRango(r)}
           >
-            {r === "hoy" ? "Hoy" : r === "semana" ? "Esta semana" : "Este mes"}
+            {etiquetasRango[r]}
           </button>
         ))}
       </div>
 
-      {grupos.map((grupo) => (
-        <div key={grupo} className="rep-history-group">
-          <h3 className="rep-section-title-sm">{grupo}</h3>
-          <div className="rep-history-list">
-            {historialMock
-              .filter((h) => h.grupo === grupo)
-              .map((h) => (
-                <button key={h.id} type="button" className="rep-history-item">
-                  <img
-                    src={h.logo}
-                    alt={h.restaurante}
-                    className="rep-history-img"
-                  />
-                  <div className="rep-history-info">
-                    <div className="rep-history-number">{h.numero}</div>
-                    <div className="rep-history-restaurant">
-                      {h.restaurante}
-                    </div>
-                    <div className="rep-history-meta">
-                      {h.hora} · {h.estado}
-                    </div>
-                  </div>
-                  <ChevronRight size={16} color="#9ca3af" />
-                </button>
-              ))}
+      {cargandoActual && (
+        <p className="rep-status-text">Cargando historial...</p>
+      )}
+
+      {errorActual && (
+        <p className="rep-status-text rep-status-error">{errorActual}</p>
+      )}
+
+      {!cargandoActual && !errorActual && data && (
+        <>
+          <div className="rep-card rep-card-green rep-history-summary">
+            <div className="rep-history-summary-col">
+              <span className="rep-history-summary-value">
+                {data.resumen.entregas}
+              </span>
+              <span className="rep-history-summary-label">Entregas</span>
+            </div>
+            <div className="rep-history-summary-col">
+              <span className="rep-history-summary-value">
+                {formatXAF(data.resumen.ganancias)}
+              </span>
+              <span className="rep-history-summary-label">Ganado</span>
+            </div>
           </div>
-        </div>
-      ))}
+
+          {grupos.length === 0 && (
+            <p className="rep-status-text">
+              Aún no tienes entregas en este período.
+            </p>
+          )}
+
+          {grupos.map((grupo) => (
+            <div key={grupo.titulo} className="rep-history-group">
+              <h3 className="rep-section-title-sm">{grupo.titulo}</h3>
+              <div className="rep-history-list">
+                {grupo.items.map((e) => (
+                  <div
+                    key={e.id}
+                    className="rep-history-item rep-history-item-static"
+                  >
+                    <img
+                      src={
+                        e.restaurante_logo ||
+                        `https://picsum.photos/seed/restaurante-${e.id}/60/60`
+                      }
+                      alt={e.restaurante_nombre}
+                      className="rep-history-img"
+                    />
+                    <div className="rep-history-info">
+                      <div className="rep-history-number">{e.codigo}</div>
+                      <div className="rep-history-restaurant">
+                        {e.restaurante_nombre}
+                      </div>
+                      <div className="rep-history-meta">
+                        {formatHora(new Date(e.fecha))} · Entregado
+                      </div>
+                    </div>
+                    <span className="rep-history-amount">
+                      {formatXAF(e.pago)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }

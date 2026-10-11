@@ -1,9 +1,12 @@
-import { useState } from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { Menu, Bell, Package, User } from "lucide-react";
 import MenuLateralRepartidor from "../../pages/repartidor/MenuLateralRepartidor";
 import ConfirmModal from "../common/ConfirmModal";
 import "../../styles/repartidor/LayoutRepartidor.css";
+import { useEffect, useState } from "react";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function LayoutRepartidor() {
   const navigate = useNavigate();
@@ -46,6 +49,26 @@ export default function LayoutRepartidor() {
 
 function HeaderRepartidor({ onMenuClick }: { onMenuClick: () => void }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [noLeidas, setNoLeidas] = useState(0);
+
+  // Se actualiza al cambiar de pantalla (así baja el número al leer) y cada 30 s
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const cargar = () => {
+      axios
+        .get(`${API_URL}/api/repartidor/notificaciones/no-leidas`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setNoLeidas(res.data.total))
+        .catch(() => {});
+    };
+
+    cargar();
+    const intervalo = setInterval(cargar, 30000);
+    return () => clearInterval(intervalo);
+  }, [location.pathname]);
 
   return (
     <header className="rep-app-header">
@@ -65,7 +88,11 @@ function HeaderRepartidor({ onMenuClick }: { onMenuClick: () => void }) {
         onClick={() => navigate("/repartidor/notificaciones")}
       >
         <Bell size={20} />
-        <span className="rep-header-badge">3</span>
+        {noLeidas > 0 && (
+          <span className="rep-header-badge">
+            {noLeidas > 9 ? "9+" : noLeidas}
+          </span>
+        )}
       </button>
     </header>
   );

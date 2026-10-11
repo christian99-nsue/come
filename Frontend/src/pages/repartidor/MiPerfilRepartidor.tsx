@@ -1,36 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUser } from "../../utils/auth";
-import {
-  Phone,
-  Mail,
-  Bike,
-  ShieldCheck,
-  User,
-  KeyRound,
-  FileText,
-  LogOut,
-  ChevronRight,
-} from "lucide-react";
+import axios from "axios";
+import { User, KeyRound, FileText, LogOut, ChevronRight } from "lucide-react";
 import ConfirmModal from "../../components/common/ConfirmModal";
 import "../../styles/repartidor/RepartidorShared.css";
-import avatar from "../../assets/pilar.jpg";
 
-const repartidorMock = {
-  nombre: "Carlos Martínez",
-  rol: "Repartidor",
-  avatar: avatar,
-  telefono: "+240 555 123 456",
-  correo: "carlos@gmail.com",
-  vehiculo: "Moto · HM-1234",
-  disponible: true,
-};
+const API_URL = import.meta.env.VITE_API_URL;
+
+interface Perfil {
+  id: number;
+  nombre: string;
+  email: string | null;
+  telefono: string;
+  foto_perfil: string | null;
+  vehiculo_tipo: "moto" | "bicicleta" | "coche" | null;
+  matricula: string | null;
+  disponible: boolean;
+}
 
 export default function MiPerfilRepartidor() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const [perfil, setPerfil] = useState<Perfil | null>(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-  const r = repartidorMock;
-  const user = getUser();
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/repartidor/perfil`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setPerfil(res.data))
+      .catch(() => setError("No se pudo cargar tu perfil"))
+      .finally(() => setCargando(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const cerrarSesion = () => {
     localStorage.removeItem("token");
@@ -39,62 +45,70 @@ export default function MiPerfilRepartidor() {
     navigate("/", { replace: true });
   };
 
+  if (cargando) {
+    return (
+      <div className="rep-page">
+        <p className="rep-status-text">Cargando perfil...</p>
+      </div>
+    );
+  }
+
+  if (!perfil) {
+    return (
+      <div className="rep-page">
+        <p className="rep-status-text rep-status-error">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="rep-page">
-      <h1 className="rep-title" style={{ marginBottom: 18 }}>
-        Mi perfil
-      </h1>
+      <h1 className="rep-title rep-title-block">Mi perfil</h1>
 
-      <div className="rep-card rep-card-green rep-profile-card">
-        <img src={r.avatar} alt={r.nombre} className="rep-profile-avatar" />
-        <div>
-          <div className="rep-profile-name">{user.nombre}</div>
-          <div className="rep-profile-role">{user.rol}</div>
-        </div>
-      </div>
-      <div className="rep-info-row">
-        <span className="rep-info-icon">
-          <Phone size={17} />
-        </span>
-        <div className="rep-info-text">
-          <span className="rep-info-label">Teléfono</span>
-          <span className="rep-info-value">{user.telefono}</span>
-        </div>
-      </div>
-
-      <div className="rep-info-row">
-        <span className="rep-info-icon">
-          <Mail size={17} />
-        </span>
-        <div className="rep-info-text">
-          <span className="rep-info-label">Correo</span>
-          <span className="rep-info-value">{user.correo}</span>
-        </div>
-      </div>
-
-      <div className="rep-info-row">
-        <span className="rep-info-icon">
-          <Bike size={17} />
-        </span>
-        <div className="rep-info-text">
-          <span className="rep-info-label">Vehículo</span>
-          <span className="rep-info-value">{r.vehiculo}</span>
-        </div>
-      </div>
-
-      <div className="rep-info-row rep-info-row-last">
-        <span className="rep-info-icon">
-          <ShieldCheck size={17} />
-        </span>
-        <div className="rep-info-text">
-          <span className="rep-info-label">Estado</span>
-          <span className="rep-badge rep-badge-green rep-status-badge">
-            ✓ {r.disponible ? "Disponible" : "No disponible"}
+      <button
+        type="button"
+        className="rep-card rep-card-green rep-profile-card rep-account-top-card"
+        onClick={() => navigate("/repartidor/editar-perfil")}
+      >
+        {perfil.foto_perfil ? (
+          <img
+            src={perfil.foto_perfil}
+            alt={perfil.nombre}
+            className="rep-profile-avatar"
+          />
+        ) : (
+          <div className="rep-profile-avatar-fallback">
+            {perfil.nombre.charAt(0).toUpperCase()}
+          </div>
+        )}
+        <div className="rep-account-top-text">
+          <div className="rep-profile-name">{perfil.nombre}</div>
+          <div className="rep-profile-role">Repartidor</div>
+          <span
+            className={
+              perfil.disponible
+                ? "rep-badge rep-badge-green rep-status-badge"
+                : "rep-badge rep-badge-gray rep-status-badge"
+            }
+          >
+            ● {perfil.disponible ? "Disponible" : "No disponible"}
           </span>
         </div>
-      </div>
+        <ChevronRight size={18} color="#9ca3af" />
+      </button>
 
       <div className="rep-menu-list">
+        <button
+          type="button"
+          className="rep-menu-row"
+          onClick={() => navigate("/repartidor/info-cuenta")}
+        >
+          <span className="rep-info-icon">
+            <FileText size={17} />
+          </span>
+          <span className="rep-menu-label">Información de la cuenta</span>
+          <ChevronRight size={17} color="#9ca3af" />
+        </button>
         <button
           type="button"
           className="rep-menu-row"
@@ -116,18 +130,6 @@ export default function MiPerfilRepartidor() {
             <KeyRound size={17} />
           </span>
           <span className="rep-menu-label">Cambiar contraseña</span>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-
-        <button
-          type="button"
-          className="rep-menu-row"
-          onClick={() => navigate("/repartidor/info-cuenta")}
-        >
-          <span className="rep-info-icon">
-            <FileText size={17} />
-          </span>
-          <span className="rep-menu-label">Información de la cuenta</span>
           <ChevronRight size={17} color="#9ca3af" />
         </button>
       </div>

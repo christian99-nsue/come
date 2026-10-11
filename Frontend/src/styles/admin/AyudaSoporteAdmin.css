@@ -1,0 +1,122 @@
+.ayuda-admin-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.ayuda-admin-hero-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #dbeafe;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ayuda-admin-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ayuda-admin-hero-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.ayuda-admin-hero-subtitle {
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.ayuda-admin-contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+}
+
+.ayuda-admin-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ayuda-admin-ver-todas {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ayuda-admin-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ayuda-admin-hours {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #eff6ff;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 4px;
+}
+
+.ayuda-admin-hours-icon {
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.ayuda-admin-hours > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ayuda-admin-hours-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.ayuda-admin-hours-subtitle {
+  font-size: 11px;
+  color: #4b5563;
+}

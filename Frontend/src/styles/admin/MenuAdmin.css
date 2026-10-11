@@ -1,0 +1,189 @@
+.menu-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.menu-tab {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #6b7280;
+  border-radius: 12px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.menu-tab.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.menu-create-btn {
+  margin-bottom: 18px;
+}
+
+.menu-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 11px 14px;
+  margin-bottom: 14px;
+}
+
+.menu-search-icon {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.menu-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.menu-categories-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 18px;
+  padding-bottom: 2px;
+}
+
+.menu-categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.menu-category-chip {
+  flex: 0 0 auto;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #374151;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.menu-category-chip.active {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+.menu-platos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-plato-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px;
+  width: 100%;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu-plato-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.menu-plato-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menu-plato-nombre {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.menu-plato-precio {
+  font-size: 13px;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.menu-plato-estado {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.menu-plato-estado.disponible {
+  color: #16a34a;
+}
+
+.menu-categorias-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-categoria-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px;
+  width: 100%;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu-categoria-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.menu-categoria-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menu-categoria-nombre {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.menu-categoria-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.menu-categoria-count {
+  font-size: 11px;
+  color: #9ca3af;
+}

@@ -1,0 +1,129 @@
+.detalle-pedido-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.detalle-pedido-top > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-pedido-codigo {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.detalle-pedido-fecha {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.detalle-pedido-cliente-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.detalle-pedido-cliente-nombre {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.detalle-pedido-cliente-tel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #16a34a;
+  text-decoration: none;
+  margin-left: 44px;
+}
+
+.detalle-pedido-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detalle-pedido-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #1f2937;
+}
+
+.detalle-pedido-item-precio {
+  font-weight: 600;
+}
+
+.detalle-pedido-totales {
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 4px;
+}
+
+.detalle-pedido-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.detalle-pedido-total-final {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0;
+  padding-top: 6px;
+}
+
+.detalle-pedido-total-final span:last-child {
+  color: #16a34a;
+}
+
+.detalle-pedido-info-row {
+  margin-bottom: 12px;
+}
+
+.detalle-pedido-cambiar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.detalle-pedido-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.detalle-pedido-actions .admin-btn-danger,
+.detalle-pedido-actions .admin-btn-primary {
+  flex: 1;
+}
+
+.detalle-pedido-single-action {
+  margin-top: 20px;
+}
+
+.detalle-pedido-waiting-note {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 20px;
+}

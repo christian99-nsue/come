@@ -1,26 +1,101 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { ClipboardCheck } from "lucide-react";
-import "../../styles/repartidor/ConfirmarEntrega.css";
 import "../../styles/repartidor/RepartidorShared.css";
+import "../../styles/repartidor/ConfirmarEntrega.css";
 
-const pedidoMock = { numero: "#FL-2841" };
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ConfirmarEntrega() {
   const navigate = useNavigate();
-  const [modalAbierto, setModalAbierto] = useState(true);
+  const token = localStorage.getItem("token");
 
-  const confirmar = () => {
-    // TODO: PATCH /api/entregas/:id { estado: 'entregado' }
-    navigate("/repartidor/entrega-completada", { replace: true });
+  const [entrega, setEntrega] = useState<{ id: number; codigo: string } | null>(
+    null,
+  );
+  const [cargando, setCargando] = useState(true);
+  const [confirmando, setConfirmando] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/repartidor/entrega-actual`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        // Solo se puede confirmar una entrega que ya está en camino
+        if (!res.data || res.data.estado !== "en_entrega") {
+          navigate("/repartidor", { replace: true });
+          return;
+        }
+        setEntrega({ id: res.data.id, codigo: res.data.codigo });
+      })
+      .catch(() => setError("No se pudo cargar tu entrega"))
+      .finally(() => setCargando(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const cancelar = () => navigate("/repartidor/en-viaje", { replace: true });
+
+  const confirmar = async () => {
+    if (!entrega) return;
+    setConfirmando(true);
+    setError("");
+    try {
+      await axios.post(
+        `${API_URL}/api/repartidor/pedidos/${entrega.id}/entregado`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      navigate(`/repartidor/entrega-completada/${entrega.id}`, {
+        replace: true,
+      });
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.message;
+
+        setError(
+          typeof mensaje === "string"
+            ? mensaje
+            : "No se pudo confirmar la entrega",
+        );
+      } else {
+        setError("Ha ocurrido un error inesperado");
+      }
+    } finally {
+      setConfirmando(false);
+    }
   };
 
-  const cancelar = () => {
-    setModalAbierto(false);
-    navigate(-1);
-  };
+  if (cargando) {
+    return (
+      <div className="confirmar-entrega-overlay">
+        <div className="confirmar-entrega-card">
+          <p className="confirmar-entrega-question">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!modalAbierto) return null;
+  if (!entrega) {
+    return (
+      <div className="confirmar-entrega-overlay">
+        <div className="confirmar-entrega-card">
+          <p className="confirmar-entrega-question">
+            {error || "No hay una entrega para confirmar."}
+          </p>
+          <button
+            type="button"
+            className="rep-btn-secondary"
+            onClick={() => navigate("/repartidor", { replace: true })}
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="confirmar-entrega-overlay">
@@ -36,7 +111,7 @@ export default function ConfirmarEntrega() {
             ✕
           </button>
         </div>
-        <p className="confirmar-entrega-subtitle">Pedido {pedidoMock.numero}</p>
+        <p className="confirmar-entrega-subtitle">Pedido {entrega.codigo}</p>
 
         <div className="confirmar-entrega-icon-box">
           <ClipboardCheck size={36} />
@@ -46,16 +121,24 @@ export default function ConfirmarEntrega() {
           ¿Has entregado correctamente el pedido al cliente?
         </p>
 
-        <button type="button" className="rep-btn-secondary" onClick={cancelar}>
+        {error && <p className="rep-status-text rep-status-error">{error}</p>}
+
+        <button
+          type="button"
+          className="rep-btn-secondary"
+          onClick={cancelar}
+          disabled={confirmando}
+        >
           Cancelar
         </button>
         <button
           type="button"
-          className="rep-btn-primary"
+          className="rep-btn-primary rep-btn-block-margin"
           style={{ marginTop: 10 }}
           onClick={confirmar}
+          disabled={confirmando}
         >
-          Confirmar entrega
+          {confirmando ? "Confirmando..." : "Confirmar entrega"}
         </button>
       </div>
     </div>

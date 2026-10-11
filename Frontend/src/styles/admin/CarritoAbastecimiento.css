@@ -1,0 +1,133 @@
+.carrito-abast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.carrito-abast-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.carrito-abast-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.carrito-abast-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.carrito-abast-nombre {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.carrito-abast-precio {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.carrito-abast-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+
+.carrito-abast-stepper button {
+  background: none;
+  border: none;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.carrito-abast-stepper span {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 14px;
+  text-align: center;
+}
+
+.carrito-abast-subtotal {
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+  flex-shrink: 0;
+  min-width: 70px;
+  text-align: right;
+}
+
+.carrito-abast-remove {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.carrito-abast-total-card {
+  margin-bottom: 20px;
+}
+
+.carrito-abast-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.carrito-abast-total-value {
+  color: #16a34a;
+  font-size: 18px;
+}
+
+.carrito-abast-turnos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.carrito-abast-turno {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.carrito-abast-turno.active {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+.carrito-abast-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

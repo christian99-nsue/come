@@ -1,0 +1,174 @@
+.admin-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+}
+
+.admin-drawer-panel {
+  width: 82%;
+  max-width: 300px;
+  height: 100%;
+  background-color: #14251c;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  animation: admin-drawer-slide-in 0.2s ease;
+}
+
+@keyframes admin-drawer-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.admin-drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-drawer-header div {
+  line-height: 1.4;
+}
+
+.admin-drawer-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.admin-drawer-name {
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.admin-drawer-role {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.admin-drawer-status {
+  font-size: 11px;
+  color: #4ade80;
+  font-weight: 600;
+  display: flex;
+  justify-self: left;
+}
+
+.admin-drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.admin-drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: #e5e7eb;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.admin-drawer-item:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.admin-drawer-subscription {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background-color: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.3);
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+  text-align: left;
+  margin: 14px 0;
+}
+
+.admin-drawer-subscription-icon {
+  color: #facc15;
+  flex-shrink: 0;
+}
+
+.admin-drawer-subscription-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-drawer-subscription-title {
+  font-size: 11px;
+  color: #d1d5db;
+}
+
+.admin-drawer-subscription-plan {
+  font-size: 13px;
+  font-weight: 700;
+  color: #facc15;
+}
+
+.admin-drawer-subscription-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background-color: #16a34a;
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.admin-drawer-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: #f87171;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.admin-drawer-subscription-badge.activa {
+  color: #15803d;
+  background: #dcfce7;
+}
+.admin-drawer-subscription-badge.vencida {
+  color: #c2410c;
+  background: #ffedd5;
+}
+.admin-drawer-subscription-badge.cancelada {
+  color: #dc2626;
+  background: #fee2e2;
+}
+.admin-drawer-subscription-badge.sin-suscripcion {
+  color: #6b7280;
+  background: #f3f4f6;
+}

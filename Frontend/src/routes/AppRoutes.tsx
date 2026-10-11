@@ -47,12 +47,41 @@ import IdiomaRepartidor from "../pages/repartidor/IdiomaRepartidor";
 import NavegacionExterna from "../pages/repartidor/NavegacionExterna";
 import TemaAplicacionRepartidor from "../pages/repartidor/TemaAplicacionRepartidor";
 import TerminosCondicionesRepartidor from "../pages/repartidor/TerminosCondicionesRepartidor";
+import LayoutAdmin from "../components/layouts/LayoutAdmin";
+import DashboardAdmin from "../pages/admin/DashboardAdmin";
+import DetallePedidoAdmin from "../pages/admin/DetallePedidoAdmin";
+import PedidosAdmin from "../pages/admin/PedidosAdmin";
+import CrearCategoria from "../pages/admin/CrearCategoria";
+import CrearPlato from "../pages/admin/CrearPlato";
+import MenuAdmin from "../pages/admin/MenuAdmin";
+import RepartidoresAdmin from "../pages/admin/RepartidoresAdmin";
+import AbastecimientoAdmin from "../pages/admin/AbastecimientoAdmin";
+import CarritoAbastecimiento from "../pages/admin/CarritoAbastecimiento";
+import ConfiguracionAdmin from "../pages/admin/ConfiguracionAdmin";
+import HistorialAdmin from "../pages/admin/HistorialAdmin";
+import NotificacionesAdmin from "../pages/admin/NotificacionesAdmin";
+import VentasAdmin from "../pages/admin/VentasAdmin";
+import { AbastecimientoCartProvider } from "../context/AbastecimientoCartContext";
+import InformacionRestaurante from "../pages/admin/InformacionRestaurante";
+import HorariosFuncionamiento from "../pages/admin/HorariosFuncionamiento";
+import PedidosConfigAdmin from "../pages/admin/PedidosConfigAdmin";
+import PagosConfigAdmin from "../pages/admin/PagosConfigAdmin";
+import CuentaAdmin from "../pages/admin/CuentaAdmin";
+import EditarPerfilAdmin from "../pages/admin/EditarPerfilAdmin";
+import CambiarContrasenaAdmin from "../pages/admin/CambiarContrasenaAdmin";
+import AyudaSoporteAdmin from "../pages/admin/AyudaSoporteAdmin";
+import SuscripcionAdmin from "../pages/admin/SuscripcionAdmin";
+import FotosRestaurante from "../pages/admin/FotosRestaurante";
+import EditarPlato from "../pages/admin/EditarPlato";
+import EditarCategoria from "../pages/admin/EditarCategoria";
+import MisPedidosRepartidor from "../pages/repartidor/MisPedidosRepartidor";
 
 export default function AppRoutes() {
   return (
     <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        {/* Rutas para clientes */}
         <Route path="/cliente" element={<LayoutCliente />}>
           <Route index path="inicio" element={<Inicio />} />
           <Route path="explorar" element={<Explorar />} />
@@ -86,6 +115,8 @@ export default function AppRoutes() {
             element={<TerminosCondiciones />}
           />
         </Route>
+
+        {/* Rutas para el repartidor */}
         <Route path="/repartidor" element={<LayoutRepartidor />}>
           <Route index element={<PanelRepartidor />} />
           <Route
@@ -97,7 +128,10 @@ export default function AppRoutes() {
           <Route path="en-viaje" element={<PedidoEnViaje />} />
           <Route path="ruta" element={<MapaRuta />} />
           <Route path="confirmar-entrega" element={<ConfirmarEntrega />} />
-          <Route path="entrega-completada" element={<EntregaCompletada />} />
+          <Route
+            path="entrega-completada/:id"
+            element={<EntregaCompletada />}
+          />
           <Route path="historial" element={<HistorialEntregas />} />
           <Route path="notificaciones" element={<NotificacionesRepartidor />} />
           <Route path="perfil" element={<MiPerfilRepartidor />} />
@@ -122,6 +156,65 @@ export default function AppRoutes() {
           <Route
             path="terminos-condiciones"
             element={<TerminosCondicionesRepartidor />}
+          />
+          <Route path="mis-pedidos" element={<MisPedidosRepartidor />} />
+        </Route>
+
+        {/* Rutas para el admin */}
+        <Route
+          path="/admin"
+          element={
+            <AbastecimientoCartProvider>
+              <LayoutAdmin />
+            </AbastecimientoCartProvider>
+          }
+        >
+          <Route index element={<DashboardAdmin />} />
+          <Route path="pedidos" element={<PedidosAdmin />} />
+          <Route path="pedidos/:id" element={<DetallePedidoAdmin />} />
+          {/* ...pedidos */}
+          <Route path="menu" element={<MenuAdmin />} />
+          <Route path="menu/crear-plato" element={<CrearPlato />} />
+          <Route path="menu/crear-categoria" element={<CrearCategoria />} />
+          <Route path="repartidores" element={<RepartidoresAdmin />} />
+          <Route path="abastecimiento" element={<AbastecimientoAdmin />} />
+          <Route
+            path="abastecimiento/carrito"
+            element={<CarritoAbastecimiento />}
+          />
+          <Route path="historial" element={<HistorialAdmin />} />
+          <Route path="notificaciones" element={<NotificacionesAdmin />} />
+          <Route path="configuracion" element={<ConfiguracionAdmin />} />
+          <Route path="ventas" element={<VentasAdmin />} />
+          <Route
+            path="configuracion/restaurante"
+            element={<InformacionRestaurante />}
+          />
+          <Route
+            path="configuracion/horarios"
+            element={<HorariosFuncionamiento />}
+          />
+          <Route
+            path="configuracion/pedidos"
+            element={<PedidosConfigAdmin />}
+          />
+          <Route path="configuracion/pagos" element={<PagosConfigAdmin />} />
+          <Route path="configuracion/cuenta" element={<CuentaAdmin />} />
+          <Route
+            path="configuracion/cuenta/editar-perfil"
+            element={<EditarPerfilAdmin />}
+          />
+          <Route
+            path="configuracion/cuenta/cambiar-contrasena"
+            element={<CambiarContrasenaAdmin />}
+          />
+          <Route path="suscripcion" element={<SuscripcionAdmin />} />
+          <Route path="ayuda-soporte" element={<AyudaSoporteAdmin />} />
+          <Route path="configuracion/fotos" element={<FotosRestaurante />} />
+          <Route path="menu/editar-plato/:id" element={<EditarPlato />} />
+          <Route
+            path="menu/editar-categoria/:id"
+            element={<EditarCategoria />}
           />
         </Route>
       </Routes>

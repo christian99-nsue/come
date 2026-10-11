@@ -1,0 +1,138 @@
+.notif-admin-read-all {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #16a34a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.notif-admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.notif-admin-tab {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #6b7280;
+  border-radius: 12px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.notif-admin-tab.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+.notif-admin-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 30px 20px;
+}
+
+.notif-admin-empty-icon {
+  color: #d1d5db;
+}
+
+.notif-admin-empty-text {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.notif-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notif-admin-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 13px;
+  background-color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.notif-admin-item.unread {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.notif-admin-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notif-admin-icon.tipo-pedido {
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+.notif-admin-icon.tipo-sistema {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.notif-admin-icon.tipo-abastecimiento {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.notif-admin-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notif-admin-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.notif-admin-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.notif-admin-time {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.notif-admin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  flex-shrink: 0;
+  margin-top: 4px;
+}

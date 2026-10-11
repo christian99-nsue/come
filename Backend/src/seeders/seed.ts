@@ -24,10 +24,10 @@ const seed = async () => {
       "INSERT INTO usuarios (telefono, password, nombre, rol) VALUES ?",
       [
         [
-          ["222783320", passwordHash, "Christian", "cliente"],
           ["222707351", passwordHash, "Benjamin", "cliente"],
           ["222179316", passwordHash, "Eliseo", "cliente"],
           ["222284414", passwordHash, "Pilar", "repartidor"],
+          ["222783320", passwordHash, "Christian", "admin"],
         ],
       ],
     );

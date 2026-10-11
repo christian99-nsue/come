@@ -1,21 +1,63 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { ArrowLeft, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import CambiosGuardadosOverlay from "../../components/common/CambiosGuardadosOverlay";
 import "../../styles/repartidor/RepartidorShared.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function CambiarContrasenaRepartidor() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const [actual, setActual] = useState("");
   const [nueva, setNueva] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [verActual, setVerActual] = useState(false);
   const [verNueva, setVerNueva] = useState(false);
   const [verConfirmar, setVerConfirmar] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [mostrarExito, setMostrarExito] = useState(false);
+  const [error, setError] = useState("");
 
-  const actualizar = () => {
-    if (!actual || !nueva || nueva !== confirmar) return;
-    // TODO: PATCH /api/repartidores/:id/password
-    navigate(-1);
+  const reglas = [
+    { texto: "Mínimo 8 caracteres", cumple: nueva.length >= 8 },
+    { texto: "Una mayúscula", cumple: /[A-Z]/.test(nueva) },
+    { texto: "Una minúscula", cumple: /[a-z]/.test(nueva) },
+    { texto: "Un número", cumple: /\d/.test(nueva) },
+  ];
+
+  const actualizar = async () => {
+    setError("");
+    if (!actual) return setError("Introduce tu contraseña actual");
+    if (!reglas.every((r) => r.cumple))
+      return setError("La nueva contraseña no cumple los requisitos");
+    if (nueva !== confirmar) return setError("Las contraseñas no coinciden");
+
+    setGuardando(true);
+    try {
+      await axios.patch(
+        `${API_URL}/api/repartidor/perfil/password`,
+        { contrasenaActual: actual, contrasenaNueva: nueva },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setMostrarExito(true);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.message;
+
+        setError(
+          typeof mensaje === "string"
+            ? mensaje
+            : "No se pudo actualizar la contraseña",
+        );
+      } else {
+        setError("Ha ocurrido un error inesperado");
+      }
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
@@ -41,6 +83,8 @@ export default function CambiarContrasenaRepartidor() {
           Cambia tu contraseña regularmente para proteger tu cuenta.
         </p>
       </div>
+
+      {error && <p className="rep-status-text rep-status-error">{error}</p>}
 
       <div className="rep-form">
         <label className="rep-password-field">
@@ -112,16 +156,27 @@ export default function CambiarContrasenaRepartidor() {
           <ShieldCheck size={16} /> La contraseña debe tener:
         </span>
         <ul className="rep-password-rules-list">
-          <li>Mínimo 8 caracteres</li>
-          <li>Una mayúscula</li>
-          <li>Una minúscula</li>
-          <li>Un número</li>
+          {reglas.map((r) => (
+            <li key={r.texto} className={r.cumple ? "cumple" : ""}>
+              {r.texto}
+            </li>
+          ))}
         </ul>
       </div>
 
-      <button type="button" className="rep-btn-primary" onClick={actualizar}>
-        Actualizar contraseña
+      <button
+        type="button"
+        className="rep-btn-primary"
+        onClick={actualizar}
+        disabled={guardando}
+      >
+        {guardando ? "Actualizando..." : "Actualizar contraseña"}
       </button>
+
+      <CambiosGuardadosOverlay
+        open={mostrarExito}
+        onContinuar={() => navigate("/repartidor/perfil", { replace: true })}
+      />
     </div>
   );
 }

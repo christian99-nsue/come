@@ -1,0 +1,152 @@
+.crear-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.crear-image-box {
+  width: 90px;
+  height: 90px;
+  border-radius: 16px;
+  border: 2px dashed #bbf7d0;
+  background-color: #ecfdf3;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.crear-image-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.crear-image-hint {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.crear-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.crear-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.crear-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-align: left;
+}
+
+.crear-input,
+.crear-textarea {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: white;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  width: 100%;
+}
+
+.crear-input:focus,
+.crear-textarea:focus,
+.crear-select:focus {
+  border-color: #16a34a;
+}
+
+.crear-textarea {
+  min-height: 90px;
+  resize: none;
+}
+
+.crear-textarea-count {
+  align-self: flex-end;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.crear-select-wrapper {
+  position: relative;
+}
+
+.crear-select {
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #1f2937;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+.crear-select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.crear-input-with-suffix {
+  position: relative;
+}
+
+.crear-input-with-suffix .crear-input {
+  padding-right: 48px;
+}
+
+.crear-input-suffix {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+.crear-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.crear-toggle-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crear-toggle-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.crear-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -34,7 +34,8 @@
   color: #1f2937;
   margin: 0;
   flex: 1;
-  text-align: left;
+  text-align: center;
+  margin-right: 50px;
 }
 
 .rep-subtitle {
@@ -568,10 +569,10 @@
 
 /* Imagen hero (En viaje, entrega) */
 .rep-hero-img {
-  width: 100%;
-  height: 130px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   object-fit: cover;
-  border-radius: 14px;
   margin-bottom: 16px;
 }
 
@@ -1208,6 +1209,239 @@
 .rep-terms-banner-icon {
   color: #16a34a;
   flex-shrink: 0;
+}
+
+.rep-status-text {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.rep-status-error {
+  color: #dc2626;
+}
+
+/* Mapa incrustado (Ruta) */
+.rep-map-frame {
+  width: 100%;
+  height: 340px;
+  border: 0;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* Historial: resumen del período */
+.rep-history-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.rep-history-summary-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rep-history-summary-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.rep-history-summary-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Historial: fila que no es clicable y muestra lo ganado */
+.rep-history-item-static {
+  cursor: default;
+}
+
+.rep-history-amount {
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+/* Notificaciones: no leídas y estado vacío */
+.rep-notif-item.unread {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.rep-notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  flex-shrink: 0;
+}
+
+.rep-notif-read-all {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #16a34a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rep-notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 30px 20px;
+  color: #d1d5db;
+}
+
+/* Mi perfil */
+.rep-title-block {
+  margin: 0 0 18px;
+}
+
+.rep-profile-avatar-fallback {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Editar perfil: nota bajo el teléfono */
+.rep-form-hint {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: -4px 0 4px;
+}
+
+/* Cambiar contraseña: requisito cumplido */
+.rep-password-rules-list li.cumple {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+/* Insignia naranja (pedido por recoger) */
+.rep-badge-orange {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+/* Mis pedidos */
+.rep-mypedido-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rep-mypedido-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rep-mypedido-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.rep-mypedido-line svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #16a34a;
+}
+
+.rep-mypedido-line strong {
+  color: #1f2937;
+}
+
+.rep-mypedido-subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 14px 0 10px;
+}
+
+/* Línea de tiempo: texto + hora, y el paso en el que va el pedido */
+.rep-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rep-step-time {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.rep-step-dot.actual {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+}
+
+.rep-step-label.actual {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.rep-mypedido-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.rep-mypedido-actions > button {
+  flex: 1;
+}
+
+.rep-mypedido-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 14px 0 0;
+}
+
+.rep-mypedido-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 30px 20px;
+  color: #d1d5db;
+}
+
+.rep-viaje {
+  display: flex;
+  gap: 30px;
+}
+
+.rep-viaje-ped {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
 }
 
 @media (max-width: 430px) {

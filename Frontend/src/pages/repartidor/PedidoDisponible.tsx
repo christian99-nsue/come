@@ -1,4 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import {
   ArrowLeft,
   MapPin,
@@ -7,24 +9,25 @@ import {
   MapPinned,
   Phone,
 } from "lucide-react";
-import burger from "../../assets/burger1.png";
 import "../../styles/repartidor/RepartidorShared.css";
 
-const pedidoMock = {
-  numero: "#FL-2841",
-  restaurante: "Burger House",
-  logo: "https://picsum.photos/seed/burger-logo/80/80",
-  listo: true,
-  distancia: "2.4 km",
-  tiempo: "~20-25 min",
-  pago: 8500,
-  productos: [
-    "1 x Hamburguesa clásica",
-    "1 x Patatas fritas",
-    "1 x Coca-Cola 330ml",
-  ],
-  recogida: { nombre: "Burger House", direccion: "Avenida Central 10, Malabo" },
-};
+const API_URL = import.meta.env.VITE_API_URL;
+
+interface PedidoDetalle {
+  id: number;
+  codigo: string;
+  asignado_a_mi: boolean;
+  restaurante_nombre: string;
+  restaurante_logo: string | null;
+  restaurante_direccion: string | null;
+  distancia_km: number | null;
+  tiempo_estimado_min: number | null;
+  pago: number;
+  items: { nombre_plato: string; cantidad: number }[];
+  cliente_nombre: string;
+  cliente_telefono: string | null;
+  direccion_entrega: string | null;
+}
 
 function formatXAF(v: number) {
   return `${v.toLocaleString("es-ES")} XAF`;
@@ -32,12 +35,87 @@ function formatXAF(v: number) {
 
 export default function PedidoDisponible() {
   const navigate = useNavigate();
-  const p = pedidoMock; // luego: buscar por `id`
+  const { id } = useParams();
+  const token = localStorage.getItem("token");
 
-  const tomarPedido = () => {
-    // TODO: POST /api/entregas/:id/tomar
-    navigate("/repartidor/mi-entrega");
+  const [pedido, setPedido] = useState<PedidoDetalle | null>(null);
+  const [cargando, setCargando] = useState(true);
+  const [tomando, setTomando] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/repartidor/pedidos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setPedido(res.data))
+      .catch((err) =>
+        setError(err.response?.data?.message || "No se pudo cargar el pedido"),
+      )
+      .finally(() => setCargando(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const tomarPedido = async () => {
+    setTomando(true);
+    setError("");
+    try {
+      await axios.post(
+        `${API_URL}/api/repartidor/pedidos/${id}/tomar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      navigate("/repartidor/mi-entrega", { replace: true });
+    } catch (err: unknown) {
+      let mensaje = "No se pudo tomar el pedido";
+
+      if (axios.isAxiosError(err)) {
+        const mensajeServidor: unknown = err.response?.data?.message;
+
+        if (typeof mensajeServidor === "string" && mensajeServidor.trim()) {
+          mensaje = mensajeServidor;
+        }
+      }
+
+      setError(mensaje);
+    } finally {
+      setTomando(false);
+    }
   };
+
+  if (cargando) {
+    return (
+      <div className="rep-page">
+        <p className="rep-status-text">Cargando pedido...</p>
+      </div>
+    );
+  }
+
+  if (!pedido) {
+    return (
+      <div className="rep-page">
+        <section className="rep-header">
+          <button
+            type="button"
+            className="rep-back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="Volver"
+          >
+            <ArrowLeft size={22} />
+          </button>
+          <h1 className="rep-title">Pedido</h1>
+        </section>
+        <p className="rep-status-text rep-status-error">{error}</p>
+        <button
+          type="button"
+          className="rep-btn-secondary"
+          onClick={() => navigate("/repartidor", { replace: true })}
+        >
+          Volver a pedidos
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="rep-page">
@@ -50,38 +128,47 @@ export default function PedidoDisponible() {
         >
           <ArrowLeft size={22} />
         </button>
-        <h1 className="rep-title">Pedido {p.numero}</h1>
+        <h1 className="rep-title">Pedido {pedido.codigo}</h1>
       </section>
 
       <div className="rep-card">
         <div className="rep-card-top">
-          <img src={burger} alt={p.restaurante} className="rep-card-logo" />
+          <img
+            src={
+              pedido.restaurante_logo ||
+              `https://picsum.photos/seed/restaurante-${pedido.id}/80/80`
+            }
+            alt={pedido.restaurante_nombre}
+            className="rep-card-logo"
+          />
           <div>
-            <div className="rep-card-name">{p.restaurante}</div>
-            {p.listo && (
-              <span className="rep-badge rep-badge-green">
-                ✓ Listo para recoger
-              </span>
-            )}
+            <div className="rep-card-name">{pedido.restaurante_nombre}</div>
+            <span className="rep-badge rep-badge-green">
+              ✓ Listo para recoger
+            </span>
           </div>
         </div>
 
         <div className="rep-quick-row">
-          <span className="rep-quick-item">
-            <MapPin size={13} /> {p.distancia}
-          </span>
-          <span className="rep-quick-item">
-            <Clock size={13} /> {p.tiempo}
-          </span>
-          <span className="rep-quick-price">{formatXAF(p.pago)}</span>
+          {pedido.distancia_km !== null && (
+            <span className="rep-quick-item">
+              <MapPin size={13} /> {pedido.distancia_km} km
+            </span>
+          )}
+          {pedido.tiempo_estimado_min !== null && (
+            <span className="rep-quick-item">
+              <Clock size={13} /> ~{pedido.tiempo_estimado_min} min
+            </span>
+          )}
+          <span className="rep-quick-price">{formatXAF(pedido.pago)}</span>
         </div>
       </div>
 
       <h3 className="rep-section-title-sm">Productos</h3>
       <div className="rep-card rep-product-list">
-        {p.productos.map((prod, i) => (
+        {pedido.items.map((item, i) => (
           <div key={i} className="rep-product-item">
-            {prod}
+            {item.cantidad} x {item.nombre_plato}
           </div>
         ))}
       </div>
@@ -92,8 +179,10 @@ export default function PedidoDisponible() {
         </span>
         <div className="rep-info-text">
           <span className="rep-info-label">Recogida</span>
-          <span className="rep-info-value">{p.recogida.nombre}</span>
-          <span className="rep-info-sub">{p.recogida.direccion}</span>
+          <span className="rep-info-value">{pedido.restaurante_nombre}</span>
+          {pedido.restaurante_direccion && (
+            <span className="rep-info-sub">{pedido.restaurante_direccion}</span>
+          )}
         </div>
       </div>
 
@@ -103,20 +192,46 @@ export default function PedidoDisponible() {
         </span>
         <div className="rep-info-text">
           <span className="rep-info-label">Entrega</span>
-          <span className="rep-info-value">Cliente: Juan Pérez</span>
-          <span className="rep-info-sub">Calle Mayor 12, Piso 2B</span>
-          <button type="button" className="rep-link-btn">
-            <span className="rep-info-icon">
-              <Phone size={18} />
-            </span>
-            Llamar
-          </button>
+          <span className="rep-info-value">
+            Cliente: {pedido.cliente_nombre}
+          </span>
+          {pedido.direccion_entrega && (
+            <span className="rep-info-sub">{pedido.direccion_entrega}</span>
+          )}
+          {pedido.cliente_telefono && (
+            <button
+              type="button"
+              className="rep-link-btn"
+              onClick={() =>
+                (window.location.href = `tel:${pedido.cliente_telefono}`)
+              }
+            >
+              <Phone size={13} /> Llamar
+            </button>
+          )}
         </div>
       </div>
 
-      <button type="button" className="rep-btn-primary" onClick={tomarPedido}>
-        Tomar pedido
-      </button>
+      {error && <p className="rep-status-text rep-status-error">{error}</p>}
+
+      {pedido.asignado_a_mi ? (
+        <button
+          type="button"
+          className="rep-btn-primary"
+          onClick={() => navigate("/repartidor/mi-entrega", { replace: true })}
+        >
+          Ir a mi entrega
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="rep-btn-primary"
+          onClick={tomarPedido}
+          disabled={tomando}
+        >
+          {tomando ? "Tomando pedido..." : "Tomar pedido"}
+        </button>
+      )}
     </div>
   );
 }

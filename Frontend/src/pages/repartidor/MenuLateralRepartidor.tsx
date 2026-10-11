@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   X,
   Package,
+  ClipboardList,
   History,
   Bell,
   User,
@@ -9,9 +12,9 @@ import {
   HelpCircle,
   LogOut,
 } from "lucide-react";
-import { getUser } from "../../utils/auth";
 import "../../styles/repartidor/MenuLateralRepartidor.css";
-import avatar from "../../assets/pilar.jpg";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface MenuLateralProps {
   open: boolean;
@@ -19,12 +22,11 @@ interface MenuLateralProps {
   onLogoutClick: () => void;
 }
 
-const repartidor = {
-  nombre: "Carlos",
-  rol: "Repartidor",
-  avatar: avatar,
-  disponible: true,
-};
+interface PerfilMenu {
+  nombre: string;
+  foto_perfil: string | null;
+  disponible: boolean;
+}
 
 export default function MenuLateralRepartidor({
   open,
@@ -32,7 +34,40 @@ export default function MenuLateralRepartidor({
   onLogoutClick,
 }: MenuLateralProps) {
   const navigate = useNavigate();
-  const user = getUser();
+  const [perfil, setPerfil] = useState<PerfilMenu | null>(null);
+  const [noLeidas, setNoLeidas] = useState(0);
+
+  // Cada vez que se abre el menú se piden los datos actuales
+  useEffect(() => {
+    if (!open) return;
+
+    let cancelado = false;
+    const token = localStorage.getItem("token");
+    const headers = { Authorization: `Bearer ${token}` };
+
+    axios
+      .get(`${API_URL}/api/repartidor/perfil`, { headers })
+      .then((res) => {
+        if (cancelado) return;
+        setPerfil({
+          nombre: res.data.nombre,
+          foto_perfil: res.data.foto_perfil,
+          disponible: res.data.disponible,
+        });
+      })
+      .catch(() => {});
+
+    axios
+      .get(`${API_URL}/api/repartidor/notificaciones/no-leidas`, { headers })
+      .then((res) => {
+        if (!cancelado) setNoLeidas(res.data.total);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelado = true;
+    };
+  }, [open]);
 
   if (!open) return null;
 
@@ -41,22 +76,37 @@ export default function MenuLateralRepartidor({
     navigate(ruta);
   };
 
+  const nombre = perfil?.nombre ?? "Cargando...";
+  const inicial = (perfil?.nombre ?? "R").charAt(0).toUpperCase();
+
   return (
     <div className="drawer-overlay" onClick={onClose}>
       <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
         <div className="drawer-header">
           <div className="drawer-user">
-            <img
-              src={repartidor.avatar}
-              alt={user.nombre}
-              className="drawer-avatar"
-            />
-            <div>
-              <div className="drawer-user-name">{user.nombre}</div>
-              <div className="drawer-user-role">{user.rol}</div>
-              <span className="drawer-user-status">
-                ● {repartidor.disponible ? "Disponible" : "No disponible"}
-              </span>
+            {perfil?.foto_perfil ? (
+              <img
+                src={perfil.foto_perfil}
+                alt={nombre}
+                className="drawer-avatar"
+              />
+            ) : (
+              <div className="drawer-avatar-fallback">{inicial}</div>
+            )}
+            <div className="drawer-user-text">
+              <div className="drawer-user-name">{nombre}</div>
+              <div className="drawer-user-role">Repartidor</div>
+              {perfil && (
+                <span
+                  className={
+                    perfil.disponible
+                      ? "drawer-user-status"
+                      : "drawer-user-status off"
+                  }
+                >
+                  ● {perfil.disponible ? "Disponible" : "No disponible"}
+                </span>
+              )}
             </div>
           </div>
           <button
@@ -80,6 +130,13 @@ export default function MenuLateralRepartidor({
           <button
             type="button"
             className="drawer-nav-item"
+            onClick={() => ir("/repartidor/mis-pedidos")}
+          >
+            <ClipboardList size={18} /> Mis pedidos
+          </button>
+          <button
+            type="button"
+            className="drawer-nav-item"
             onClick={() => ir("/repartidor/historial")}
           >
             <History size={18} /> Historial
@@ -90,6 +147,11 @@ export default function MenuLateralRepartidor({
             onClick={() => ir("/repartidor/notificaciones")}
           >
             <Bell size={18} /> Notificaciones
+            {noLeidas > 0 && (
+              <span className="drawer-badge">
+                {noLeidas > 9 ? "9+" : noLeidas}
+              </span>
+            )}
           </button>
           <button
             type="button"
