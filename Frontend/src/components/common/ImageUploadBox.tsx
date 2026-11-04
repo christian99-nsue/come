@@ -15,7 +15,8 @@ type Carpeta =
   | "logos-restaurante"
   | "perfiles-admin"
   | "fotos-restaurante"
-  | "perfiles-repartidor";
+  | "perfiles-repartidor"
+  | "perfiles-cliente";
 
 interface ImageUploadBoxProps {
   carpeta: Carpeta;

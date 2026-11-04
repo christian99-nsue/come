@@ -1,176 +1,259 @@
-import { useState } from "react";
-import { Search, SlidersHorizontal, Star } from "lucide-react";
-import { getUser } from "../../utils/auth";
-import BannerCarousel from "../../components/common/Banner";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import banner from "../../assets/banner23.png";
-import burgerHouse from "../../assets/burger-house.jpg";
-import pizzaTop from "../../assets/pizza-top.jpg";
-import wokExpress from "../../assets/wok-express.jpg";
-import burger from "../../assets/burger1.png";
-import pizza from "../../assets/pizza.png";
-import bebida from "../../assets/bebida.jpg";
-import postre from "../../assets/postre1.png";
-import saludable from "../../assets/saludable.jpg";
+import axios from "axios";
+import { Search, Star } from "lucide-react";
+import BannerCarousel from "../../components/common/BannerCarousel";
+import { getUser } from "../../utils/auth";
+import { categoriasRestaurantes } from "../../data/categoriasRestaurantes";
+import type { EstadoPedido } from "../../utils/seguimientoPedido";
 import "../../styles/cliente/inicio.css";
+import BannerVentanas from "../../components/common/BannerVentanas";
 
-interface Restaurante {
-  id: string;
+const API_URL = import.meta.env.VITE_API_URL;
+
+interface UsuarioInicio {
+  nombre?: string | null;
+}
+
+interface RestauranteInicio {
+  id: number;
   nombre: string;
+  logo: string | null;
+  foto_portada: string | null;
   rating: number;
-  imagen: string;
+  reviews_count: number;
+  abierto: boolean;
 }
 
-interface Categoria {
-  id: string;
-  nombre: string;
-  icono: { src: string };
+interface PedidoActivo {
+  id: number;
+  codigo: string;
+  estado: EstadoPedido;
+  restaurante_nombre: string;
+  restaurante_logo: string | null;
 }
 
-const restaurantesMock: Restaurante[] = [
-  {
-    id: "1",
-    nombre: "Burger House",
-    rating: 4.6,
-    imagen: burgerHouse,
-  },
-  {
-    id: "2",
-    nombre: "Pizza Top",
-    rating: 3.8,
-    imagen: pizzaTop,
-  },
-  {
-    id: "3",
-    nombre: "Wok Express",
-    rating: 4.8,
-    imagen: wokExpress,
-  },
-];
+function tituloEstado(estado: EstadoPedido) {
+  switch (estado) {
+    case "nuevo":
+      return "Pedido enviado";
+    case "en_preparacion":
+      return "Preparando tu pedido";
+    case "listo_para_recoger":
+      return "Listo para recoger";
+    case "en_entrega":
+      return "Pedido en camino";
+    default:
+      return "Pedido";
+  }
+}
 
-const categoriasMock: Categoria[] = [
-  { id: "todos", nombre: "Todos", icono: { src: banner } },
-  { id: "burgers", nombre: "Burgers", icono: { src: burger } },
-  { id: "pizzas", nombre: "Pizzas", icono: { src: pizza } },
-  { id: "bebidas", nombre: "Bebidas", icono: { src: bebida } },
-  { id: "postres", nombre: "Postres", icono: { src: postre } },
-  { id: "saludable", nombre: "Saludable", icono: { src: saludable } },
-];
+const categorias = categoriasRestaurantes.filter((c) => c.id !== "todos");
 
 export default function Inicio() {
-  const [categoriaActiva, setCategoriaActiva] = useState("todos");
-  const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
+  const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
+  const usuario = getUser() as UsuarioInicio | null;
 
-  const user = getUser();
+  const primerNombre = String(usuario?.nombre || "")
+    .trim()
+    .split(/\s+/)[0];
+
+  const [busqueda, setBusqueda] = useState("");
+  const [restaurantes, setRestaurantes] = useState<RestauranteInicio[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+  const [pedidos, setPedidos] = useState<PedidoActivo[]>([]);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/cliente/restaurantes`, {
+        headers,
+        params: { limite: 8 },
+      })
+      .then((res) => setRestaurantes(res.data))
+      .catch(() => setError("No se pudieron cargar los restaurantes"))
+      .finally(() => setCargando(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Pedidos en curso: se actualizan solos para ver los cambios de estado sin recargar
+  useEffect(() => {
+    const cargar = () =>
+      axios
+        .get(`${API_URL}/api/cliente/pedidos`, { headers })
+        .then((res) => setPedidos(res.data.activos.slice(0, 2)))
+        .catch(() => {});
+
+    cargar();
+    const intervalo = setInterval(cargar, 15000);
+    return () => clearInterval(intervalo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const buscar = (e: FormEvent) => {
+    e.preventDefault();
+    const q = busqueda.trim();
+    navigate(
+      q
+        ? `/cliente/restaurantes?q=${encodeURIComponent(q)}`
+        : "/cliente/restaurantes",
+    );
+  };
 
   return (
     <div className="home-page">
-      {/* Saludo */}
       <section className="home-greeting">
         <h1 className="home-greeting-title">
-          ¡Hola, {user.nombre}! <span className="home-wave">👋</span>
+          ¡Hola{primerNombre ? `, ${primerNombre}` : ""}!{" "}
+          <span className="home-wave">👋</span>
         </h1>
-        <p className="home-greeting-subtitle">¿Que vas a pedir hoy?</p>
+        <p className="home-greeting-subtitle">¿Qué vas a pedir hoy?</p>
       </section>
-
-      {/* Buscador */}
-      <section className="home-search-row">
+      <BannerVentanas />
+      <form className="home-search-row" onSubmit={buscar}>
         <div className="home-search-input">
           <Search size={20} className="home-search-icon" />
           <input
-            type="text"
+            type="search"
             placeholder="Busca restaurantes o platos..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
+            maxLength={100}
           />
         </div>
-        <button type="button" className="home-filter-btn" aria-label="Filtros">
-          <SlidersHorizontal size={20} />
-        </button>
-      </section>
-
-      {/* Banner promocional */}
-
+      </form>
       <BannerCarousel />
-      {/* Restaurantes cerca de ti */}
       <section className="home-section">
         <div className="home-section-header">
-          <h3>Restaurantes cerca de ti</h3>
-          <button type="button" className="home-link-btn">
+          <h3>Restaurantes</h3>
+          <button
+            type="button"
+            className="home-link-btn"
+            onClick={() => navigate("/cliente/restaurantes")}
+          >
             Ver todos
           </button>
         </div>
+
+        {cargando && <p className="home-status">Cargando restaurantes...</p>}
+        {error && <p className="home-status error">{error}</p>}
+        {!cargando && !error && restaurantes.length === 0 && (
+          <p className="home-status">Aún no hay restaurantes disponibles.</p>
+        )}
+
         <div className="home-restaurants-scroll">
-          {restaurantesMock.map((r) => (
+          {restaurantes.map((r) => (
             <div
               key={r.id}
-              className="restaurant-card"
+              className={
+                r.abierto ? "restaurant-card" : "restaurant-card cerrado"
+              }
+              role="button"
+              tabIndex={0}
               onClick={() => navigate(`/cliente/restaurante/${r.id}`)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") navigate(`/cliente/restaurante/${r.id}`);
+              }}
             >
               <img
-                src={r.imagen}
+                src={
+                  r.foto_portada ||
+                  r.logo ||
+                  `https://picsum.photos/seed/restaurante-${r.id}/300/200`
+                }
                 alt={r.nombre}
                 className="restaurant-card-img"
               />
               <div className="restaurant-card-info">
                 <span className="restaurant-card-name">{r.nombre}</span>
                 <span className="restaurant-card-rating">
-                  <Star size={14} /> {r.rating}
+                  {!r.abierto ? (
+                    <span className="restaurant-card-closed">Cerrado</span>
+                  ) : r.reviews_count > 0 ? (
+                    <span className="restaurant-rating-value">
+                      {" "}
+                      <Star size={15} className="restaurant-rating-star" />
+                      {r.rating.toFixed(1)}{" "}
+                    </span>
+                  ) : (
+                    "Nuevo"
+                  )}
                 </span>
               </div>
             </div>
           ))}
         </div>
       </section>
-
-      {/* Categorías */}
       <section className="home-section">
         <div className="home-section-header">
-          <h3>Categorias</h3>
+          <h3>Categorías</h3>
         </div>
         <div className="home-categories-scroll">
-          {categoriasMock.map((cat) => (
+          {categorias.map((cat) => (
             <button
               key={cat.id}
               type="button"
-              className={
-                cat.id === categoriaActiva
-                  ? "category-chip active"
-                  : "category-chip"
+              className="category-chip"
+              onClick={() =>
+                navigate(`/cliente/restaurantes?categoria=${cat.id}`)
               }
-              onClick={() => setCategoriaActiva(cat.id)}
             >
               <span className="category-chip-emoji">
-                <img src={cat.icono.src} alt="Icono de categoria" />
+                <cat.icono size={24} strokeWidth={1.8} />
               </span>
               <span className="category-chip-label">{cat.nombre}</span>
             </button>
           ))}
         </div>
       </section>
-
-      {/* Tus pedidos */}
-      <section className="home-section home-section-last">
-        <div className="home-section-header">
-          <h3>Tus pedidos</h3>
-          <button type="button" className="home-link-btn">
-            Ver historial
-          </button>
-        </div>
-        <div className="order-status-card" style={{ cursor: "Pointer" }}>
-          <div className="order-status-info">
-            <span className="order-status-label">
-              Pedido en camino <FontAwesomeIcon icon={faTruckFast} size="sm" />
-            </span>
-            <span className="order-status-restaurant">Burger House</span>
-            <span className="order-status-id">#12345</span>
+      {pedidos.length > 0 && (
+        <section className="home-section home-section-last">
+          <div className="home-section-header">
+            <h3>Tus pedidos</h3>
+            <button
+              type="button"
+              className="home-link-btn"
+              onClick={() => navigate("/cliente/pedidos")}
+            >
+              Ver historial
+            </button>
           </div>
-          <img src={burgerHouse} alt="Pedido" className="order-status-img" />
-        </div>
-      </section>
+
+          <div className="home-orders-list">
+            {pedidos.map((p) => (
+              <div
+                key={p.id}
+                className="order-status-card"
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/cliente/pedidos/${p.id}`)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") navigate(`/cliente/pedidos/${p.id}`);
+                }}
+              >
+                <div className="order-status-info">
+                  <span className="order-status-label">
+                    {tituloEstado(p.estado)}
+                  </span>
+                  <span className="order-status-restaurant">
+                    {p.restaurante_nombre}
+                  </span>
+                  <span className="order-status-id">{p.codigo}</span>
+                </div>
+                <img
+                  src={
+                    p.restaurante_logo ||
+                    `https://picsum.photos/seed/restaurante-${p.id}/80/80`
+                  }
+                  alt={p.restaurante_nombre}
+                  className="order-status-img"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

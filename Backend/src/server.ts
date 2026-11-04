@@ -1,11 +1,16 @@
 import app from "./app";
 import dotenv from "dotenv";
+import { iniciarPlanificadorLotes } from "./jobs/lotesReparto";
+import { iniciarAvisosSuscripcion } from "./jobs/avisosSuscripcion";
 
 dotenv.config();
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${process.env.PORT}`);
 });
+
+iniciarPlanificadorLotes();
+iniciarAvisosSuscripcion();
 
 server.on("error", (err) => {
   console.error("❌ Error al iniciar el servidor:", err);

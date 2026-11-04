@@ -274,17 +274,17 @@
 .restaurant-list-card {
   border-bottom: 1px solid #f0f0f0;
   padding-bottom: 16px;
+  height: 120px;
   display: flex;
   gap: 10px;
-  height: 100px;
   box-shadow: 2px 2px 4px 2px rgba(100, 100, 100, 0.5);
   border-radius: 16px;
   cursor: pointer;
 }
 
 .restaurant-list-img {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
   object-fit: cover;
@@ -298,7 +298,6 @@
   gap: 4px;
   padding-top: 5px;
   line-height: 1.4;
-  padding-bottom: 5px;
 }
 
 .restaurant-list-top {
@@ -393,6 +392,30 @@ button.restaurant-list-fav {
   font-size: 13px;
   font-weight: 700;
   color: #16a34a;
+}
+
+.restaurant-list-card {
+  cursor: pointer;
+}
+
+.restaurant-list-card.cerrado {
+  opacity: 0.6;
+}
+
+.restaurant-list-badge.closed {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.restaurantes-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 30px 0;
+}
+
+.restaurantes-status.error {
+  color: #dc2626;
 }
 
 @media (max-width: 430px) {

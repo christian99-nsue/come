@@ -1,0 +1,285 @@
+.misrep-page {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 16px 16px 110px;
+  box-sizing: border-box;
+}
+
+.misrep-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.misrep-back {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #1f2937;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.misrep-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.misrep-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 30px 16px;
+  line-height: 1.5;
+}
+.misrep-status.error {
+  color: #dc2626;
+}
+.misrep-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #d1d5db;
+  margin-top: 20px;
+}
+
+/* Lista */
+.misrep-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.misrep-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.misrep-card.nueva {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.misrep-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.misrep-card-asunto {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.misrep-card-sub {
+  font-size: 12px;
+  color: #6b7280;
+}
+.misrep-time {
+  font-size: 11px;
+  color: #9ca3af;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+.misrep-chevron {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.misrep-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.misrep-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.misrep-badge.recibido {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.misrep-badge.revision {
+  background: #fef3c7;
+  color: #92400e;
+}
+.misrep-badge.resuelto {
+  background: #dcfce7;
+  color: #166534;
+}
+.misrep-badge.nueva {
+  background: #16a34a;
+  color: #ffffff;
+}
+.misrep-badge.neutra {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.misrep-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+  font-family: inherit;
+}
+
+/* Conversación */
+.misrep-hilo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.misrep-burbuja {
+  max-width: 88%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 16px;
+}
+.misrep-burbuja.yo {
+  align-self: flex-end;
+  background: #dcfce7;
+  border-bottom-right-radius: 4px;
+}
+.misrep-burbuja.soporte {
+  align-self: flex-start;
+  background: #f3f4f6;
+  border-bottom-left-radius: 4px;
+}
+
+.misrep-quien {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-align: left;
+}
+/* El texto de los usuarios y de soporte se muestra tal cual, respetando los saltos de línea */
+.misrep-texto {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1f2937;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: justify;
+}
+.misrep-fecha {
+  font-size: 11px;
+  color: #9ca3af;
+  align-self: flex-end;
+}
+
+.misrep-evento {
+  align-self: center;
+  font-size: 12px;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 4px 12px;
+  text-align: center;
+}
+
+.misrep-pie {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.misrep-responder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+}
+.misrep-responder-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  line-height: 1.4;
+}
+.misrep-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1f2937;
+  background: #ffffff;
+  resize: vertical;
+  min-height: 70px;
+}
+.misrep-responder-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.misrep-contador {
+  font-size: 11px;
+  color: #9ca3af;
+}
+.misrep-enviar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.misrep-enviar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -8,9 +8,15 @@ import * as historialService from "../../services/repartidor/historialRepartidor
 import * as notificacionesService from "../../services/repartidor/notificacionesRepartidorService";
 import { verificarTokenRepartidor } from "../../middlewares/authRepartidor";
 import * as misPedidosService from "../../services/repartidor/misPedidosRepartidorService";
+import * as ajustesService from "../../services/repartidor/ajustesRepartidorService";
+import * as soporteService from "../../services/repartidor/soporteRepartidorService";
+import * as misReportesService from "../../services/misReportesService";
+import cargaRoutes from "./cargaRepartidorRoutes";
 
 const router = Router();
 router.use(verificarTokenRepartidor);
+
+router.use("/carga", cargaRoutes);
 
 // ===== Panel y pedidos disponibles =====
 router.get("/panel", async (req: Request, res: Response) => {
@@ -195,5 +201,83 @@ router.get("/mis-pedidos", async (req: Request, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+// ===== Ajustes (idioma, tema, mapas, sonido) =====
+router.get("/ajustes", async (req: Request, res: Response) => {
+  try {
+    const ajustes = await ajustesService.obtenerAjustes((req as any).usuarioId);
+    res.json(ajustes);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.patch("/ajustes", async (req: Request, res: Response) => {
+  try {
+    const ajustes = await ajustesService.actualizarAjustes(
+      (req as any).usuarioId,
+      req.body,
+    );
+    res.json(ajustes);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// ===== Soporte =====
+router.post("/soporte/reportes", async (req: Request, res: Response) => {
+  try {
+    const resultado = await soporteService.crearReporte(
+      (req as any).usuarioId,
+      req.body,
+    );
+    res.status(201).json(resultado);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// ===== Mis reportes =====
+router.get("/soporte/reportes", async (req: Request, res: Response) => {
+  try {
+    res.json(
+      await misReportesService.listarMisReportes((req as any).usuarioId),
+    );
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.get("/soporte/reportes/:id", async (req: Request, res: Response) => {
+  try {
+    res.json(
+      await misReportesService.obtenerMiReporte(
+        (req as any).usuarioId,
+        Number(req.params.id),
+      ),
+    );
+  } catch (error: any) {
+    res.status(404).json({ message: error.message });
+  }
+});
+
+router.post(
+  "/soporte/reportes/:id/mensajes",
+  async (req: Request, res: Response) => {
+    try {
+      res
+        .status(201)
+        .json(
+          await misReportesService.enviarMensajeUsuario(
+            (req as any).usuarioId,
+            Number(req.params.id),
+            req.body?.mensaje,
+          ),
+        );
+    } catch (error: any) {
+      res.status(error.estado ?? 400).json({ message: error.message });
+    }
+  },
+);
 
 export default router;

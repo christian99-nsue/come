@@ -9,6 +9,7 @@ import {
   Boxes,
   BarChart3,
   History,
+  Star,
   Bell,
   Settings,
   HelpCircle,
@@ -178,6 +179,13 @@ export default function MenuLateralAdmin({
             {" "}
             <History size={18} /> Historial{" "}
           </button>{" "}
+          <button
+            type="button"
+            className="admin-drawer-item"
+            onClick={() => ir("/admin/valoraciones")}
+          >
+            <Star size={18} /> Valoraciones
+          </button>
           <button
             type="button"
             className="admin-drawer-item"

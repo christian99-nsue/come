@@ -1,0 +1,272 @@
+/* Estrellas */
+.estrellas {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.estrella {
+  display: flex;
+}
+
+.estrella-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+}
+
+/* Resumen y lista */
+.valp-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.valp-status.error {
+  color: #dc2626;
+}
+
+.valp-empty {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  line-height: 1.5;
+  margin: 30px 16px;
+}
+
+.valp-summary {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.valp-summary-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 96px;
+  flex-shrink: 0;
+}
+
+.valp-score {
+  font-size: 38px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.valp-count {
+  font-size: 11px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.valp-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.valp-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.valp-bar-label {
+  font-size: 12px;
+  color: #4b5563;
+  width: 12px;
+  text-align: right;
+}
+
+.valp-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background-color: #f0f0f0;
+  overflow: hidden;
+}
+
+.valp-bar-fill {
+  height: 100%;
+  background-color: #f59e0b;
+  border-radius: 999px;
+}
+
+.valp-bar-count {
+  font-size: 11px;
+  color: #9ca3af;
+  width: 24px;
+  text-align: right;
+}
+
+.valp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.valp-item {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.valp-item:last-child {
+  border-bottom: none;
+}
+
+.valp-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.valp-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.valp-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.valp-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.valp-date {
+  font-size: 11px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.valp-comment {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.45;
+  margin: 2px 0 0;
+  word-break: break-word;
+}
+
+.valp-code {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Valorar un pedido (seguimiento del cliente) */
+.valpedido-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.valpedido-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.valpedido-sub {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: -4px 0 4px;
+}
+
+.valpedido-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.valpedido-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #1f2937;
+  resize: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  outline: none;
+}
+
+.valpedido-textarea:focus {
+  border-color: #16a34a;
+}
+
+.valpedido-count {
+  align-self: flex-end;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: -4px;
+}
+
+.valpedido-error {
+  font-size: 12px;
+  color: #b91c1c;
+  margin: 0;
+}
+
+.valpedido-btn {
+  width: 100%;
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.valpedido-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.valpedido-comment {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.45;
+  margin: 0;
+  word-break: break-word;
+}
+
+.valpedido-thanks {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+}

@@ -5,6 +5,7 @@
   padding-bottom: 110px;
   box-sizing: border-box;
   position: relative;
+  padding-left: 10px;
 }
 
 /* Portada / hero */
@@ -263,9 +264,21 @@
 .category-chip-emoji {
   font-size: 16px;
 }
-.category-chip-emoji img {
-  width: 20px;
-  height: 20px;
+
+.category-chip-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.category-chip-emoji svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+  flex-shrink: 0;
 }
 
 .category-chip-label {
@@ -718,6 +731,185 @@
   object-fit: cover;
   border-radius: 10px;
   display: block;
+}
+
+.detalle-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 40px 16px;
+}
+
+.detalle-status.error {
+  color: #dc2626;
+}
+
+.detalle-back-link {
+  display: block;
+  margin: 0 auto;
+  background: none;
+  border: none;
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.detalle-hero-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #16a34a, #14532d);
+}
+
+.detalle-open-badge.closed {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.detalle-closed-banner {
+  background-color: #fef3c7;
+  color: #92400e;
+  font-size: 12px;
+  line-height: 1.4;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.menu-group-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 18px 0 10px;
+}
+
+.menu-item-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #bbf7d0;
+  background-color: #ecfdf3;
+  border-radius: 999px;
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+
+.menu-item-stepper button {
+  background: none;
+  border: none;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.menu-item-stepper button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.menu-item-stepper span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  min-width: 14px;
+  text-align: center;
+}
+
+.menu-item-soldout {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.menu-item-add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Pestaña Información */
+.rd-info-block {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+.rd-info-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.rd-info-row:last-child {
+  border-bottom: none;
+}
+
+.rd-info-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: #ecfdf3;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rd-info-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 3px;
+  text-align: left;
+}
+
+.rd-info-title,
+.rd-info-sub,
+.rd-info-link {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+}
+
+.rd-info-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.rd-info-sub {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.rd-info-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #16a34a;
+  text-decoration: none;
+}
+
+.rd-horario-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #6b7280;
 }
 
 @media (max-width: 430px) {

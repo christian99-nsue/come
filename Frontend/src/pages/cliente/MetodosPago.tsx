@@ -1,62 +1,92 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   ArrowLeft,
-  Plus,
   Banknote,
   Landmark,
   CreditCard,
-  ChevronRight,
   ShieldCheck,
 } from "lucide-react";
 import "../../styles/cliente/MetodosPago.css";
 
-type TipoMetodo = "efectivo" | "transferencia" | "tarjeta";
+const API_URL = import.meta.env.VITE_API_URL;
 
-interface Metodo {
-  id: string;
-  tipo: TipoMetodo;
+type Metodo = "efectivo" | "transferencia" | "tarjeta";
+
+const metodos: {
+  id: Metodo;
   titulo: string;
   detalle: string;
-  predeterminado?: boolean;
-}
-
-const metodosMock: Metodo[] = [
+  icon: typeof Banknote;
+}[] = [
   {
-    id: "1",
-    tipo: "efectivo",
+    id: "efectivo",
     titulo: "Efectivo",
-    detalle: "Pago contra entrega",
-    predeterminado: true,
+    detalle: "Pagas al recibir tu pedido",
+    icon: Banknote,
   },
   {
-    id: "2",
-    tipo: "transferencia",
+    id: "transferencia",
     titulo: "Transferencia bancaria",
-    detalle: "**** 4582",
+    detalle: "El restaurante te indica los datos para transferir",
+    icon: Landmark,
   },
   {
-    id: "3",
-    tipo: "tarjeta",
+    id: "tarjeta",
     titulo: "Tarjeta de débito/crédito",
-    detalle: "**** 3241",
+    detalle: "El restaurante coordina el cobro contigo",
+    icon: CreditCard,
   },
 ];
 
-function iconoPara(tipo: TipoMetodo) {
-  switch (tipo) {
-    case "transferencia":
-      return <Landmark size={18} />;
-    case "tarjeta":
-      return <CreditCard size={18} />;
-    default:
-      return <Banknote size={18} />;
-  }
-}
-
 export default function MetodosPago() {
   const navigate = useNavigate();
-  const [metodos] = useState<Metodo[]>(metodosMock);
+  const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
+
+  const [preferido, setPreferido] = useState<Metodo>("efectivo");
+  const [cargando, setCargando] = useState(true);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/cliente/perfil`, { headers })
+      .then((res) => setPreferido(res.data.metodo_pago_preferido))
+      .catch(() => setError("No se pudo cargar tu preferencia"))
+      .finally(() => setCargando(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Se guarda al tocar la opción (no hay botón de guardar)
+  const elegir = async (metodo: Metodo) => {
+    if (guardando || metodo === preferido) return;
+
+    const anterior = preferido;
+    setPreferido(metodo); // se refleja al instante
+    setGuardando(true);
+    setError("");
+
+    try {
+      await axios.patch(
+        `${API_URL}/api/cliente/perfil`,
+        { metodo_pago_preferido: metodo },
+        { headers },
+      );
+    } catch (err: unknown) {
+      setPreferido(anterior); // Si falla, vuelve al valor anterior
+
+      if (axios.isAxiosError<{ message?: string }>(err)) {
+        setError(
+          err.response?.data?.message || "No se pudo guardar tu preferencia",
+        );
+      } else {
+        setError("No se pudo guardar tu preferencia");
+      }
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   return (
     <div className="metodos-page">
@@ -70,37 +100,46 @@ export default function MetodosPago() {
           <ArrowLeft size={22} />
         </button>
         <h1 className="metodos-title">Métodos de pago</h1>
-        <button
-          type="button"
-          className="metodos-add-btn"
-          aria-label="Añadir método de pago"
-        >
-          <Plus size={20} />
-        </button>
       </section>
 
-      <div className="metodos-list">
-        {metodos.map((m) => (
-          <button key={m.id} type="button" className="metodo-item">
-            <span className="metodo-item-icon">{iconoPara(m.tipo)}</span>
-            <div className="metodo-item-body">
-              <span className="metodo-item-title">{m.titulo}</span>
-              <span className="metodo-item-detail">{m.detalle}</span>
-            </div>
-            {m.predeterminado && (
-              <span className="metodo-item-badge">Predeterminado</span>
-            )}
-            <ChevronRight size={18} className="metodo-item-chevron" />
-          </button>
-        ))}
-      </div>
+      <p className="metodos-intro">
+        Elige cómo prefieres pagar. Lo usaremos como opción inicial al finalizar
+        un pedido.
+      </p>
 
-      <button type="button" className="metodos-add-new-btn">
-        <span className="metodos-add-new-icon">
-          <Plus size={18} />
-        </span>
-        Añadir método de pago
-      </button>
+      {cargando && <p className="metodos-status">Cargando...</p>}
+      {error && <p className="metodos-status error">{error}</p>}
+
+      {!cargando && (
+        <div className="metodos-list">
+          {metodos.map((m) => {
+            const Icon = m.icon;
+            const activo = preferido === m.id;
+            return (
+              <button
+                key={m.id}
+                type="button"
+                className={activo ? "metodo-item active" : "metodo-item"}
+                onClick={() => elegir(m.id)}
+              >
+                <span className="metodo-item-icon">
+                  <Icon size={18} />
+                </span>
+                <div className="metodo-item-body">
+                  <span className="metodo-item-title">{m.titulo}</span>
+                  <span className="metodo-item-detail">{m.detalle}</span>
+                </div>
+                {activo && <span className="metodo-item-badge">Preferido</span>}
+                <span
+                  className={
+                    activo ? "metodo-item-dot active" : "metodo-item-dot"
+                  }
+                />
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <div className="metodos-security-banner">
         <span className="metodos-security-icon">
@@ -108,11 +147,11 @@ export default function MetodosPago() {
         </span>
         <div className="metodos-security-text">
           <span className="metodos-security-title">
-            Tus datos de pago están protegidos
+            No guardamos datos de tarjetas ni cuentas
           </span>
           <span className="metodos-security-subtitle">
-            Utilizamos tecnología de seguridad para mantener tu información
-            segura.
+            El pago se coordina con el restaurante. Si el restaurante no acepta
+            tu método preferido, podrás elegir otro al finalizar el pedido.
           </span>
         </div>
       </div>

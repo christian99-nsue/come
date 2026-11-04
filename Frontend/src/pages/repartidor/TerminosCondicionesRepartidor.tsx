@@ -5,32 +5,17 @@ import {
   ShieldCheck,
   Bike,
   Smartphone,
-  ShieldCheck as ShieldIcon,
+  ChevronRight,
 } from "lucide-react";
+import { documentosLegales } from "../../data/documentosLegales";
 import "../../styles/repartidor/RepartidorShared.css";
 
-const documentos = [
-  {
-    icon: FileText,
-    titulo: "Términos de uso",
-    subtitulo: "Lee nuestros términos de uso",
-  },
-  {
-    icon: ShieldCheck,
-    titulo: "Política de privacidad",
-    subtitulo: "Cómo protegemos tus datos",
-  },
-  {
-    icon: Bike,
-    titulo: "Condiciones para repartidores",
-    subtitulo: "Normas y responsabilidades",
-  },
-  {
-    icon: Smartphone,
-    titulo: "Uso de la aplicación",
-    subtitulo: "Información importante",
-  },
-];
+const iconos: Record<string, typeof FileText> = {
+  "terminos-de-uso": FileText,
+  "politica-de-privacidad": ShieldCheck,
+  "condiciones-repartidores": Bike,
+  "uso-de-la-aplicacion": Smartphone,
+};
 
 export default function TerminosCondicionesRepartidor() {
   const navigate = useNavigate();
@@ -50,10 +35,15 @@ export default function TerminosCondicionesRepartidor() {
       </section>
 
       <div className="rep-menu-list">
-        {documentos.map((doc) => {
-          const Icon = doc.icon;
+        {documentosLegales.map((doc) => {
+          const Icon = iconos[doc.slug] || FileText;
           return (
-            <button key={doc.titulo} type="button" className="rep-menu-row">
+            <button
+              key={doc.slug}
+              type="button"
+              className="rep-menu-row"
+              onClick={() => navigate(`/repartidor/terminos/${doc.slug}`)}
+            >
               <span className="rep-info-icon">
                 <Icon size={17} />
               </span>
@@ -61,13 +51,14 @@ export default function TerminosCondicionesRepartidor() {
                 <span className="rep-menu-label">{doc.titulo}</span>
                 <span className="rep-menu-sublabel">{doc.subtitulo}</span>
               </div>
+              <ChevronRight size={17} color="#9ca3af" />
             </button>
           );
         })}
       </div>
 
       <div className="rep-terms-banner">
-        <ShieldIcon size={18} className="rep-terms-banner-icon" />
+        <ShieldCheck size={18} className="rep-terms-banner-icon" />
         Al utilizar esta aplicación aceptas nuestros términos y condiciones.
       </div>
     </div>

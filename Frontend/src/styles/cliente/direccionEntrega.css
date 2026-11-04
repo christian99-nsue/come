@@ -273,6 +273,151 @@
   white-space: nowrap;
 }
 
+.direccion-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.direccion-status.error {
+  color: #dc2626;
+}
+
+.direccion-continue-btn.full {
+  flex: 1;
+}
+
+.direccion-continue-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.direccion-form {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.direccion-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.direccion-chip {
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #374151;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.direccion-chip.active {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+.direccion-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.direccion-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.direccion-input {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #fff;
+  outline: none;
+  box-sizing: border-box;
+  width: 100%;
+  font-family: inherit;
+}
+
+.direccion-input:focus {
+  border-color: #16a34a;
+}
+
+.direccion-loc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid #bbf7d0;
+  background-color: #ecfdf3;
+  color: #16a34a;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.direccion-loc-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.direccion-hint {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 6px 0 14px;
+}
+
+.direccion-form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.direccion-cancel-btn {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #1f2937;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.direccion-save-btn {
+  flex: 1;
+  border: none;
+  background-color: #16a34a;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.direccion-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.direccion-bottom-bar {
+  z-index: 60;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
 @media (max-width: 430px) {
   .direccion-page,
   .direccion-bottom-bar {

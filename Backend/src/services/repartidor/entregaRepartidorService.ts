@@ -1,6 +1,7 @@
 import { db } from "../../config/db";
 import { notificarEntregaRegistrada } from "./notificacionesRepartidorService";
 import { registrarEvento } from "./eventosPedidoService";
+import { notificarCliente } from "../cliente/notificacionesClienteService";
 
 const num = (v: any) => (v === null || v === undefined ? null : Number(v));
 
@@ -10,7 +11,8 @@ export const obtenerEntregaActual = async (repartidorId: number) => {
             p.latitud_entrega, p.longitud_entrega,
             r.nombre AS restaurante_nombre, r.direccion AS restaurante_direccion,
             r.latitud AS restaurante_lat, r.longitud AS restaurante_lng,
-            u.nombre AS cliente_nombre, u.telefono AS cliente_telefono
+            u.nombre AS cliente_nombre, u.telefono AS cliente_telefono,
+            u.tipo_contacto AS cliente_tipo_contacto
      FROM pedidos p
      JOIN restaurantes r ON r.id = p.restaurante_id
      JOIN usuarios u ON u.id = p.cliente_id
@@ -36,11 +38,17 @@ export const obtenerEntregaActual = async (repartidorId: number) => {
     restaurante_lng: num(p.restaurante_lng),
     cliente_nombre: p.cliente_nombre,
     cliente_telefono: p.cliente_telefono,
+    cliente_tipo_contacto: p.cliente_tipo_contacto as
+      | "Llamada"
+      | "Whatsapp"
+      | "Mensaje"
+      | null,
     direccion_entrega: p.direccion_entrega,
     entrega_lat: num(p.latitud_entrega),
     entrega_lng: num(p.longitud_entrega),
   };
 };
+
 export const marcarRecogido = async (
   pedidoId: number,
   repartidorId: number,
@@ -56,6 +64,7 @@ export const marcarRecogido = async (
   }
 
   await registrarEvento(pedidoId, "recogido");
+  await notificarCliente(pedidoId, "en_camino");
   return { ok: true };
 };
 
@@ -75,8 +84,9 @@ export const marcarEntregado = async (
   }
 
   await registrarEvento(pedidoId, "entregado");
+  await notificarCliente(pedidoId, "entregado");
 
-  // Una falla al notificar no debe romper la entrega ya confirmada
+  // Una falla al notificar al repartidor no debe romper la entrega ya confirmada
   try {
     await notificarEntregaRegistrada(repartidorId, pedidoId);
   } catch (error) {

@@ -63,7 +63,6 @@ import NotificacionesAdmin from "../pages/admin/NotificacionesAdmin";
 import VentasAdmin from "../pages/admin/VentasAdmin";
 import { AbastecimientoCartProvider } from "../context/AbastecimientoCartContext";
 import InformacionRestaurante from "../pages/admin/InformacionRestaurante";
-import HorariosFuncionamiento from "../pages/admin/HorariosFuncionamiento";
 import PedidosConfigAdmin from "../pages/admin/PedidosConfigAdmin";
 import PagosConfigAdmin from "../pages/admin/PagosConfigAdmin";
 import CuentaAdmin from "../pages/admin/CuentaAdmin";
@@ -75,26 +74,72 @@ import FotosRestaurante from "../pages/admin/FotosRestaurante";
 import EditarPlato from "../pages/admin/EditarPlato";
 import EditarCategoria from "../pages/admin/EditarCategoria";
 import MisPedidosRepartidor from "../pages/repartidor/MisPedidosRepartidor";
+import PreguntasFrecuentesRepartidor from "../pages/repartidor/PreguntasFrecuentesRepartidor";
+import ReportarProblemaRepartidor from "../pages/repartidor/ReportarProblemaRepartidor";
+import DocumentoLegalRepartidor from "../pages/repartidor/DocumentoLegalRepartidor";
+import { CarritoProvider } from "../context/CarritoContext";
+import PedidoDetalleCliente from "../pages/cliente/PedidoDetalleCliente";
+import ValoracionesAdmin from "../pages/admin/ValoracionesAdmin";
+import CambiarContrasena from "../pages/cliente/CambiarContrasena";
+import DetallePedidoAbastecimiento from "../pages/admin/DetallePedidoAbastecimiento";
+import MisReportes from "../pages/cliente/MisReportes";
+import ReporteDetalleCliente from "../pages/cliente/ReporteDetalleCliente";
+import MisReportesRepartidor from "../pages/repartidor/MisReportesRepartidor";
+import ReporteDetalleRepartidor from "../pages/repartidor/ReporteDetalleRepartidor";
+import CrearCuenta from "../pages/auth/CrearCuenta";
+import TieneCodigo from "../pages/auth/TieneCodigo";
+import RegistroFormulario from "../pages/auth/RegistroFormulario";
+import SolicitudEnviada from "../pages/auth/SolicitudEnviada";
+import ConsultarSolicitud from "../pages/auth/ConsultarSolicitud";
+import EnlaceRegistro from "../pages/auth/EnlaceRegistro";
+import RegistroCompletado from "../pages/auth/RegistroCompletado";
 
 export default function AppRoutes() {
   return (
     <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/crear-cuenta" element={<CrearCuenta />} />
+        <Route
+          path="/crear-cuenta/cliente"
+          element={<RegistroFormulario modo="cliente" />}
+        />
+        <Route path="/crear-cuenta/:rol" element={<TieneCodigo />} />
+        <Route
+          path="/crear-cuenta/:rol/codigo"
+          element={<RegistroFormulario modo="codigo" />}
+        />
+        <Route
+          path="/crear-cuenta/:rol/solicitud"
+          element={<RegistroFormulario modo="solicitud" />}
+        />
+        <Route path="/solicitud-enviada" element={<SolicitudEnviada />} />
+        <Route path="/consultar-solicitud" element={<ConsultarSolicitud />} />
+        <Route path="/registro/enlace/:token" element={<EnlaceRegistro />} />
+        <Route path="/registro-completado" element={<RegistroCompletado />} />
+
         {/* Rutas para clientes */}
-        <Route path="/cliente" element={<LayoutCliente />}>
+        <Route
+          path="/cliente"
+          element={
+            <CarritoProvider>
+              <LayoutCliente />
+            </CarritoProvider>
+          }
+        >
           <Route index path="inicio" element={<Inicio />} />
           <Route path="explorar" element={<Explorar />} />
           <Route path="carrito" element={<Carrito />} />
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="perfil" element={<Perfil />} />
-          <Route path="inicio/restaurantes" element={<Restaurantes />} />
+          <Route path="restaurantes" element={<Restaurantes />} />
           <Route path="restaurante/:id" element={<RestauranteDetalle />} />
           <Route path="cupon" element={<Cupon />} />
           <Route path="direccion-entrega" element={<DireccionEntrega />} />
           <Route path="tiempo-entrega" element={<TiempoEntrega />} />
           <Route path="finalizar-pedido" element={<FinalizarPedido />} />
-          <Route path="pedido-realizado" element={<PedidoRealizado />} />
+          <Route path="pedido-realizado/:id" element={<PedidoRealizado />} />
+          <Route path="pedidos/:id" element={<PedidoDetalleCliente />} />
           <Route path="perfil/editar-perfil" element={<EditarPerfil />} />
           <Route path="perfil/mis-direcciones" element={<MisDirecciones />} />
           <Route path="perfil/metodos-pago" element={<MetodosPago />} />
@@ -106,14 +151,20 @@ export default function AppRoutes() {
           <Route path="perfil/contactanos" element={<Contactanos />} />
           <Route path="notificaciones" element={<NotificacionesFeed />} />
           <Route
-            path="notificaciones/preferencias"
+            path="perfil/cambiar-contrasena"
+            element={<CambiarContrasena />}
+          />
+          <Route
+            path="perfil/notificaciones/preferencias"
             element={<Notificaciones />}
           />
           <Route path="favoritos" element={<Favoritos />} />
           <Route
-            path="terminos-condiciones"
+            path="perfil/terminos-condiciones"
             element={<TerminosCondiciones />}
           />
+          <Route path="mis-reportes" element={<MisReportes />} />
+          <Route path="mis-reportes/:id" element={<ReporteDetalleCliente />} />
         </Route>
 
         {/* Rutas para el repartidor */}
@@ -154,10 +205,24 @@ export default function AppRoutes() {
           />
           <Route path="centro-ayuda" element={<AyudaSoporteRepartidor />} />
           <Route
+            path="ayuda/preguntas"
+            element={<PreguntasFrecuentesRepartidor />}
+          />
+          <Route
+            path="ayuda/reportar"
+            element={<ReportarProblemaRepartidor />}
+          />
+          <Route
             path="terminos-condiciones"
             element={<TerminosCondicionesRepartidor />}
           />
           <Route path="mis-pedidos" element={<MisPedidosRepartidor />} />
+          <Route path="ayuda/reportes" element={<MisReportesRepartidor />} />
+          <Route
+            path="ayuda/reportes/:id"
+            element={<ReporteDetalleRepartidor />}
+          />
+          <Route path="terminos/:slug" element={<DocumentoLegalRepartidor />} />
         </Route>
 
         {/* Rutas para el admin */}
@@ -186,14 +251,12 @@ export default function AppRoutes() {
           <Route path="notificaciones" element={<NotificacionesAdmin />} />
           <Route path="configuracion" element={<ConfiguracionAdmin />} />
           <Route path="ventas" element={<VentasAdmin />} />
+          <Route path="valoraciones" element={<ValoracionesAdmin />} />
           <Route
             path="configuracion/restaurante"
             element={<InformacionRestaurante />}
           />
-          <Route
-            path="configuracion/horarios"
-            element={<HorariosFuncionamiento />}
-          />
+
           <Route
             path="configuracion/pedidos"
             element={<PedidosConfigAdmin />}
@@ -215,6 +278,10 @@ export default function AppRoutes() {
           <Route
             path="menu/editar-categoria/:id"
             element={<EditarCategoria />}
+          />
+          <Route
+            path="abastecimiento/pedidos/:id"
+            element={<DetallePedidoAbastecimiento />}
           />
         </Route>
       </Routes>

@@ -1,184 +1,158 @@
-import { useState } from "react";
-import {
-  MapPin,
-  ChevronDown,
-  Search,
-  SlidersHorizontal,
-  Star,
-} from "lucide-react";
-import banner from "../../assets/banner23.png";
+import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import burgerHouse from "../../assets/burger-house.jpg";
-import pizzaTop from "../../assets/pizza-top.jpg";
-import wokExpress from "../../assets/wok-express.jpg";
-import burger from "../../assets/burger1.png";
-import pizza from "../../assets/pizza.png";
-import bebida from "../../assets/bebida.jpg";
-import postre from "../../assets/postre1.png";
-import saludable from "../../assets/saludable.jpg";
-import shawarma from "../../assets/shawarma.png";
-import bites from "../../assets/bites.png";
-import chicken from "../../assets/chicken.png";
-import sweet from "../../assets/sweet.png";
+import axios from "axios";
+import { Search, Star } from "lucide-react";
+import { categoriasRestaurantes } from "../../data/categoriasRestaurantes";
+import { formatXAF } from "../../utils/carritoCalculos";
 import "../../styles/cliente/explorar.css";
 
-interface Categoria {
-  id: string;
-  nombre: string;
-  icono: { src: string };
-}
+const API_URL = import.meta.env.VITE_API_URL;
 
-interface RestauranteCercano {
-  id: string;
+interface RestauranteExplorar {
+  id: number;
   nombre: string;
-  categorias: string;
+  logo: string | null;
+  foto_portada: string | null;
+  categorias_texto: string | null;
   rating: number;
-  reviews: number;
-  envio: number;
-  pedidoMinimo: number;
+  reviews_count: number;
+  tiempo_min: number;
+  tiempo_max: number;
+  costo_envio: number;
+  pedido_minimo: number;
   abierto: boolean;
-  imagen: string;
 }
 
-interface Popular {
-  id: string;
-  nombre: string;
-  rating: number;
-  imagen: string;
-}
+// Cada sección pide a la lista de restaurantes el filtro que lleva su nombre
+const secciones = [
+  {
+    clave: "populares",
+    titulo: "Populares",
+    nota: "Lo más pedido en los últimos 30 días",
+    formato: "grid",
+  },
+  {
+    clave: "entrega_rapida",
+    titulo: "Entrega rápida",
+    nota: "Entrega estimada en 30 minutos o menos",
+    formato: "lista",
+  },
+  {
+    clave: "nuevos",
+    titulo: "Nuevos en COME",
+    nota: "Se unieron en el último mes",
+    formato: "lista",
+  },
+] as const;
 
-const categoriasMock: Categoria[] = [
-  { id: "todos", nombre: "Todos", icono: { src: banner } },
-  { id: "burgers", nombre: "Burgers", icono: { src: burger } },
-  { id: "pizzas", nombre: "Pizzas", icono: { src: pizza } },
-  { id: "bebidas", nombre: "Bebidas", icono: { src: bebida } },
-  { id: "postres", nombre: "Postres", icono: { src: postre } },
-  { id: "saludable", nombre: "Saludable", icono: { src: saludable } },
-];
+const categorias = categoriasRestaurantes.filter((c) => c.id !== "todos");
 
-const cercaDeTiMock: RestauranteCercano[] = [
-  {
-    id: "1",
-    nombre: "Burger House",
-    categorias: "Hamburguesas · Americana",
-    rating: 4.6,
-    reviews: 120,
-    envio: 1500,
-    pedidoMinimo: 2000,
-    abierto: true,
-    imagen: burgerHouse,
-  },
-  {
-    id: "2",
-    nombre: "Pizza Top",
-    categorias: "Pizzas · Italiana",
-    rating: 4.6,
-    reviews: 120,
-    envio: 2000,
-    pedidoMinimo: 2000,
-    abierto: true,
-    imagen: pizzaTop,
-  },
-  {
-    id: "3",
-    nombre: "Wok Express",
-    categorias: "Asiatica · Wok",
-    rating: 4.6,
-    reviews: 120,
-    envio: 1500,
-    pedidoMinimo: 1500,
-    abierto: true,
-    imagen: wokExpress,
-  },
-];
-
-const popularesMock: Popular[] = [
-  {
-    id: "1",
-    nombre: "Shawarma King",
-    rating: 4.7,
-    imagen: shawarma,
-  },
-  {
-    id: "2",
-    nombre: "Chicken Spot",
-    rating: 4.6,
-    imagen: chicken,
-  },
-  {
-    id: "3",
-    nombre: "Green Bites",
-    rating: 4.5,
-    imagen: bites,
-  },
-  {
-    id: "4",
-    nombre: "Sweet Time",
-    rating: 4.8,
-    imagen: sweet,
-  },
-];
-
-function formatXAF(valor: number) {
-  return `${valor.toLocaleString("es-ES")}XAF`;
+function valoracion(r: RestauranteExplorar) {
+  if (r.reviews_count === 0) return "Nuevo";
+  return (
+    <>
+      <Star size={13} className="nearby-star-icon" />
+      {r.rating.toFixed(1)} ({r.reviews_count})
+    </>
+  );
 }
 
 export default function Explorar() {
-  const [categoriaActiva, setCategoriaActiva] = useState("todos");
-  const [busqueda, setBusqueda] = useState("");
-  const [ciudad] = useState("Bata");
   const navigate = useNavigate();
+  const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
+
+  const [busqueda, setBusqueda] = useState("");
+  const [datos, setDatos] = useState<Record<string, RestauranteExplorar[]>>({});
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelado = false;
+
+    Promise.all(
+      secciones.map(
+        (s) =>
+          axios
+            .get(`${API_URL}/api/cliente/restaurantes`, {
+              headers,
+              params: { filtro: s.clave, limite: 6 },
+            })
+            .then((res) => res.data as RestauranteExplorar[])
+            .catch(() => null), // si una sección falla, las demás se siguen mostrando
+      ),
+    ).then((resultados) => {
+      if (cancelado) return;
+
+      const nuevo: Record<string, RestauranteExplorar[]> = {};
+      let fallos = 0;
+      resultados.forEach((lista, i) => {
+        if (lista === null) fallos++;
+        else nuevo[secciones[i].clave] = lista;
+      });
+
+      setDatos(nuevo);
+      setError(
+        fallos === secciones.length
+          ? "No se pudo cargar la información. Revisa tu conexión."
+          : "",
+      );
+      setCargando(false);
+    });
+
+    return () => {
+      cancelado = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const buscar = (e: FormEvent) => {
+    e.preventDefault();
+    const q = busqueda.trim();
+    navigate(
+      q
+        ? `/cliente/restaurantes?q=${encodeURIComponent(q)}`
+        : "/cliente/restaurantes",
+    );
+  };
+
+  const abrir = (id: number) => navigate(`/cliente/restaurante/${id}`);
+  const hayContenido = secciones.some((s) => (datos[s.clave] || []).length > 0);
 
   return (
     <div className="explorar-page">
-      {/* Encabezado de la página */}
       <section className="explorar-header">
         <div className="explorar-header-text">
           <h1 className="explorar-title">Explorar</h1>
-          <p className="explorar-subtitle">
-            Encuentra los mejores restaurantes cerca de ti.
-          </p>
+          <p className="explorar-subtitle">Descubre qué pedir hoy.</p>
         </div>
-        <button type="button" className="explorar-location-btn">
-          <MapPin size={16} className="explorar-location-icon" />
-          <span>{ciudad}</span>
-          <ChevronDown size={16} />
-        </button>
       </section>
 
-      {/* Buscador */}
-      <section className="explorar-search-row">
+      <form className="explorar-search-row" onSubmit={buscar}>
         <div className="explorar-search-input">
           <Search size={20} className="explorar-search-icon" />
           <input
-            type="text"
+            type="search"
             placeholder="Busca restaurantes o platos..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
+            maxLength={100}
           />
         </div>
-        <button type="button" className="explorar-filter-btn">
-          <SlidersHorizontal size={18} />
-          <span>Filtros</span>
-        </button>
-      </section>
+      </form>
 
-      {/* Categorías */}
       <section className="explorar-section">
         <div className="explorar-categories-scroll">
-          {categoriasMock.map((cat) => (
+          {categorias.map((cat) => (
             <button
               key={cat.id}
               type="button"
-              className={
-                cat.id === categoriaActiva
-                  ? "category-chip active"
-                  : "category-chip"
+              className="category-chip"
+              onClick={() =>
+                navigate(`/cliente/restaurantes?categoria=${cat.id}`)
               }
-              onClick={() => setCategoriaActiva(cat.id)}
             >
               <span className="category-chip-emoji">
-                <img src={cat.icono.src} alt="Icono de categoria" />
+                <cat.icono size={20} />
               </span>
               <span className="category-chip-label">{cat.nombre}</span>
             </button>
@@ -186,70 +160,140 @@ export default function Explorar() {
         </div>
       </section>
 
-      {/* Cerca de ti */}
-      <section className="explorar-section">
-        <div className="explorar-section-header">
-          <h3>Cerca de ti</h3>
-          <button type="button" className="explorar-link-btn">
-            Ver todos
-          </button>
-        </div>
+      {cargando && <p className="explorar-status">Cargando restaurantes...</p>}
+      {!cargando && error && <p className="explorar-status error">{error}</p>}
+      {!cargando && !error && !hayContenido && (
+        <p className="explorar-status">
+          Aún no hay restaurantes destacados. Mira la lista completa.
+        </p>
+      )}
 
-        <div className="nearby-list">
-          {cercaDeTiMock.map((r) => (
-            <div
-              key={r.id}
-              className="nearby-card"
-              onClick={() => navigate(`/cliente/restaurante/${r.id}`)}
-            >
-              <img src={r.imagen} alt={r.nombre} className="nearby-card-img" />
-              <div className="nearby-card-body">
-                <div className="nearby-card-top">
-                  <span className="nearby-card-name">{r.nombre}</span>
-                  {r.abierto && (
-                    <span className="nearby-card-badge">Abierto</span>
-                  )}
-                </div>
-                <span className="nearby-card-tags">{r.categorias}</span>
-                <span className="nearby-card-rating">
-                  <Star size={14} className="nearby-star-icon" />
-                  {r.rating} ({r.reviews})
-                </span>
-                <span className="nearby-card-delivery">
-                  Pedido mínimo {formatXAF(r.pedidoMinimo)}
-                </span>
+      {secciones.map((s) => {
+        const lista = datos[s.clave] || [];
+        if (lista.length === 0) return null; // una sección vacía no se muestra
+
+        return (
+          <section key={s.clave} className="explorar-section">
+            <div className="explorar-section-header">
+              <div>
+                <h3>{s.titulo}</h3>
+                <span className="explorar-section-note">{s.nota}</span>
               </div>
+              <button
+                type="button"
+                className="explorar-link-btn"
+                onClick={() =>
+                  navigate(`/cliente/restaurantes?filtro=${s.clave}`)
+                }
+              >
+                Ver todos
+              </button>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Populares */}
-      <section className="explorar-section explorar-section-last">
-        <div className="explorar-section-header">
-          <h3>Populares</h3>
-          <button type="button" className="explorar-link-btn">
-            Ver todos
-          </button>
-        </div>
+            {s.formato === "grid" ? (
+              <div className="popular-grid">
+                {lista.map((r) => (
+                  <div
+                    key={r.id}
+                    className={
+                      r.abierto ? "popular-card" : "popular-card cerrado"
+                    }
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => abrir(r.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") abrir(r.id);
+                    }}
+                  >
+                    <img
+                      src={
+                        r.foto_portada ||
+                        r.logo ||
+                        `https://picsum.photos/seed/restaurante-${r.id}/300/300`
+                      }
+                      alt={r.nombre}
+                      className="popular-card-img"
+                    />
+                    <span className="popular-card-name">{r.nombre}</span>
+                    <span className="popular-card-rating">
+                      {r.abierto ? valoracion(r) : "Cerrado"}
+                    </span>
+                    <span className="popular-card-rating">
+                      {r.tiempo_min}-{r.tiempo_max} min
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="nearby-list">
+                {lista.map((r) => (
+                  <div
+                    key={r.id}
+                    className={
+                      r.abierto ? "nearby-card" : "nearby-card cerrado"
+                    }
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => abrir(r.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") abrir(r.id);
+                    }}
+                  >
+                    <img
+                      src={
+                        r.foto_portada ||
+                        r.logo ||
+                        `https://picsum.photos/seed/restaurante-${r.id}/300/200`
+                      }
+                      alt={r.nombre}
+                      className="nearby-card-img"
+                    />
+                    <div className="nearby-card-body">
+                      <div className="nearby-card-top">
+                        <span className="nearby-card-name">{r.nombre}</span>
+                        <span
+                          className={
+                            r.abierto
+                              ? "nearby-card-badge"
+                              : "nearby-card-badge closed"
+                          }
+                        >
+                          {r.abierto ? "Abierto" : "Cerrado"}
+                        </span>
+                      </div>
+                      {r.categorias_texto && (
+                        <span className="nearby-card-tags">
+                          {r.categorias_texto}
+                        </span>
+                      )}
+                      <span className="nearby-card-rating">
+                        {valoracion(r)}
+                      </span>
+                      <span className="nearby-card-delivery">
+                        {r.tiempo_min}-{r.tiempo_max} min · Envío{" "}
+                        {formatXAF(r.costo_envio)}
+                        {r.pedido_minimo > 0
+                          ? ` · Mín. ${formatXAF(r.pedido_minimo)}`
+                          : ""}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        );
+      })}
 
-        <div className="popular-grid">
-          {popularesMock.map((p) => (
-            <div
-              key={p.id}
-              className="popular-card"
-              onClick={() => navigate(`/cliente/restaurante/${p.id}`)}
-            >
-              <img src={p.imagen} alt={p.nombre} className="popular-card-img" />
-              <span className="popular-card-name">{p.nombre}</span>
-              <span className="popular-card-rating">
-                <Star size={13} className="nearby-star-icon" />
-                {p.rating}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {!cargando && (
+        <button
+          type="button"
+          className="explorar-all-btn"
+          onClick={() => navigate("/cliente/restaurantes")}
+        >
+          Ver todos los restaurantes
+        </button>
+      )}
     </div>
   );
 }

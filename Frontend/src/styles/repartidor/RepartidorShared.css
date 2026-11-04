@@ -1444,6 +1444,110 @@
   text-align: left;
 }
 
+/* Preguntas frecuentes */
+.rep-faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 4px 14px;
+}
+
+.rep-faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rep-faq-answer {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+/* Reportar un problema: campo de texto largo */
+.rep-field-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+.rep-textarea {
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  min-height: 110px;
+  font-size: 14px;
+  color: #1f2937;
+  font-family: inherit;
+  width: 100%;
+  padding: 0;
+}
+
+.rep-textarea-count {
+  align-self: flex-end;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Documentos legales */
+.rep-doc-section {
+  margin-bottom: 18px;
+}
+
+.rep-doc-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 6px;
+}
+
+.rep-doc-section-text {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Contacto con el cliente: primero la opción que él prefiere */
+.rep-contact-block {
+  margin-bottom: 20px;
+}
+
+.rep-contact-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 8px;
+}
+
+.rep-contact-block .rep-contact-row {
+  margin: 8px 0 0;
+}
+
+.rep-ventana-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 999px;
+  padding: 3px 10px;
+  margin-top: 4px;
+}
+
 @media (max-width: 430px) {
   .rep-page {
     max-width: 100%;

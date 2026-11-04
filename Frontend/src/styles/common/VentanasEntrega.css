@@ -1,0 +1,260 @@
+.vent-section {
+  margin: 16px 0;
+}
+.vent-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px;
+}
+.vent-sub {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.vent-aviso {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 0 0 12px;
+}
+
+.vent-vacio {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 18px 8px;
+  line-height: 1.5;
+}
+
+.vent-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.vent-dia {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.vent-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+}
+.vent-card.active {
+  border-color: #16a34a;
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.vent-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.vent-rango {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+.vent-cierre {
+  font-size: 12px;
+  color: #6b7280;
+}
+.vent-cierre.pronto {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.vent-prevista {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 12px 0;
+}
+
+/* Franja informativa, antes de pedir */
+.vent-banner {
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 12px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+.vent-banner.otro_dia {
+  background: #fffbeb;
+  border-color: #fcd34d;
+  color: #92400e;
+}
+.vent-banner.sin_ventanas {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.vent-banner-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.vent-banner-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.vent-banner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.vent-banner-text strong {
+  font-size: 14px;
+}
+
+.vent-banner-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 2px 0;
+}
+
+.vent-banner-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.vent-banner-item {
+  display: grid;
+  grid-template-columns: 70px 90px 1fr;
+  gap: 8px;
+  font-size: 12px;
+  align-items: baseline;
+}
+.vent-banner-dia {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.vent-banner-rango {
+  font-weight: 700;
+}
+.vent-banner-cierre {
+  opacity: 0.85;
+}
+
+/* Horario semanal de entregas, en la información del restaurante */
+.horario-ent {
+  margin: 16px 0;
+}
+.horario-ent-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 10px;
+}
+
+.horario-ent-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.horario-ent-grupo.hoy {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.horario-ent-dias {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+.horario-ent-hoy {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #16a34a;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.horario-ent-rangos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.horario-ent-rango {
+  font-size: 13px;
+  font-weight: 600;
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+.horario-ent-sin {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 4px 2px 0;
+}
+.horario-ent-vacio {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 8px 2px;
+  line-height: 1.5;
+}
+.horario-ent-nota {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 8px 2px 0;
+}

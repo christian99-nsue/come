@@ -4,7 +4,6 @@ import axios from "axios";
 import {
   Store,
   Images,
-  Clock,
   ClipboardList,
   CreditCard,
   UserCog,
@@ -73,23 +72,6 @@ export default function ConfiguracionAdmin() {
             <span className="admin-menu-label">Fotos del restaurante</span>
             <span className="admin-menu-sublabel">
               Galería de imágenes de tu local
-            </span>
-          </div>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-
-        <button
-          type="button"
-          className="admin-menu-row"
-          onClick={() => navigate("/admin/configuracion/horarios")}
-        >
-          <span className="admin-icon-box">
-            <Clock size={17} />
-          </span>
-          <div className="admin-menu-label-col">
-            <span className="admin-menu-label">Horarios de funcionamiento</span>
-            <span className="admin-menu-sublabel">
-              Define cuándo recibes pedidos
             </span>
           </div>
           <ChevronRight size={17} color="#9ca3af" />

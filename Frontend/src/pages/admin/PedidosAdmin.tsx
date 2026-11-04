@@ -34,6 +34,7 @@ interface Pedido {
   estado: EstadoPedido;
   total: number;
   fecha_creacion: string;
+  ventana: { etiqueta_dia: string; inicio: string; fin: string } | null;
 }
 
 function formatXAF(v: number) {
@@ -223,6 +224,12 @@ export default function PedidosAdmin() {
                   <span className="pedido-card-meta">
                     {formatXAF(p.total)} · {formatHora(p.fecha_creacion)}
                   </span>
+                  {p.ventana && (
+                    <span className="pedido-card-meta">
+                      Entrega: {p.ventana.etiqueta_dia}, {p.ventana.inicio} –{" "}
+                      {p.ventana.fin}
+                    </span>
+                  )}
                 </div>
               </div>
 

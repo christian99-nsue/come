@@ -1,0 +1,201 @@
+.abast-det-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid transparent;
+}
+
+.abast-det-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.abast-det-banner-text strong {
+  font-size: 15px;
+}
+
+.abast-det-banner.pendiente {
+  background-color: #fffbeb;
+  border-color: #fcd34d;
+  color: #92400e;
+}
+.abast-det-banner.confirmado {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+.abast-det-banner.entregado {
+  background-color: #ecfdf3;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+.abast-det-banner.cancelado {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.abast-det-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.abast-det-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 14px;
+}
+
+/* Seguimiento */
+.abast-det-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.abast-det-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 20px;
+}
+
+.abast-det-step:last-child {
+  padding-bottom: 0;
+}
+
+.abast-det-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  border: 2px solid #e5e7eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.abast-det-dot.hecho {
+  background-color: #16a34a;
+  border-color: #16a34a;
+}
+.abast-det-dot.actual {
+  background-color: #ecfdf3;
+  border-color: #16a34a;
+}
+.abast-det-dot.negativo {
+  background-color: #dc2626;
+  border-color: #dc2626;
+}
+
+.abast-det-line {
+  position: absolute;
+  top: 22px;
+  left: 10px;
+  width: 2px;
+  height: calc(100% - 22px);
+  background-color: #e5e7eb;
+}
+
+.abast-det-line.hecho {
+  background-color: #16a34a;
+}
+
+.abast-det-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-top: 1px;
+}
+
+.abast-det-step-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+.abast-det-step-label.hecho {
+  color: #1f2937;
+  font-weight: 700;
+}
+.abast-det-step-sub {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Entrega */
+.abast-det-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.abast-det-row:last-child {
+  margin-bottom: 0;
+}
+.abast-det-row strong {
+  color: #1f2937;
+  text-align: right;
+}
+
+/* Productos */
+.abast-det-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.abast-det-item-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.abast-det-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.abast-det-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+}
+.abast-det-item-sub {
+  font-size: 11px;
+  color: #9ca3af;
+}
+.abast-det-item-total {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.abast-det-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}

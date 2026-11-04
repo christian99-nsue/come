@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+// 1) Import de íconos: añade MessageSquare
 import {
   ArrowLeft,
   MapPin,
-  Locate,
   User,
   Phone,
   MessageCircle,
+  MessageSquare,
   Map,
+  Locate,
 } from "lucide-react";
 import logo from "../../assets/repartidor-logo.jpg";
+
 import "../../styles/repartidor/RepartidorShared.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -27,6 +30,7 @@ interface Entrega {
   direccion_entrega: string | null;
   entrega_lat: number | null;
   entrega_lng: number | null;
+  cliente_tipo_contacto: "Llamada" | "Whatsapp" | "Mensaje" | null;
 }
 
 function abrirMapa(
@@ -49,6 +53,45 @@ function numeroWhatsApp(telefono: string) {
   const digitos = telefono.replace(/\D/g, "");
   return digitos.length <= 9 ? `${CODIGO_PAIS}${digitos}` : digitos;
 }
+
+// 3) Justo después de la función numeroWhatsApp, añade
+type TipoContacto = "Llamada" | "Whatsapp" | "Mensaje";
+
+const opcionesContacto: {
+  id: TipoContacto;
+  etiqueta: string;
+  preferencia: string;
+  icon: typeof Phone;
+  abrir: (tel: string) => void;
+}[] = [
+  {
+    id: "Llamada",
+    etiqueta: "Llamar",
+    preferencia: "una llamada",
+    icon: Phone,
+    abrir: (tel) => {
+      window.location.href = `tel:${tel}`;
+    },
+  },
+  {
+    id: "Whatsapp",
+    etiqueta: "WhatsApp",
+    preferencia: "WhatsApp",
+    icon: MessageCircle,
+    abrir: (tel) => {
+      window.open(`https://wa.me/${numeroWhatsApp(tel)}`, "_blank");
+    },
+  },
+  {
+    id: "Mensaje",
+    etiqueta: "SMS",
+    preferencia: "un mensaje de texto",
+    icon: MessageSquare,
+    abrir: (tel) => {
+      window.location.href = `sms:${tel}`;
+    },
+  },
+];
 
 export default function PedidoEnViaje() {
   const navigate = useNavigate();
@@ -172,32 +215,46 @@ export default function PedidoEnViaje() {
           <span className="rep-info-value">{entrega.cliente_nombre}</span>
         </div>
       </div>
+      {entrega.cliente_telefono &&
+        (() => {
+          const tel = entrega.cliente_telefono as string;
+          const preferida =
+            opcionesContacto.find(
+              (o) => o.id === entrega.cliente_tipo_contacto,
+            ) ?? opcionesContacto[1];
+          const otras = opcionesContacto.filter((o) => o.id !== preferida.id);
+          const IconoPreferida = preferida.icon;
 
-      {entrega.cliente_telefono && (
-        <div className="rep-contact-row">
-          <button
-            type="button"
-            className="rep-btn-secondary"
-            onClick={() =>
-              (window.location.href = `tel:${entrega.cliente_telefono}`)
-            }
-          >
-            <Phone size={16} /> Llamar
-          </button>
-          <button
-            type="button"
-            className="rep-btn-secondary"
-            onClick={() =>
-              window.open(
-                `https://wa.me/${numeroWhatsApp(entrega.cliente_telefono as string)}`,
-                "_blank",
-              )
-            }
-          >
-            <MessageCircle size={16} /> WhatsApp
-          </button>
-        </div>
-      )}
+          return (
+            <div className="rep-contact-block">
+              <p className="rep-contact-hint">
+                El cliente prefiere {preferida.preferencia}.
+              </p>
+              <button
+                type="button"
+                className="rep-btn-primary"
+                onClick={() => preferida.abrir(tel)}
+              >
+                <IconoPreferida size={16} /> {preferida.etiqueta}
+              </button>
+              <div className="rep-contact-row">
+                {otras.map((o) => {
+                  const Icono = o.icon;
+                  return (
+                    <button
+                      key={o.id}
+                      type="button"
+                      className="rep-btn-secondary"
+                      onClick={() => o.abrir(tel)}
+                    >
+                      <Icono size={16} /> {o.etiqueta}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
       <button
         type="button"

@@ -1,0 +1,60 @@
+/* Apariencia del panel del cliente.
+   Todo esto solo se activa con los atributos que pone preferenciasCliente.ts. */
+
+/* Un único filtro sobre la página: combina el tema oscuro y el contraste alto */
+html[data-cliente-filter] {
+  filter: var(--cliente-filtro-tema, invert(0))
+    var(--cliente-filtro-contraste, contrast(1));
+}
+
+/* Tema oscuro: se invierten los colores (el blanco pasa a negro) */
+html[data-cliente-theme="dark"] {
+  --cliente-filtro-tema: invert(1) hue-rotate(180deg);
+  background-color: #ffffff;
+}
+
+/* Contraste alto */
+html[data-cliente-contrast="high"] {
+  --cliente-filtro-contraste: contrast(1.25);
+}
+
+/* Lo que no debe invertirse: fotos, vídeos y emojis se vuelven a invertir para verse normales */
+html[data-cliente-theme="dark"] img,
+html[data-cliente-theme="dark"] video,
+html[data-cliente-theme="dark"] iframe,
+html[data-cliente-theme="dark"] [style*="background-image"],
+html[data-cliente-theme="dark"] .category-chip-emoji,
+html[data-cliente-theme="dark"] .banner-emoji,
+html[data-cliente-theme="dark"] .home-wave,
+html[data-cliente-theme="dark"] .realizado-notify-icon,
+html[data-cliente-theme="dark"] .contacto-success-icon,
+html[data-cliente-theme="dark"] .tema-preview {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Al invertirse, la sombra oscura detrás de las ventanas saldría blanca: se compensa */
+html[data-cliente-theme="dark"] .confirm-modal-overlay,
+html[data-cliente-theme="dark"] .cliente-drawer-overlay {
+  background-color: rgba(255, 255, 255, 0.45);
+}
+
+/* Reducir movimiento: lo pide el usuario o lo pide su dispositivo */
+html[data-cliente-reduce] *,
+html[data-cliente-reduce] *::before,
+html[data-cliente-reduce] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-cliente-ui] *,
+  html[data-cliente-ui] *::before,
+  html[data-cliente-ui] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

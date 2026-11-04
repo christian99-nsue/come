@@ -38,42 +38,91 @@ const preguntasMock: Pregunta[] = [
     categoria: "pedidos",
     pregunta: "¿Cómo puedo cancelar un pedido?",
     respuesta:
-      "Puedes cancelar tu pedido desde 'Mis pedidos' mientras el restaurante aún no lo haya confirmado. Una vez confirmado, contacta directamente al restaurante o a soporte.",
+      "En Pedidos, abre tu pedido y pulsa «Cancelar pedido». Solo es posible mientras el restaurante no lo haya confirmado. Si ya lo confirmó, llama al restaurante desde el seguimiento del pedido.",
   },
   {
     id: "2",
     categoria: "pedidos",
-    pregunta: "¿Qué hago si mi pedido llegó incompleto?",
+    pregunta: "¿Cómo sigo mi pedido?",
     respuesta:
-      "Ve a 'Mis pedidos', selecciona el pedido en cuestión y toca 'Reportar un problema'. Nuestro equipo revisará tu caso en menos de 24 horas.",
+      "En la pestaña Pedidos ves el estado en tiempo real: confirmado, preparando, en camino y entregado. Al abrir el pedido ves la línea de tiempo con las horas y los datos de tu repartidor.",
   },
   {
     id: "3",
-    categoria: "pagos",
-    pregunta: "¿Qué métodos de pago aceptan?",
+    categoria: "pedidos",
+    pregunta: "¿Puedo repetir un pedido anterior?",
     respuesta:
-      "Aceptamos efectivo contra entrega, transferencia bancaria y tarjetas de débito/crédito. Puedes gestionarlos desde Perfil → Métodos de pago.",
+      "Sí. En Pedidos → Historial pulsa «Volver a pedir». Se añaden al carrito los productos que sigan disponibles, con los precios de hoy.",
   },
   {
     id: "4",
-    categoria: "pagos",
-    pregunta: "¿Puedo pedir factura de mi compra?",
+    categoria: "pedidos",
+    pregunta: "Mi pedido llegó incompleto o con algún problema, ¿qué hago?",
     respuesta:
-      "Sí, escríbenos por el Centro de ayuda indicando el número de pedido y te enviaremos la factura correspondiente.",
+      "Escríbenos desde Contáctanos indicando el código del pedido, y lo revisamos.",
   },
   {
     id: "5",
-    categoria: "cuenta",
-    pregunta: "¿Cómo cambio mi número de teléfono?",
+    categoria: "pagos",
+    pregunta: "¿Qué métodos de pago hay?",
     respuesta:
-      "Ve a Perfil → Información personal y edita tu número. Te pediremos verificarlo con un código antes de guardar el cambio.",
+      "Cada restaurante indica qué métodos acepta (efectivo, transferencia o tarjeta) y los ves al finalizar el pedido. El pago se coordina con el restaurante; la app no guarda datos de tarjetas.",
   },
   {
     id: "6",
-    categoria: "entregas",
-    pregunta: "¿Cuánto tiempo tarda mi pedido en llegar?",
+    categoria: "pagos",
+    pregunta: "¿Cómo cambio mi método de pago preferido?",
     respuesta:
-      "El tiempo estimado aparece en cada restaurante antes de pedir, normalmente entre 20 y 40 minutos según la distancia y la demanda.",
+      "En Perfil → Métodos de pago. Se usará como opción inicial al finalizar un pedido, siempre que el restaurante lo acepte.",
+  },
+  {
+    id: "7",
+    categoria: "pagos",
+    pregunta: "¿Por qué no se creó mi pedido al confirmar?",
+    respuesta:
+      "Los precios, el costo de envío y la disponibilidad se verifican al confirmar. Si algo cambió desde que lo viste, te pedimos revisar el carrito antes de crear el pedido.",
+  },
+  {
+    id: "8",
+    categoria: "cuenta",
+    pregunta: "¿Cómo cambio mi número de teléfono?",
+    respuesta:
+      "En Perfil → Información personal. Ese número es con el que inicias sesión, así que después debes usar el nuevo.",
+  },
+  {
+    id: "9",
+    categoria: "cuenta",
+    pregunta: "¿Cómo gestiono mis direcciones?",
+    respuesta:
+      "En Perfil → Mis direcciones puedes añadir, editar y eliminar direcciones, y elegir cuál es la principal.",
+  },
+  {
+    id: "10",
+    categoria: "cuenta",
+    pregunta: "¿Cómo desactivo las notificaciones?",
+    respuesta:
+      "En Perfil → Notificaciones. Aunque las desactives, puedes ver el estado de tus pedidos en la pestaña Pedidos.",
+  },
+  {
+    id: "11",
+    categoria: "entregas",
+    pregunta: "¿Cuánto tarda mi pedido?",
+    respuesta:
+      "Cada restaurante muestra un tiempo estimado. Es una estimación: el tiempo real depende de la preparación y del reparto.",
+  },
+  {
+    id: "12",
+    categoria: "entregas",
+    pregunta: "¿Puedo llamar a mi repartidor?",
+    respuesta:
+      "Sí. Mientras lleva tu pedido aparece el botón «Llamar» en el seguimiento. Cuando se entrega, desaparece.",
+  },
+  {
+    id: "13",
+    categoria: "entregas",
+    pregunta: "¿Puedo pedir a otra dirección?",
+    respuesta:
+      "Sí. Al finalizar el pedido elige otra de tus direcciones guardadas o añade una nueva.",
   },
 ];
 

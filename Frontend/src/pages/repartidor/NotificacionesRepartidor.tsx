@@ -8,13 +8,18 @@ import {
   Megaphone,
   ChevronRight,
   Bell,
+  Layers,
   CheckCheck,
 } from "lucide-react";
 import "../../styles/repartidor/RepartidorShared.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-type TipoNotif = "nuevo_pedido" | "entrega_registrada" | "aviso";
+type TipoNotif =
+  | "nuevo_pedido"
+  | "entrega_registrada"
+  | "aviso"
+  | "lote_liberado";
 
 interface Notificacion {
   id: number;
@@ -24,6 +29,7 @@ interface Notificacion {
   leida: boolean;
   pedido_id: number | null;
   fecha_creacion: string;
+  reporte_id: number | null;
 }
 
 function tiempoRelativo(iso: string) {
@@ -41,6 +47,8 @@ function iconoPara(tipo: TipoNotif) {
       return <Package size={17} />;
     case "entrega_registrada":
       return <CheckCircle2 size={17} />;
+    case "lote_liberado":
+      return <Layers size={17} />;
     default:
       return <Megaphone size={17} />;
   }
@@ -120,10 +128,18 @@ export default function NotificacionesRepartidor() {
         .catch(() => {});
     }
 
+    if (n.reporte_id) {
+      navigate(`/repartidor/ayuda/reportes/${n.reporte_id}`);
+      return;
+    }
+
     if (n.tipo === "nuevo_pedido" && n.pedido_id) {
       navigate(`/repartidor/pedido/${n.pedido_id}`);
     } else if (n.tipo === "entrega_registrada" && n.pedido_id) {
       navigate(`/repartidor/entrega-completada/${n.pedido_id}`);
+    } else if (n.tipo === "lote_liberado") {
+      navigate("/repartidor");
+      return;
     }
   };
 
@@ -196,7 +212,9 @@ export default function NotificacionesRepartidor() {
               </div>
             </div>
             {!n.leida && <span className="rep-notif-dot" />}
-            {n.pedido_id && <ChevronRight size={16} color="#9ca3af" />}
+            {(n.pedido_id || n.reporte_id || n.tipo === "lote_liberado") && (
+              <ChevronRight size={16} color="#9ca3af" />
+            )}
           </button>
         ))}
       </div>

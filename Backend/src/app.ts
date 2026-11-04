@@ -17,10 +17,20 @@ import fotosRestauranteAdminRoutes from "./routes/admin/fotosRestauranteAdminRou
 import repartidorRoutes from "./routes/repartidor/repartidorRoutes";
 import perfilRepartidorRoutes from "./routes/repartidor/perfilRepartidorRoutes";
 import uploadsRepartidorRoutes from "./routes/repartidor/uploadsRepartidorRoutes";
+import clienteRoutes from "./routes/cliente/clienteRoutes";
+import valoracionesAdminRoutes from "./routes/admin/valoracionesAdminRoutes";
+import uploadsClienteRoutes from "./routes/cliente/uploadsClienteRoutes";
+import superadminRoutes from "./routes/superadminRoutes";
+import superadminUploadsRoutes from "./routes/superadminUploadsRoutes";
+import registroRoutes from "./routes/registroRoutes";
+import ubicacionAdminRoutes from "./routes/admin/ubicacionAdminRoutes";
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.HUB_FRONTEND_URL,
+].filter(Boolean) as string[];
 
 app.use(
   cors({
@@ -43,7 +53,9 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+app.use("/api/registro", registroRoutes);
 app.use("/api/auth", authRoutes);
+
 app.use("/api/admin/menu", menuAdminRoutes);
 app.use("/api/admin/pedidos", pedidosAdminRoutes);
 app.use("/api/admin/restaurante", restauranteAdminRoutes);
@@ -60,5 +72,10 @@ app.use("/api/admin/restaurante/fotos", fotosRestauranteAdminRoutes);
 app.use("/api/repartidor/perfil", perfilRepartidorRoutes);
 app.use("/api/repartidor/uploads", uploadsRepartidorRoutes);
 app.use("/api/repartidor", repartidorRoutes);
+app.use("/api/cliente/uploads", uploadsClienteRoutes);
+app.use("/api/cliente", clienteRoutes);
+app.use("/api/admin/valoraciones", valoracionesAdminRoutes);
+app.use("/api/superadmin/uploads", superadminUploadsRoutes);
+app.use("/api/superadmin", superadminRoutes);
 
 export default app;

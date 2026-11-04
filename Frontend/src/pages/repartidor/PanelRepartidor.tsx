@@ -15,6 +15,11 @@ interface PedidoDisponible {
   distancia_km: number | null;
   tiempo_estimado_min: number | null;
   pago: number;
+  ventana: {
+    etiqueta_dia: string;
+    inicio: string;
+    fin: string;
+  } | null;
 }
 
 interface PanelData {
@@ -35,25 +40,40 @@ export default function PanelRepartidor() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
     const token = localStorage.getItem("token");
 
     const cargarPanel = () => {
       axios
-        .get(`${API_URL}/api/repartidor/panel`, {
+        .get<PanelData>(`${API_URL}/api/repartidor/panel`, {
           headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
         })
         .then((res) => {
           setPanel(res.data);
           setError("");
         })
-        .catch(() => setError("No se pudieron cargar los pedidos"))
-        .finally(() => setCargando(false));
+        .catch((err: unknown) => {
+          if (!axios.isCancel(err)) {
+            setError("No se pudieron cargar los pedidos");
+          }
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) {
+            setCargando(false);
+          }
+        });
     };
 
     cargarPanel();
-    // Se actualiza solo cada 15 segundos para ver pedidos nuevos
-    const intervalo = setInterval(cargarPanel, 15000);
-    return () => clearInterval(intervalo);
+
+    // Se actualiza cada 15 segundos para mostrar pedidos nuevos.
+    const intervalo = window.setInterval(cargarPanel, 15000);
+
+    return () => {
+      controller.abort();
+      window.clearInterval(intervalo);
+    };
   }, []);
 
   if (cargando) {
@@ -76,6 +96,7 @@ export default function PanelRepartidor() {
     <div className="rep-page">
       <div className="rep-greeting">
         <h2 className="rep-greeting-title">Hola, {user.nombre} 👋</h2>
+
         <span
           className={
             panel.disponible
@@ -95,12 +116,14 @@ export default function PanelRepartidor() {
         <span className="rep-info-icon">
           <Package size={18} />
         </span>
+
         <span className="rep-banner-text">
           {panel.pedidos.length}{" "}
           {panel.pedidos.length === 1
             ? "pedido disponible"
             : "pedidos disponibles"}
         </span>
+
         <span className="rep-chevron">
           <ChevronRight size={16} />
         </span>
@@ -125,7 +148,15 @@ export default function PanelRepartidor() {
           <div
             key={p.id}
             className="rep-card rep-order-card"
+            role="button"
+            tabIndex={0}
             onClick={() => navigate(`/repartidor/pedido/${p.id}`)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                navigate(`/repartidor/pedido/${p.id}`);
+              }
+            }}
           >
             <img
               src={
@@ -134,21 +165,34 @@ export default function PanelRepartidor() {
               alt={p.restaurante}
               className="rep-order-img"
             />
+
             <div className="rep-order-info">
               <div className="rep-order-name">{p.restaurante}</div>
+
               <div className="rep-order-number">Pedido {p.codigo}</div>
+
               {p.distancia_km !== null && (
                 <div className="rep-order-number">
                   <MapPin size={12} /> {p.distancia_km} km
                 </div>
               )}
+
               {p.tiempo_estimado_min !== null && (
                 <div className="rep-order-number">
                   ~{p.tiempo_estimado_min} min
                 </div>
               )}
+
+              {p.ventana && (
+                <span className="rep-ventana-tag">
+                  Entregar: {p.ventana.etiqueta_dia}, {p.ventana.inicio} –{" "}
+                  {p.ventana.fin}
+                </span>
+              )}
+
               <div className="rep-order-price">{formatXAF(p.pago)}</div>
             </div>
+
             <span className="rep-chevron">
               <ChevronRight size={22} />
             </span>

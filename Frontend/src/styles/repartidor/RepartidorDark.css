@@ -1,0 +1,282 @@
+/* Tema oscuro del panel del repartidor.
+   Solo se activa cuando <html> tiene data-theme="dark". */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] #root {
+  background-color: #000000;
+  color: #f3f4f6;
+}
+
+/* Textos principales */
+html[data-theme="dark"] .rep-title,
+html[data-theme="dark"] .rep-app-header-title,
+html[data-theme="dark"] .rep-greeting-title,
+html[data-theme="dark"] .rep-section-title,
+html[data-theme="dark"] .rep-section-title-sm,
+html[data-theme="dark"] .rep-card-name,
+html[data-theme="dark"] .rep-order-name,
+html[data-theme="dark"] .rep-info-value,
+html[data-theme="dark"] .rep-menu-label,
+html[data-theme="dark"] .rep-profile-name,
+html[data-theme="dark"] .rep-history-number,
+html[data-theme="dark"] .rep-notif-title,
+html[data-theme="dark"] .rep-radio-title,
+html[data-theme="dark"] .rep-success-title,
+html[data-theme="dark"] .rep-lock-title,
+html[data-theme="dark"] .rep-banner-text,
+html[data-theme="dark"] .rep-form-input,
+html[data-theme="dark"] .rep-form-select,
+html[data-theme="dark"] .rep-password-input,
+html[data-theme="dark"] .rep-textarea,
+html[data-theme="dark"] .rep-product-item,
+html[data-theme="dark"] .rep-faq-question,
+html[data-theme="dark"] .rep-doc-section-title,
+html[data-theme="dark"] .rep-mypedido-line strong,
+html[data-theme="dark"] .rep-mypedido-subtitle,
+html[data-theme="dark"] .rep-history-summary-value,
+html[data-theme="dark"] .rep-step-label.done,
+html[data-theme="dark"] .confirm-modal-title,
+html[data-theme="dark"] .confirmar-entrega-title,
+html[data-theme="dark"] .confirmar-entrega-question,
+html[data-theme="dark"] .cg-title {
+  color: #f3f4f6;
+}
+
+/* Textos secundarios */
+html[data-theme="dark"] .rep-quick-row,
+html[data-theme="dark"] .rep-mypedido-line,
+html[data-theme="dark"] .rep-faq-answer,
+html[data-theme="dark"] .rep-doc-section-text,
+html[data-theme="dark"] .rep-profile-role,
+html[data-theme="dark"] .rep-history-restaurant,
+html[data-theme="dark"] .rep-notif-subtitle,
+html[data-theme="dark"] .rep-password-rules-list,
+html[data-theme="dark"] .rep-support-hours,
+html[data-theme="dark"] .rep-terms-banner {
+  color: #cbd5d0;
+}
+
+/* Superficies: tarjetas, filas y campos */
+html[data-theme="dark"] .rep-card,
+html[data-theme="dark"] .rep-menu-row,
+html[data-theme="dark"] .rep-toggle-row,
+html[data-theme="dark"] .rep-radio-card,
+html[data-theme="dark"] .rep-lang-row,
+html[data-theme="dark"] .rep-history-item,
+html[data-theme="dark"] .rep-notif-item,
+html[data-theme="dark"] .rep-form-field,
+html[data-theme="dark"] .rep-field-block,
+html[data-theme="dark"] .rep-password-input-wrapper,
+html[data-theme="dark"] .rep-faq-item,
+html[data-theme="dark"] .rep-tab-btn,
+html[data-theme="dark"] .rep-btn-secondary,
+html[data-theme="dark"] .rep-link-btn {
+  background-color: #171717;
+  border: 1px solid #333333;
+  color: #f3f4f6;
+  box-shadow:
+    0 4px 12px rgba(255, 255, 255, 0.025),
+    0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* Superficies verdes (seleccionado, destacado) */
+html[data-theme="dark"] .rep-card-green,
+html[data-theme="dark"] .rep-radio-card.active,
+html[data-theme="dark"] .rep-notif-item.unread,
+html[data-theme="dark"] .rep-tab-btn.active,
+html[data-theme="dark"] .rep-support-hours,
+html[data-theme="dark"] .rep-terms-banner,
+html[data-theme="dark"] .rep-password-rules,
+html[data-theme="dark"] .rep-lock-icon,
+html[data-theme="dark"] .rep-info-icon,
+html[data-theme="dark"] .rep-success-circle {
+  background-color: #14301f;
+}
+
+html[data-theme="dark"] .rep-card-green,
+html[data-theme="dark"] .rep-radio-card.active,
+html[data-theme="dark"] .rep-notif-item.unread {
+  border-color: #1d4d2f;
+}
+
+html[data-theme="dark"] .rep-tab-btn.active {
+  border-color: #16a34a;
+  color: #4ade80;
+}
+
+/* Cabecera y barra inferior */
+html[data-theme="dark"] .rep-app-header,
+html[data-theme="dark"] .rep-bottom-nav {
+  background-color: #000000;
+  border-color: #292929;
+  box-shadow:
+    0 -4px 16px rgba(255, 255, 255, 0.02),
+    0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .rep-header-icon-btn,
+html[data-theme="dark"] .rep-back-btn,
+html[data-theme="dark"] .rep-icon-btn {
+  color: #e5e7eb;
+}
+
+/* Etiquetas de estado */
+html[data-theme="dark"] .rep-badge-green {
+  background-color: #14301f;
+  color: #4ade80;
+}
+
+html[data-theme="dark"] .rep-badge-gray {
+  background-color: #263a2f;
+  color: #cbd5d0;
+}
+
+html[data-theme="dark"] .rep-badge-orange {
+  background-color: #3b2a0a;
+  color: #fbbf24;
+}
+
+/* Línea de tiempo */
+html[data-theme="dark"] .rep-step-dot {
+  background-color: #15221b;
+  border-color: #263a2f;
+}
+
+html[data-theme="dark"] .rep-step-dot.actual {
+  background-color: #14301f;
+  border-color: #16a34a;
+}
+
+html[data-theme="dark"] .rep-step-dot.done {
+  background-color: #16a34a;
+  border-color: #16a34a;
+}
+
+html[data-theme="dark"] .rep-step-line {
+  background-color: #263a2f;
+}
+
+html[data-theme="dark"] .rep-step-line.done {
+  background-color: #16a34a;
+}
+
+/* Interruptores y selección */
+html[data-theme="dark"] .toggle-switch {
+  background-color: #374151;
+}
+
+html[data-theme="dark"] .toggle-switch.active {
+  background-color: #16a34a;
+}
+
+html[data-theme="dark"] .rep-radio-dot {
+  border-color: #4b5563;
+}
+
+html[data-theme="dark"] .rep-radio-dot.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
+  box-shadow: inset 0 0 0 3px #15221b;
+}
+
+/* Ventanas y pantallas de éxito */
+html[data-theme="dark"] .confirm-modal-card,
+html[data-theme="dark"] .confirmar-entrega-card {
+  background-color: #171717;
+  border: 1px solid #383838;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+html[data-theme="dark"] .confirmar-entrega-icon-box {
+  background-color: #1b2c22;
+}
+
+html[data-theme="dark"] .confirm-modal-cancel {
+  background-color: #15221b;
+  border-color: #263a2f;
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .cg-overlay {
+  background-color: #0f1713;
+}
+
+/* Profundidad y separación de las tarjetas */
+html[data-theme="dark"] .rep-card,
+html[data-theme="dark"] .rep-history-item,
+html[data-theme="dark"] .rep-notif-item,
+html[data-theme="dark"] .rep-faq-item {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+html[data-theme="dark"] .rep-card:hover,
+html[data-theme="dark"] .rep-history-item:hover,
+html[data-theme="dark"] .rep-notif-item:hover,
+html[data-theme="dark"] .rep-faq-item:hover {
+  border-color: #454545;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* Fondo negro del marco móvil en tema oscuro */
+html[data-theme="dark"] .mobile-frame-inner {
+  background-color: #000000 !important;
+}
+
+html[data-theme="dark"] .mobile-frame-outer {
+  background-color: #000000 !important;
+  border-color: #262626;
+}
+
+html[data-theme="dark"] .misrep-title,
+html[data-theme="dark"] .misrep-back,
+html[data-theme="dark"] .misrep-card-asunto,
+html[data-theme="dark"] .misrep-texto {
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .misrep-card,
+html[data-theme="dark"] .misrep-pie,
+html[data-theme="dark"] .misrep-evento {
+  background-color: #15221b;
+  border-color: #263a2f;
+  color: #cbd5d0;
+}
+
+html[data-theme="dark"] .misrep-card.nueva,
+html[data-theme="dark"] .misrep-burbuja.yo {
+  background-color: #14301f;
+  border-color: #1d4d2f;
+}
+
+html[data-theme="dark"] .misrep-burbuja.soporte {
+  background-color: #1b2c22;
+}
+
+html[data-theme="dark"] .misrep-badge.neutra {
+  background-color: #263a2f;
+  color: #cbd5d0;
+}
+
+html[data-theme="dark"] .misrep-responder {
+  background-color: #15221b;
+  border-color: #263a2f;
+}
+html[data-theme="dark"] .misrep-responder-label {
+  color: #cbd5d0;
+}
+html[data-theme="dark"] .misrep-textarea {
+  background-color: #0f1a14;
+  border-color: #263a2f;
+  color: #f3f4f6;
+}

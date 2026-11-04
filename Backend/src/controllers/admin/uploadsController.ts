@@ -10,6 +10,8 @@ const CARPETAS_VALIDAS = [
   "perfiles-admin",
   "fotos-restaurante",
   "perfiles-repartidor",
+  "perfiles-cliente",
+  "abastecimiento",
 ];
 
 export const subirImagen = async (req: Request, res: Response) => {

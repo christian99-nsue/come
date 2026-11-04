@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft, MapPin, Map } from "lucide-react";
 import "../../styles/repartidor/RepartidorShared.css";
+import {
+  leerCache,
+  urlNavegacion as armarUrlNavegacion,
+  etiquetaNavegacion,
+} from "../../utils/preferenciasRepartidor";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -114,9 +119,10 @@ export default function MapaRuta() {
     }
   }
 
-  // Navegación desde donde esté el repartidor hasta el destino
+  // Navegación desde donde esté el repartidor, en la app de mapas que eligió
+  const preferencia = leerCache().navegacion_externa;
   const urlNavegacion = destino
-    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destino)}&travelmode=driving`
+    ? armarUrlNavegacion(destino, preferencia)
     : null;
 
   return (
@@ -180,7 +186,7 @@ export default function MapaRuta() {
           className="rep-btn-primary"
           onClick={() => window.open(urlNavegacion, "_blank")}
         >
-          <Map size={16} /> Abrir en mapas
+          <Map size={16} /> Abrir en {etiquetaNavegacion[preferencia]}
         </button>
       )}
     </div>

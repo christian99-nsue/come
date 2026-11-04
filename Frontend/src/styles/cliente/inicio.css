@@ -164,9 +164,9 @@
   object-fit: cover;
 }
 
-.banner-emoji {
-  font-size: 64px;
-  line-height: 1;
+.banner-emoji img {
+  height: 100px;
+  width: 100px;
 }
 
 .banner-dots {
@@ -396,9 +396,20 @@
   background-color: #ecfdf3;
 }
 
-.category-chip-emoji img {
-  height: 35px;
-  width: 35px;
+.category-chip-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  flex-shrink: 0;
+}
+
+.category-chip-emoji svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  flex-shrink: 0;
 }
 
 .category-chip-label {
@@ -462,6 +473,55 @@
   height: 52px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
+}
+
+.restaurant-card {
+  cursor: pointer;
+}
+
+.restaurant-card.cerrado {
+  opacity: 0.6;
+}
+
+.restaurant-card-closed {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.home-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.home-status.error {
+  color: #dc2626;
+}
+
+.home-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-status-card {
+  cursor: pointer;
+}
+
+.restaurant-rating-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.restaurant-rating-star {
+  color: #facc15;
+  fill: #facc15;
+  stroke: #facc15;
   flex-shrink: 0;
 }
 

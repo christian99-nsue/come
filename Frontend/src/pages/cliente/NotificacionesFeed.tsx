@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   ArrowLeft,
   Settings,
@@ -7,104 +8,108 @@ import {
   Tag,
   Info,
   ChevronRight,
+  Bell,
+  CheckCheck,
 } from "lucide-react";
 import "../../styles/cliente/NotificacionesFeed.css";
 
-type Filtro = "todas" | "pedidos" | "promociones";
+const API_URL = import.meta.env.VITE_API_URL;
+
+type Filtro = "todas" | "sin_leer";
 type TipoNotif = "pedido" | "promocion" | "info";
 
-interface NotifItem {
-  id: string;
+interface Notificacion {
+  id: number;
   tipo: TipoNotif;
   titulo: string;
-  descripcion: string;
-  hace: string;
-  sinLeer: boolean;
+  mensaje: string | null;
+  leida: boolean;
+  pedido_id: number | null;
+  fecha_creacion: string;
+  reporte_id: number | null;
 }
 
-const notificacionesMock: NotifItem[] = [
-  {
-    id: "1",
-    tipo: "pedido",
-    titulo: "Tu pedido está en camino",
-    descripcion:
-      "El repartidor ya salió del restaurante y se dirige a tu dirección.",
-    hace: "Hace 12 min",
-    sinLeer: true,
-  },
-  {
-    id: "2",
-    tipo: "pedido",
-    titulo: "Pedido confirmado",
-    descripcion: "Tu pedido de Burger House ha sido confirmado.",
-    hace: "Hace 35 min",
-    sinLeer: true,
-  },
-  {
-    id: "3",
-    tipo: "promocion",
-    titulo: "¡Promoción especial!",
-    descripcion:
-      "Disfruta de un 20% de descuento en Pizza Top. Válido por 24 horas.",
-    hace: "Hace 2 h",
-    sinLeer: true,
-  },
-  {
-    id: "4",
-    tipo: "info",
-    titulo: "Recordatorio de pedido",
-    descripcion:
-      "No olvides revisar tu pedido antes de que llegue el repartidor.",
-    hace: "Hace 4 h",
-    sinLeer: false,
-  },
-  {
-    id: "5",
-    tipo: "pedido",
-    titulo: "Restaurante favorito en oferta",
-    descripcion: "Burger House tiene un 15% de descuento en toda su carta.",
-    hace: "Hace 6 h",
-    sinLeer: false,
-  },
-  {
-    id: "6",
-    tipo: "pedido",
-    titulo: "Nuevo restaurante disponible",
-    descripcion: "Ahora puedes pedir en Café & Más. ¡Descúbrelo!",
-    hace: "Hace 1 día",
-    sinLeer: false,
-  },
-  {
-    id: "7",
-    tipo: "info",
-    titulo: "¡Gracias por tu pedido!",
-    descripcion:
-      "Esperamos que lo disfrutes. Si tienes algún problema, contáctanos.",
-    hace: "Hace 1 día",
-    sinLeer: false,
-  },
-];
+function tiempoRelativo(iso: string) {
+  const min = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (min < 1) return "Ahora mismo";
+  if (min < 60) return `Hace ${min} min`;
+  const horas = Math.floor(min / 60);
+  if (horas < 24) return `Hace ${horas} h`;
+  const dias = Math.floor(horas / 24);
+  return dias === 1 ? "Hace 1 día" : `Hace ${dias} días`;
+}
 
-function iconoPara(tipo: TipoNotif) {
-  switch (tipo) {
-    case "promocion":
-      return <Tag size={18} />;
-    case "info":
-      return <Info size={18} />;
-    default:
-      return <ShoppingCart size={18} />;
-  }
+function icono(tipo: TipoNotif) {
+  if (tipo === "promocion") return <Tag size={18} />;
+  if (tipo === "info") return <Info size={18} />;
+  return <ShoppingCart size={18} />;
 }
 
 export default function NotificacionesFeed() {
   const navigate = useNavigate();
-  const [filtro, setFiltro] = useState<Filtro>("todas");
+  const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
 
-  const notificacionesFiltradas = notificacionesMock.filter((n) => {
-    if (filtro === "todas") return true;
-    if (filtro === "pedidos") return n.tipo === "pedido";
-    return n.tipo === "promocion";
-  });
+  const [filtro, setFiltro] = useState<Filtro>("todas");
+  const [lista, setLista] = useState<Notificacion[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  // Avisa al contador de la campana y del menú para que se actualice al instante
+  const avisarCambio = () =>
+    window.dispatchEvent(new Event("notificaciones-cliente"));
+
+  const cargar = () =>
+    axios
+      .get(`${API_URL}/api/cliente/notificaciones`, { headers })
+      .then((res) => {
+        setLista(res.data);
+        setError("");
+      })
+      .catch(() => setError("No se pudieron cargar tus notificaciones"))
+      .finally(() => setCargando(false));
+
+  useEffect(() => {
+    cargar();
+    const intervalo = setInterval(cargar, 30000);
+    return () => clearInterval(intervalo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const abrir = (n: Notificacion) => {
+    if (!n.leida) {
+      // Se marca como leída al instante; si el servidor falla, se vuelve a lo que él dice
+      setLista((prev) =>
+        prev.map((x) => (x.id === n.id ? { ...x, leida: true } : x)),
+      );
+      axios
+        .patch(
+          `${API_URL}/api/cliente/notificaciones/${n.id}/leida`,
+          {},
+          { headers },
+        )
+        .then(avisarCambio)
+        .catch(() => cargar());
+    }
+
+    if (n.reporte_id) navigate(`/cliente/mis-reportes/${n.reporte_id}`);
+    else if (n.pedido_id) navigate(`/cliente/pedidos/${n.pedido_id}`);
+  };
+
+  const marcarTodasLeidas = () => {
+    setLista((prev) => prev.map((n) => ({ ...n, leida: true })));
+    axios
+      .patch(
+        `${API_URL}/api/cliente/notificaciones/leer-todas`,
+        {},
+        { headers },
+      )
+      .then(avisarCambio)
+      .catch(() => cargar());
+  };
+
+  const hayNoLeidas = lista.some((n) => !n.leida);
+  const visibles =
+    filtro === "sin_leer" ? lista.filter((n) => !n.leida) : lista;
 
   return (
     <div className="notif-page">
@@ -143,41 +148,71 @@ export default function NotificacionesFeed() {
         <button
           type="button"
           className={
-            filtro === "pedidos"
+            filtro === "sin_leer"
               ? "notif-filter-chip active"
               : "notif-filter-chip"
           }
-          onClick={() => setFiltro("pedidos")}
+          onClick={() => setFiltro("sin_leer")}
         >
-          <ShoppingCart size={14} /> Pedidos
-        </button>
-        <button
-          type="button"
-          className={
-            filtro === "promociones"
-              ? "notif-filter-chip active"
-              : "notif-filter-chip"
-          }
-          onClick={() => setFiltro("promociones")}
-        >
-          <Tag size={14} /> Promociones
+          Sin leer
         </button>
       </div>
 
+      {hayNoLeidas && (
+        <div className="notif-toolbar">
+          <button
+            type="button"
+            className="notif-read-all"
+            onClick={marcarTodasLeidas}
+          >
+            <CheckCheck size={15} /> Marcar todas como leídas
+          </button>
+        </div>
+      )}
+
+      {cargando && (
+        <p className="notif-status">Cargando tus notificaciones...</p>
+      )}
+      {!cargando && error && lista.length === 0 && (
+        <p className="notif-status error">{error}</p>
+      )}
+
+      {!cargando && !error && visibles.length === 0 && (
+        <div className="notif-empty">
+          <Bell size={28} />
+          <p className="notif-status">
+            {filtro === "sin_leer"
+              ? "No tienes notificaciones sin leer."
+              : "No tienes notificaciones por ahora."}
+          </p>
+        </div>
+      )}
+
       <div className="notif-list">
-        {notificacionesFiltradas.map((n) => (
-          <button key={n.id} type="button" className="notif-item">
+        {visibles.map((n) => (
+          <button
+            key={n.id}
+            type="button"
+            className={n.leida ? "notif-item" : "notif-item unread"}
+            onClick={() => abrir(n)}
+          >
             <span className={`notif-item-icon tipo-${n.tipo}`}>
-              {iconoPara(n.tipo)}
+              {icono(n.tipo)}
             </span>
             <div className="notif-item-body">
               <span className="notif-item-title">{n.titulo}</span>
-              <span className="notif-item-desc">{n.descripcion}</span>
-              <span className="notif-item-time">{n.hace}</span>
+              {n.mensaje && (
+                <span className="notif-item-desc">{n.mensaje}</span>
+              )}
+              <span className="notif-item-time">
+                {tiempoRelativo(n.fecha_creacion)}
+              </span>
             </div>
             <div className="notif-item-right">
-              {n.sinLeer && <span className="notif-item-dot" />}
-              <ChevronRight size={16} color="#9ca3af" />
+              {!n.leida && <span className="notif-item-dot" />}
+              {(n.pedido_id || n.reporte_id) && (
+                <ChevronRight size={16} color="#9ca3af" />
+              )}
             </div>
           </button>
         ))}

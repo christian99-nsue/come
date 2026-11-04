@@ -47,8 +47,7 @@ interface DetallePedido {
   costo_envio: number;
   total: number;
   metodo_pago: string;
-  ventana_entrega_inicio: string | null;
-  ventana_entrega_fin: string | null;
+  ventana: { etiqueta_dia: string; inicio: string; fin: string } | null;
   fecha_creacion: string;
   items: ItemPedido[];
 }
@@ -323,8 +322,9 @@ export default function DetallePedidoAdmin() {
         <div className="admin-menu-label-col">
           <span className="admin-menu-label">Ventana de entrega</span>
           <span className="admin-menu-sublabel">
-            {formatHora(pedido.ventana_entrega_inicio)} -{" "}
-            {formatHora(pedido.ventana_entrega_fin)}
+            {pedido.ventana
+              ? `${pedido.ventana.etiqueta_dia}, ${pedido.ventana.inicio} – ${pedido.ventana.fin}`
+              : "—"}
           </span>
         </div>
         <span className="detalle-pedido-cambiar">

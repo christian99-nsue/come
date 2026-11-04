@@ -1,202 +1,133 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   Settings,
   Globe,
   Moon,
-  Volume2,
-  Vibrate,
-  MapPin,
   Navigation,
-  ShieldCheck,
-  Fingerprint,
-  Lock,
   HelpCircle,
   FileText,
+  LogOut,
   ChevronRight,
 } from "lucide-react";
+import ConfirmModal from "../../components/common/ConfirmModal";
+import {
+  leerCache,
+  cargarPreferencias,
+  etiquetaIdioma,
+  etiquetaTema,
+  etiquetaNavegacion,
+  type Preferencias,
+} from "../../utils/preferenciasRepartidor";
 import "../../styles/repartidor/RepartidorShared.css";
 
 export default function ConfiguracionRepartidor() {
   const navigate = useNavigate();
-  const [sonido, setSonido] = useState(true);
-  const [vibracion, setVibracion] = useState(true);
-  const [compartirUbicacion, setCompartirUbicacion] = useState(true);
-  const [dosFactores, setDosFactores] = useState(true);
+
+  const [prefs, setPrefs] = useState<Preferencias>(leerCache());
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+
+  useEffect(() => {
+    cargarPreferencias()
+      .then(setPrefs)
+      .catch(() => {});
+  }, []);
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setMostrarConfirmacion(false);
+    navigate("/", { replace: true });
+  };
+
+  const filas = [
+    {
+      icon: Settings,
+      titulo: "General",
+      sub: "Datos personales y disponibilidad",
+      ruta: "/repartidor/configuracion/general",
+    },
+    {
+      icon: Globe,
+      titulo: "Idioma",
+      sub: etiquetaIdioma[prefs.idioma],
+      ruta: "/repartidor/configuracion/idioma",
+    },
+    {
+      icon: Moon,
+      titulo: "Tema de aplicación",
+      sub: etiquetaTema[prefs.tema],
+      ruta: "/repartidor/configuracion/tema",
+    },
+    {
+      icon: Navigation,
+      titulo: "Navegación externa",
+      sub: etiquetaNavegacion[prefs.navegacion_externa],
+      ruta: "/repartidor/configuracion/navegacion-externa",
+    },
+    {
+      icon: HelpCircle,
+      titulo: "Ayuda y soporte",
+      sub: "Preguntas, reportes y contacto",
+      ruta: "/repartidor/centro-ayuda",
+    },
+    {
+      icon: FileText,
+      titulo: "Términos y condiciones",
+      sub: "Políticas y condiciones de uso",
+      ruta: "/repartidor/terminos-condiciones",
+    },
+  ];
 
   return (
     <div className="rep-page">
-      <section className="rep-header">
-        <button
-          type="button"
-          className="rep-back-btn"
-          onClick={() => navigate(-1)}
-          aria-label="Volver"
-        >
-          <ArrowLeft size={22} />
-        </button>
-        <h1 className="rep-title">Configuración</h1>
-      </section>
+      <h1 className="rep-title rep-title-block">Configuración</h1>
 
-      <h3 className="rep-section-title-sm rep-config-group-title">
-        <Settings size={15} /> General
-      </h3>
       <div className="rep-menu-list">
-        <button
-          type="button"
-          className="rep-menu-row"
-          onClick={() => navigate("/repartidor/configuracion/idioma")}
-        >
-          <span className="rep-info-icon">
-            <Globe size={17} />
-          </span>
-          <span className="rep-menu-label">Idioma</span>
-          <span className="rep-config-value">Español</span>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-        <button
-          type="button"
-          className="rep-menu-row"
-          onClick={() => navigate("/repartidor/configuracion/tema")}
-        >
-          <span className="rep-info-icon">
-            <Moon size={17} />
-          </span>
-          <span className="rep-menu-label">Tema de aplicación</span>
-          <span className="rep-config-value">Claro</span>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-        <div className="rep-toggle-row">
-          <span className="rep-info-icon">
-            <Volume2 size={17} />
-          </span>
-          <span className="rep-menu-label">Sonido de notificaciones</span>
-          <button
-            type="button"
-            className={sonido ? "toggle-switch active" : "toggle-switch"}
-            onClick={() => setSonido((v) => !v)}
-          >
-            <span className="toggle-knob" />
-          </button>
-        </div>
-        <div className="rep-toggle-row">
-          <span className="rep-info-icon">
-            <Vibrate size={17} />
-          </span>
-          <span className="rep-menu-label">Vibración</span>
-          <button
-            type="button"
-            className={vibracion ? "toggle-switch active" : "toggle-switch"}
-            onClick={() => setVibracion((v) => !v)}
-          >
-            <span className="toggle-knob" />
-          </button>
-        </div>
+        {filas.map((f) => {
+          const Icon = f.icon;
+          return (
+            <button
+              key={f.titulo}
+              type="button"
+              className="rep-menu-row"
+              onClick={() => navigate(f.ruta)}
+            >
+              <span className="rep-info-icon">
+                <Icon size={17} />
+              </span>
+              <div className="rep-menu-label-col">
+                <span className="rep-menu-label">{f.titulo}</span>
+                <span className="rep-menu-sublabel">{f.sub}</span>
+              </div>
+              <ChevronRight size={17} color="#9ca3af" />
+            </button>
+          );
+        })}
       </div>
 
-      <h3 className="rep-section-title-sm rep-config-group-title">
-        <MapPin size={15} /> Ubicación y entrega
-      </h3>
-      <div className="rep-menu-list">
-        <div className="rep-toggle-row">
-          <span className="rep-info-icon">
-            <MapPin size={17} />
-          </span>
-          <div className="rep-menu-label-col">
-            <span className="rep-menu-label">Compartir ubicación</span>
-            <span className="rep-menu-sublabel">
-              Para mejorar la precisión de las entregas
-            </span>
-          </div>
-          <button
-            type="button"
-            className={
-              compartirUbicacion ? "toggle-switch active" : "toggle-switch"
-            }
-            onClick={() => setCompartirUbicacion((v) => !v)}
-          >
-            <span className="toggle-knob" />
-          </button>
-        </div>
-        <button type="button" className="rep-menu-row">
-          <span className="rep-info-icon">
-            <Navigation size={17} />
-          </span>
-          <div
-            className="rep-menu-label-col"
-            onClick={() =>
-              navigate("/repartidor/configuracion/navegacion-externa")
-            }
-          >
-            <span className="rep-menu-label">Navegación externa</span>
-            <span className="rep-menu-sublabel">Abrir en Google Maps</span>
-          </div>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-      </div>
+      <button
+        type="button"
+        className="rep-menu-row rep-logout-row"
+        onClick={() => setMostrarConfirmacion(true)}
+      >
+        <span className="rep-info-icon rep-logout-icon">
+          <LogOut size={17} />
+        </span>
+        <span className="rep-logout-label">Cerrar sesión</span>
+        <ChevronRight size={17} color="#dc2626" />
+      </button>
 
-      <h3 className="rep-section-title-sm rep-config-group-title">
-        <ShieldCheck size={15} /> Privacidad y seguridad
-      </h3>
-      <div className="rep-menu-list">
-        <div className="rep-toggle-row">
-          <span className="rep-info-icon">
-            <Fingerprint size={17} />
-          </span>
-          <div className="rep-menu-label-col">
-            <span className="rep-menu-label">Autenticación en dos pasos</span>
-            <span className="rep-menu-sublabel">
-              Mayor seguridad para tu cuenta
-            </span>
-          </div>
-          <button
-            type="button"
-            className={dosFactores ? "toggle-switch active" : "toggle-switch"}
-            onClick={() => setDosFactores((v) => !v)}
-          >
-            <span className="toggle-knob" />
-          </button>
-        </div>
-        <button type="button" className="rep-menu-row">
-          <span className="rep-info-icon">
-            <Lock size={17} />
-          </span>
-          <div className="rep-menu-label-col">
-            <span className="rep-menu-label">Bloqueo de aplicación</span>
-            <span className="rep-menu-sublabel">Usa huella o PIN</span>
-          </div>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-      </div>
-
-      <h3 className="rep-section-title-sm rep-config-group-title">
-        <HelpCircle size={15} /> Soporte
-      </h3>
-      <div className="rep-menu-list">
-        <button
-          type="button"
-          className="rep-menu-row"
-          onClick={() => navigate("/repartidor/centro-ayuda")}
-        >
-          <span className="rep-info-icon">
-            <HelpCircle size={17} />
-          </span>
-          <span className="rep-menu-label">Ayuda y soporte</span>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-        <button
-          type="button"
-          className="rep-menu-row"
-          onClick={() => navigate("/repartidor/terminos-condiciones")}
-        >
-          <span className="rep-info-icon">
-            <FileText size={17} />
-          </span>
-          <span className="rep-menu-label">Términos y condiciones</span>
-          <ChevronRight size={17} color="#9ca3af" />
-        </button>
-      </div>
+      <ConfirmModal
+        open={mostrarConfirmacion}
+        title="¿Cerrar sesión?"
+        message="Tendrás que volver a iniciar sesión con tu número de teléfono y contraseña para acceder de nuevo."
+        confirmLabel="Cerrar sesión"
+        cancelLabel="Cancelar"
+        danger
+        onConfirm={cerrarSesion}
+        onCancel={() => setMostrarConfirmacion(false)}
+      />
     </div>
   );
 }

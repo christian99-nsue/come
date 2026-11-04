@@ -5,6 +5,14 @@ import "../../styles/repartidor/LayoutRepartidor.css";
 import { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { useRef } from "react";
+import {
+  aplicarTema,
+  cargarPreferencias,
+  leerCache,
+  reproducirSonido,
+} from "../../utils/preferenciasRepartidor";
+import "../../styles/repartidor/RepartidorDark.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,6 +21,15 @@ export default function LayoutRepartidor() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [mostrarConfirmacionLogout, setMostrarConfirmacionLogout] =
     useState(false);
+
+  // Tema y preferencias: se pinta al instante con la copia local y se sincroniza con el servidor
+  useEffect(() => {
+    aplicarTema(leerCache().tema);
+    cargarPreferencias().catch(() => {});
+
+    // Al salir del panel (o cerrar sesión) se quita el tema oscuro
+    return () => document.documentElement.removeAttribute("data-theme");
+  }, []);
 
   const cerrarSesion = () => {
     localStorage.removeItem("token");
@@ -51,8 +68,9 @@ function HeaderRepartidor({ onMenuClick }: { onMenuClick: () => void }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [noLeidas, setNoLeidas] = useState(0);
+  const anterior = useRef<number | null>(null);
 
-  // Se actualiza al cambiar de pantalla (así baja el número al leer) y cada 30 s
+  // Se actualiza al cambiar de pantalla y cada 30 s. Si subió, suena un aviso.
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -61,7 +79,18 @@ function HeaderRepartidor({ onMenuClick }: { onMenuClick: () => void }) {
         .get(`${API_URL}/api/repartidor/notificaciones/no-leidas`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-        .then((res) => setNoLeidas(res.data.total))
+        .then((res) => {
+          const total: number = res.data.total;
+          if (
+            anterior.current !== null &&
+            total > anterior.current &&
+            leerCache().sonido_notificaciones
+          ) {
+            reproducirSonido();
+          }
+          anterior.current = total;
+          setNoLeidas(total);
+        })
         .catch(() => {});
     };
 

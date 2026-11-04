@@ -174,3 +174,14 @@
   display: block;
   opacity: 0.9;
 }
+
+/* Inicial del nombre cuando no hay foto */
+.cliente-drawer-avatar.fallback {
+  background-color: #16a34a;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

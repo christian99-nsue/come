@@ -1,97 +1,83 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { Trash2, Minus, Plus, ChevronRight, PackagePlus } from "lucide-react";
+import ConfirmModal from "../../components/common/ConfirmModal";
+import { useCarrito } from "../../context/useCarrito";
+import BannerVentanas from "../../components/common/BannerVentanas";
+import { useVentanas } from "../../hooks/useVentanas";
 import {
-  Trash2,
-  Minus,
-  Plus,
-  ChevronRight,
-  PackagePlus,
-  Ticket,
-  MapPin,
-  Clock,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import burgerHouse from "../../assets/burger-house.jpg";
-import combo from "../../assets/combo.png";
-import "../../styles/cliente/carrito.css";
+  calcularLineas,
+  formatXAF,
+  type PlatoCatalogo,
+} from "../../utils/carritoCalculos";
+import "../../styles/cliente/Carrito.css";
 
-interface CartItem {
-  id: string;
+const API_URL = import.meta.env.VITE_API_URL;
+
+interface DatosRestaurante {
+  id: number;
   nombre: string;
-  descripcion: string;
-  precio: number;
-  cantidad: number;
-  imagen: string;
-}
-
-interface Restaurante {
-  nombre: string;
-  minimo: number;
-  imagen: string;
-  id: string;
-}
-
-const restauranteMock: Restaurante = {
-  nombre: "Burger House",
-  minimo: 3000,
-  imagen: burgerHouse,
-  id: "1",
-};
-
-const itemsIniciales: CartItem[] = [
-  {
-    id: "combo-clasico",
-    nombre: "Combo Clasico",
-    descripcion: "Hamburguesas, papas fritas y refresco",
-    precio: 3500,
-    cantidad: 1,
-    imagen: combo,
-  },
-];
-
-function formatXAF(valor: number) {
-  return `${valor.toLocaleString("es-ES")} XAF`;
+  logo: string | null;
+  abierto: boolean;
+  costo_envio: number;
+  pedido_minimo: number;
 }
 
 export default function Carrito() {
-  const [items, setItems] = useState<CartItem[]>(itemsIniciales);
-  const [direccion] = useState("Malabo, Centro- Calle Acacio Mañe");
-  const [tiempoEntrega] = useState("Lo antes posible (20 - 30 min)");
   const navigate = useNavigate();
-  const subtotal = items.reduce(
-    (acc, item) => acc + item.precio * item.cantidad,
-    0,
-  );
-  const envio = 0;
-  const servicio = 0;
-  const total = subtotal + envio + servicio;
+  const location = useLocation();
+  const avisoRepetir = (location.state as { aviso?: string } | null)?.aviso;
+  const token = localStorage.getItem("token");
 
-  const aumentarCantidad = (id: string) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, cantidad: item.cantidad + 1 } : item,
-      ),
-    );
-  };
+  const { restaurante, items, cambiarCantidad, quitar, vaciar } = useCarrito();
+  const { ventanas } = useVentanas();
 
-  const disminuirCantidad = (id: string) => {
-    setItems((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, cantidad: item.cantidad - 1 } : item,
-        )
-        .filter((item) => item.cantidad > 0),
-    );
-  };
+  const [catalogo, setCatalogo] = useState<PlatoCatalogo[] | null>(null);
+  const [datos, setDatos] = useState<DatosRestaurante | null>(null);
+  const [error, setError] = useState("");
+  const [confirmarVaciar, setConfirmarVaciar] = useState(false);
 
-  const eliminarItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  // Se piden los precios y la disponibilidad actuales cuando cambian los productos del carrito.
+  const idsClave = items
+    .map((i) => i.plato_id)
+    .sort()
+    .join(",");
 
-  const vaciarCarrito = () => {
-    setItems([]);
-  };
+  useEffect(() => {
+    if (!restaurante || items.length === 0) return;
 
-  if (items.length === 0) {
+    let cancelado = false;
+
+    axios
+      .post(
+        `${API_URL}/api/cliente/carrito/detalle`,
+        {
+          restaurante_id: restaurante.id,
+          items: items.map((i) => ({ plato_id: i.plato_id })),
+        },
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+      .then((res) => {
+        if (cancelado) return;
+        setCatalogo(res.data.platos);
+        setDatos(res.data.restaurante);
+      })
+      .catch(() => {
+        if (!cancelado) {
+          setError(
+            "No se pudo verificar tu carrito. Revisa tu conexión e inténtalo de nuevo.",
+          );
+        }
+      });
+
+    return () => {
+      cancelado = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restaurante?.id, idsClave]);
+
+  if (!restaurante || items.length === 0) {
     return (
       <div className="carrito-page">
         <section className="carrito-header">
@@ -100,16 +86,50 @@ export default function Carrito() {
             <p className="carrito-subtitle">Tu carrito está vacío</p>
           </div>
         </section>
+
+        <BannerVentanas />
+
         <p className="carrito-empty-text">
           Explora los restaurantes y añade productos a tu carrito.
         </p>
+
+        <button
+          type="button"
+          className="checkout-btn"
+          onClick={() => navigate("/cliente/restaurantes")}
+        >
+          <span>Ver restaurantes</span>
+        </button>
       </div>
     );
   }
 
+  const { lineas, subtotal, hayProblemas } = calcularLineas(items, catalogo);
+  const envio = datos ? datos.costo_envio : 0;
+  const total = subtotal + envio;
+  const minimo = datos ? datos.pedido_minimo : 0;
+  const bajoMinimo = datos !== null && subtotal < minimo;
+  const cerrado = datos !== null && !datos.abierto;
+
+  let motivoBloqueo = "";
+
+  if (ventanas && ventanas.length === 0) {
+    motivoBloqueo = "No hay ventanas de entrega disponibles por ahora";
+  } else if (error) {
+    motivoBloqueo = error;
+  } else if (cerrado) {
+    motivoBloqueo = "El restaurante está cerrado en este momento.";
+  } else if (hayProblemas) {
+    motivoBloqueo =
+      "Quita los productos que ya no están disponibles para continuar.";
+  } else if (bajoMinimo) {
+    motivoBloqueo = `El pedido mínimo de este restaurante es ${formatXAF(minimo)}.`;
+  }
+
+  const puedeContinuar = datos !== null && !motivoBloqueo;
+
   return (
     <div className="carrito-page">
-      {/* Encabezado */}
       <section className="carrito-header">
         <div>
           <h1 className="carrito-title">Mi carrito</h1>
@@ -117,72 +137,106 @@ export default function Carrito() {
             Revisa tu pedido antes de confirmar
           </p>
         </div>
+
         <button
           type="button"
           className="carrito-clear-btn"
-          onClick={vaciarCarrito}
+          onClick={() => setConfirmarVaciar(true)}
           aria-label="Vaciar carrito"
         >
           <Trash2 size={18} />
         </button>
       </section>
 
-      {/* Card del restaurante + items */}
+      <BannerVentanas />
+
+      {avisoRepetir && <p className="carrito-warning">{avisoRepetir}</p>}
+
       <section className="restaurant-order-card">
-        <div className="restaurant-order-top">
+        <div
+          className="restaurant-order-top"
+          role="button"
+          tabIndex={0}
+          onClick={() => navigate(`/cliente/restaurante/${restaurante.id}`)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              navigate(`/cliente/restaurante/${restaurante.id}`);
+            }
+          }}
+        >
           <img
-            src={restauranteMock.imagen}
-            alt={restauranteMock.nombre}
+            src={
+              datos?.logo ||
+              `https://picsum.photos/seed/restaurante-${restaurante.id}/80/80`
+            }
+            alt={restaurante.nombre}
             className="restaurant-order-img"
           />
+
           <div className="restaurant-order-info">
-            <span className="restaurant-order-name">
-              {restauranteMock.nombre}
-            </span>
-            <span className="restaurant-order-min">
-              Minimo {formatXAF(restauranteMock.minimo)}
-            </span>
+            <span className="restaurant-order-name">{restaurante.nombre}</span>
+
+            {minimo > 0 && (
+              <span className="restaurant-order-min">
+                Mínimo {formatXAF(minimo)}
+              </span>
+            )}
           </div>
+
           <ChevronRight size={18} className="carrito-chevron" />
         </div>
 
-        {items.map((item) => (
-          <div key={item.id} className="cart-item-row">
+        {lineas.map((l) => (
+          <div key={l.item.plato_id} className="cart-item-row">
             <div className="cart-item-img-wrapper">
               <img
-                src={item.imagen}
-                alt={item.nombre}
+                src={
+                  l.imagen ||
+                  `https://picsum.photos/seed/plato-${l.item.plato_id}/120/120`
+                }
+                alt={l.nombre}
                 className="cart-item-img"
               />
-              <span className="cart-item-qty-badge">{item.cantidad}</span>
+              <span className="cart-item-qty-badge">{l.item.cantidad}</span>
             </div>
+
             <div className="cart-item-info">
-              <span className="cart-item-name">{item.nombre}</span>
-              <span className="cart-item-desc">{item.descripcion}</span>
-              <span className="cart-item-price">{formatXAF(item.precio)}</span>
+              <span className="cart-item-name">{l.nombre}</span>
+
+              {l.problema ? (
+                <span className="cart-item-problem">{l.problema}</span>
+              ) : (
+                <span className="cart-item-price">{formatXAF(l.precio)}</span>
+              )}
             </div>
+
             <div className="cart-item-actions">
-              <div className="cart-item-stepper">
-                <button
-                  type="button"
-                  onClick={() => disminuirCantidad(item.id)}
-                  aria-label="Disminuir cantidad"
-                >
-                  <Minus size={14} />
-                </button>
-                <span>{item.cantidad}</span>
-                <button
-                  type="button"
-                  onClick={() => aumentarCantidad(item.id)}
-                  aria-label="Aumentar cantidad"
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
+              {!l.problema && (
+                <div className="cart-item-stepper">
+                  <button
+                    type="button"
+                    onClick={() => cambiarCantidad(l.item.plato_id, -1)}
+                    aria-label="Disminuir cantidad"
+                  >
+                    <Minus size={14} />
+                  </button>
+
+                  <span>{l.item.cantidad}</span>
+
+                  <button
+                    type="button"
+                    onClick={() => cambiarCantidad(l.item.plato_id, 1)}
+                    aria-label="Aumentar cantidad"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+              )}
+
               <button
                 type="button"
                 className="cart-item-delete"
-                onClick={() => eliminarItem(item.id)}
+                onClick={() => quitar(l.item.plato_id)}
                 aria-label="Eliminar producto"
               >
                 <Trash2 size={16} />
@@ -194,102 +248,69 @@ export default function Carrito() {
         <button
           type="button"
           className="add-more-row"
-          onClick={() => navigate(`/cliente/restaurante/${restauranteMock.id}`)}
+          onClick={() => navigate(`/cliente/restaurante/${restaurante.id}`)}
         >
           <span className="add-more-icon">
             <PackagePlus size={18} />
           </span>
+
           <div className="add-more-text">
-            <span className="add-more-title">Añadir mas productos</span>
+            <span className="add-more-title">Añadir más productos</span>
             <span className="add-more-subtitle">
-              Explora el menu del restaurante
+              Explora el menú del restaurante
             </span>
           </div>
+
           <ChevronRight size={18} className="carrito-chevron" />
         </button>
       </section>
 
-      {/* Cupón */}
-      <button
-        type="button"
-        className="coupon-row"
-        onClick={() => navigate("/cliente/cupon")}
-      >
-        <span className="coupon-icon">
-          <Ticket size={18} />
-        </span>
-        <div className="coupon-text">
-          <span className="coupon-title">¿Tienes un cupon?</span>
-          <span className="coupon-subtitle">
-            Añade tu codigo y obten descuentos
-          </span>
-        </div>
-        <ChevronRight size={18} className="carrito-chevron" />
-      </button>
-
-      {/* Resumen del pedido */}
       <section className="order-summary">
         <h3 className="order-summary-title">Resumen del pedido</h3>
+
         <div className="order-summary-row">
           <span>Subtotal</span>
           <span>{formatXAF(subtotal)}</span>
         </div>
+
         <div className="order-summary-row">
-          <span>Envio</span>
-          <span>{formatXAF(envio)}</span>
+          <span>Envío</span>
+          <span>{datos ? formatXAF(envio) : "Calculando..."}</span>
         </div>
-        <div className="order-summary-row">
-          <span>Servicio</span>
-          <span>{formatXAF(servicio)}</span>
-        </div>
+
         <div className="order-summary-divider" />
+
         <div className="order-summary-row order-summary-total">
           <span>Total</span>
           <span>{formatXAF(total)}</span>
         </div>
       </section>
 
-      {/* Dirección de entrega */}
-      <button
-        type="button"
-        className="info-row"
-        onClick={() => navigate("/cliente/direccion-entrega")}
-      >
-        <span className="info-row-icon">
-          <MapPin size={18} />
-        </span>
-        <div className="info-row-text">
-          <span className="info-row-title">Direccion de entrega</span>
-          <span className="info-row-subtitle">{direccion}</span>
-        </div>
-        <ChevronRight size={18} className="carrito-chevron" />
-      </button>
+      {motivoBloqueo && <p className="carrito-warning">{motivoBloqueo}</p>}
 
-      {/* Tiempo de entrega */}
-      <button
-        type="button"
-        className="info-row"
-        onClick={() => navigate("/cliente/tiempo-entrega")}
-      >
-        <span className="info-row-icon">
-          <Clock size={18} />
-        </span>
-        <div className="info-row-text">
-          <span className="info-row-title">Tiempo de entrega</span>
-          <span className="info-row-subtitle">{tiempoEntrega}</span>
-        </div>
-        <ChevronRight size={18} className="carrito-chevron" />
-      </button>
-
-      {/* Botón finalizar pedido */}
       <button
         type="button"
         className="checkout-btn"
-        onClick={() => navigate("/cliente/finalizar-pedido")}
+        disabled={!puedeContinuar}
+        onClick={() => navigate("/cliente/direccion-entrega")}
       >
-        <span>Finalizar pedido</span>
+        <span>Continuar</span>
         <span>{formatXAF(total)}</span>
       </button>
+
+      <ConfirmModal
+        open={confirmarVaciar}
+        title="¿Vaciar el carrito?"
+        message="Se quitarán todos los productos de tu pedido."
+        confirmLabel="Vaciar carrito"
+        cancelLabel="Cancelar"
+        danger
+        onConfirm={() => {
+          vaciar();
+          setConfirmarVaciar(false);
+        }}
+        onCancel={() => setConfirmarVaciar(false)}
+      />
     </div>
   );
 }

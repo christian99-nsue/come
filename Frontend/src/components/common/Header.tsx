@@ -1,4 +1,4 @@
-import { Menu, Bell, Package } from "lucide-react";
+import { Menu, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
@@ -24,10 +24,9 @@ export default function Header({
       </button>
 
       <div className="header-brand">
-        <div className="header-logo-circle">
-          <Package size={20} className="header-logo-icon" strokeWidth={2} />
-        </div>
-        <span className="header-brand-name">COME</span>
+        <span className="header-brand-name">
+          <strong className="header-logo-icon">CO</strong>ME
+        </span>
       </div>
 
       <button

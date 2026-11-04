@@ -413,6 +413,102 @@
   white-space: nowrap;
 }
 
+/* Lista de pedidos en curso */
+.active-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.active-order-card {
+  cursor: pointer;
+}
+
+.active-order-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+.active-order-total {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.active-order-link {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* Paso que está en curso */
+.order-step-icon.current {
+  border-color: #16a34a;
+  background-color: #ecfdf3;
+  color: #16a34a;
+}
+
+.order-step-label.current {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.order-history-card {
+  cursor: pointer;
+}
+
+.reorder-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pedidos-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin: 30px 0;
+}
+
+.pedidos-status.error {
+  color: #dc2626;
+}
+
+.pedidos-warning {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #92400e;
+  background-color: #fef3c7;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+}
+
+.pedidos-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.pedidos-empty-btn {
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 @media (max-width: 430px) {
   .pedidos-page {
     max-width: 100%;

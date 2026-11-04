@@ -35,8 +35,11 @@ export default function PagosConfigAdmin() {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        if (res.data.metodos_pago_aceptados) {
-          setSeleccionados(JSON.parse(res.data.metodos_pago_aceptados));
+        const guardados = res.data.metodos_pago_aceptados;
+        if (guardados) {
+          setSeleccionados(
+            Array.isArray(guardados) ? guardados : JSON.parse(guardados),
+          );
         }
       })
       .catch(() => setError("No se pudo cargar la configuración"))

@@ -1,24 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sun, CircleDot, Zap, Eye, Info } from "lucide-react";
+import { ArrowLeft, Sun, CircleDot, Zap, Info } from "lucide-react";
+import {
+  aplicarPreferencias,
+  leerCache,
+  cargarPreferencias,
+  guardarPreferencias,
+  type PreferenciasCliente,
+  type TamanoTexto,
+} from "../../utils/preferenciasCliente";
 import "../../styles/cliente/Accesibilidad.css";
 
-type TamanoTexto = "pequeno" | "normal" | "grande" | "muy_grande";
-type Contraste = "normal" | "alto";
+const tamanos: { id: TamanoTexto; label: string; size: number }[] = [
+  { id: "pequeno", label: "Pequeño", size: 12 },
+  { id: "normal", label: "Normal", size: 14 },
+  { id: "grande", label: "Grande", size: 16 },
+  { id: "muy_grande", label: "Muy grande", size: 18 },
+];
 
 export default function Accesibilidad() {
   const navigate = useNavigate();
-  const [tamanoTexto, setTamanoTexto] = useState<TamanoTexto>("normal");
-  const [contraste, setContraste] = useState<Contraste>("normal");
-  const [reduceMovimiento, setReduceMovimiento] = useState(false);
-  const [modoDaltonismo, setModoDaltonismo] = useState(false);
 
-  const opcionesTamano: { id: TamanoTexto; label: string; size: number }[] = [
-    { id: "pequeno", label: "Pequeño", size: 12 },
-    { id: "normal", label: "Normal", size: 14 },
-    { id: "grande", label: "Grande", size: 16 },
-    { id: "muy_grande", label: "Muy grande", size: 18 },
-  ];
+  const [prefs, setPrefs] = useState<PreferenciasCliente>(leerCache());
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    cargarPreferencias()
+      .then(setPrefs)
+      .catch(() => {});
+  }, []);
+
+  const cambiar = async (cambio: Partial<PreferenciasCliente>) => {
+    const anterior = prefs;
+    const nuevo = { ...prefs, ...cambio };
+
+    setPrefs(nuevo);
+    aplicarPreferencias(nuevo); // se ve al instante
+    setError("");
+
+    try {
+      setPrefs(await guardarPreferencias(cambio));
+    } catch {
+      // Si el servidor falla, todo vuelve a como estaba
+      setPrefs(anterior);
+      aplicarPreferencias(anterior);
+      setError("No se pudo guardar tu preferencia");
+    }
+  };
 
   return (
     <div className="accesibilidad-page">
@@ -36,20 +64,20 @@ export default function Accesibilidad() {
 
       <h3 className="accesibilidad-section-title">Tamaño de texto</h3>
       <div className="accesibilidad-list">
-        {opcionesTamano.map((op) => (
+        {tamanos.map((t) => (
           <button
-            key={op.id}
+            key={t.id}
             type="button"
             className="accesibilidad-row"
-            onClick={() => setTamanoTexto(op.id)}
+            onClick={() => cambiar({ tamano_texto: t.id })}
           >
-            <span className="accesibilidad-aa" style={{ fontSize: op.size }}>
+            <span className="accesibilidad-aa" style={{ fontSize: t.size }}>
               Aa
             </span>
-            <span className="accesibilidad-label">{op.label}</span>
+            <span className="accesibilidad-label">{t.label}</span>
             <span
               className={
-                tamanoTexto === op.id
+                prefs.tamano_texto === t.id
                   ? "accesibilidad-radio active"
                   : "accesibilidad-radio"
               }
@@ -63,7 +91,7 @@ export default function Accesibilidad() {
         <button
           type="button"
           className="accesibilidad-row"
-          onClick={() => setContraste("normal")}
+          onClick={() => cambiar({ alto_contraste: false })}
         >
           <span className="accesibilidad-icon">
             <Sun size={18} />
@@ -71,7 +99,7 @@ export default function Accesibilidad() {
           <span className="accesibilidad-label">Normal</span>
           <span
             className={
-              contraste === "normal"
+              !prefs.alto_contraste
                 ? "accesibilidad-radio active"
                 : "accesibilidad-radio"
             }
@@ -80,7 +108,7 @@ export default function Accesibilidad() {
         <button
           type="button"
           className="accesibilidad-row"
-          onClick={() => setContraste("alto")}
+          onClick={() => cambiar({ alto_contraste: true })}
         >
           <span className="accesibilidad-icon">
             <CircleDot size={18} />
@@ -88,7 +116,7 @@ export default function Accesibilidad() {
           <span className="accesibilidad-label">Alto contraste</span>
           <span
             className={
-              contraste === "alto"
+              prefs.alto_contraste
                 ? "accesibilidad-radio active"
                 : "accesibilidad-radio"
             }
@@ -102,49 +130,35 @@ export default function Accesibilidad() {
             <Zap size={18} />
           </span>
           <div className="accesibilidad-toggle-text">
-            <span className="accesibilidad-label">Reduce movimiento</span>
+            <span className="accesibilidad-label">Reducir movimiento</span>
             <span className="accesibilidad-subtitle">
-              Disminuye las animaciones y efectos en la app.
+              Disminuye las animaciones y apaga el avance automático de los
+              banners.
             </span>
           </div>
           <button
             type="button"
             className={
-              reduceMovimiento ? "toggle-switch active" : "toggle-switch"
+              prefs.reducir_movimiento
+                ? "toggle-switch active"
+                : "toggle-switch"
             }
-            onClick={() => setReduceMovimiento((v) => !v)}
-            aria-label="Activar/desactivar reducir movimiento"
-          >
-            <span className="toggle-knob" />
-          </button>
-        </div>
-
-        <div className="accesibilidad-row-toggle">
-          <span className="accesibilidad-icon">
-            <Eye size={18} />
-          </span>
-          <div className="accesibilidad-toggle-text">
-            <span className="accesibilidad-label">Modo de daltonismo</span>
-            <span className="accesibilidad-subtitle">
-              Mejora la visualización de colores para personas con daltonismo.
-            </span>
-          </div>
-          <button
-            type="button"
-            className={
-              modoDaltonismo ? "toggle-switch active" : "toggle-switch"
+            onClick={() =>
+              cambiar({ reducir_movimiento: !prefs.reducir_movimiento })
             }
-            onClick={() => setModoDaltonismo((v) => !v)}
-            aria-label="Activar/desactivar modo de daltonismo"
+            aria-label="Activar o desactivar reducir movimiento"
+            aria-pressed={prefs.reducir_movimiento}
           >
             <span className="toggle-knob" />
           </button>
         </div>
       </div>
 
+      {error && <p className="accesibilidad-error">{error}</p>}
+
       <div className="accesibilidad-note">
         <Info size={16} className="accesibilidad-note-icon" />
-        Estas opciones te ayudarán a tener una mejor experiencia en la app.
+        El tamaño de texto amplía toda la interfaz, no solo las letras.
       </div>
     </div>
   );

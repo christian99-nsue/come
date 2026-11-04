@@ -1,155 +1,269 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Package,
   Clock,
   Ban,
   Check,
-  Scooter,
-  Wallet,
-  RotateCw,
+  ChefHat,
+  Bike,
+  PackageCheck,
   ChevronRight,
-  Truck,
+  RotateCw,
 } from "lucide-react";
-import pizzaTop from "../../assets/pizza-top.jpg";
-import wokExpress from "../../assets/wok-express.jpg";
-import bites from "../../assets/bites.png";
-import chicken from "../../assets/chicken.png";
-import combo from "../../assets/combo.png";
-import repartidor from "../../assets/repartidor.png";
-import "../../styles/cliente/pedidos.css";
+import { useRepetirPedido } from "../../hooks/useRepetirPedido";
+import { formatXAF } from "../../utils/carritoCalculos";
+import {
+  pasosCompactos,
+  completadosCompacto,
+  mensajeEstado,
+  formatFechaHora,
+  type EstadoPedido,
+} from "../../utils/seguimientoPedido";
+import "../../styles/cliente/Pedidos.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 type Tab = "activos" | "historial" | "cancelados";
-type EstadoPedido =
-  | "confirmado"
-  | "preparando"
-  | "en_camino"
-  | "entregado"
-  | "cancelado";
 
-interface Pedido {
-  id: string;
-  numero: string;
-  restaurante: string;
-  imagen: string;
-  fecha: string;
+interface PedidoLista {
+  id: number;
+  codigo: string;
   estado: EstadoPedido;
   total: number;
-  // solo para el pedido activo destacado
-  llegadaEstimada?: string;
-  repartidor?: string;
-  repartidorImg?: string;
+  productos: number;
+  restaurante_nombre: string;
+  restaurante_logo: string | null;
+  repartidor_nombre: string | null;
+  fecha_creacion: string;
 }
 
-const pasosEstado = [
-  { key: "confirmado", label: "Confirmado", icon: Check },
-  { key: "preparando", label: "Preparando", icon: Package },
-  { key: "en_camino", label: "En camino", icon: Scooter },
-  { key: "entregado", label: "Entregado", icon: Wallet },
-] as const;
-
-const pedidosMock: Pedido[] = [
-  {
-    id: "1",
-    numero: "#12345",
-    restaurante: "Burger House",
-    imagen: combo,
-    fecha: "Hoy, 10:30",
-    estado: "en_camino",
-    total: 3500,
-    llegadaEstimada: "10 - 15 min",
-    repartidor: "Marta",
-    repartidorImg: repartidor,
-  },
-  {
-    id: "2",
-    numero: "#12345",
-    restaurante: "Pizza Top",
-    imagen: pizzaTop,
-    fecha: "Ayer, 20:15",
-    estado: "entregado",
-    total: 7500,
-  },
-  {
-    id: "3",
-    numero: "#12345",
-    restaurante: "Wok Express",
-    imagen: wokExpress,
-    fecha: "15 jul, 20:15",
-    estado: "entregado",
-    total: 6000,
-  },
-  {
-    id: "4",
-    numero: "#12345",
-    restaurante: "Chicken Spot",
-    imagen: chicken,
-    fecha: "20 jun, 20:15",
-    estado: "cancelado",
-    total: 4500,
-  },
-  {
-    id: "5",
-    numero: "#12345",
-    restaurante: "Green Bites",
-    imagen: bites,
-    fecha: "15 jun, 20:15",
-    estado: "entregado",
-    total: 5200,
-  },
-  {
-    id: "6",
-    numero: "#12345",
-    restaurante: "Chicken Spot",
-    imagen: chicken,
-    fecha: "20 jun, 20:15",
-    estado: "entregado",
-    total: 4500,
-  },
-];
-
-function formatXAF(valor: number) {
-  return `${valor.toLocaleString("es-ES")} XAF`;
+interface Datos {
+  activos: PedidoLista[];
+  historial: PedidoLista[];
+  cancelados: PedidoLista[];
 }
 
-function estadoLabel(estado: EstadoPedido) {
-  switch (estado) {
-    case "entregado":
-      return "Entregado";
-    case "cancelado":
-      return "Cancelado";
-    case "en_camino":
-      return "En camino";
-    case "preparando":
-      return "Preparando";
-    case "confirmado":
-      return "Confirmado";
-  }
+const iconosPasos = [Check, ChefHat, Bike, PackageCheck];
+
+function etiquetaFinal(estado: EstadoPedido) {
+  if (estado === "entregado") return "Entregado";
+  if (estado === "rechazado") return "Rechazado";
+  return "Cancelado";
 }
 
-const pasoIndexPorEstado: Record<EstadoPedido, number> = {
-  confirmado: 0,
-  preparando: 1,
-  en_camino: 2,
-  entregado: 3,
-  cancelado: -1,
-};
+function TarjetaActiva({
+  p,
+  onAbrir,
+}: {
+  p: PedidoLista;
+  onAbrir: () => void;
+}) {
+  const completados = completadosCompacto(p.estado);
+
+  return (
+    <div
+      className="active-order-card"
+      role="button"
+      tabIndex={0}
+      onClick={onAbrir}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") onAbrir();
+      }}
+    >
+      <div className="active-order-top">
+        <img
+          src={
+            p.restaurante_logo ||
+            `https://picsum.photos/seed/restaurante-${p.id}/120/120`
+          }
+          alt={p.restaurante_nombre}
+          className="active-order-img"
+        />
+        <div className="active-order-info">
+          <span className="active-order-name">{p.restaurante_nombre}</span>
+          <span className="active-order-meta">Pedido {p.codigo}</span>
+          <span className="active-order-meta">
+            {formatFechaHora(p.fecha_creacion)} · {p.productos}{" "}
+            {p.productos === 1 ? "producto" : "productos"}
+          </span>
+          <span className="active-order-status">
+            {mensajeEstado(p.estado, p.repartidor_nombre)}
+          </span>
+        </div>
+      </div>
+
+      <div className="order-stepper">
+        {pasosCompactos.map((label, i) => {
+          const Icon = iconosPasos[i];
+          const hecho = i < completados;
+          const enCurso =
+            i === completados && completados < pasosCompactos.length;
+
+          return (
+            <div className="order-step" key={label}>
+              <div
+                className={
+                  hecho
+                    ? "order-step-icon done"
+                    : enCurso
+                      ? "order-step-icon current"
+                      : "order-step-icon"
+                }
+              >
+                <Icon size={14} />
+              </div>
+              <span
+                className={
+                  hecho
+                    ? "order-step-label done"
+                    : enCurso
+                      ? "order-step-label current"
+                      : "order-step-label"
+                }
+              >
+                {label}
+              </span>
+              {i < pasosCompactos.length - 1 && (
+                <div
+                  className={
+                    i < completados - 1
+                      ? "order-step-line done"
+                      : "order-step-line"
+                  }
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="active-order-footer">
+        <span className="active-order-total">{formatXAF(p.total)}</span>
+        <span className="active-order-link">
+          Ver seguimiento <ChevronRight size={14} />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function TarjetaHistorial({
+  p,
+  onAbrir,
+  onRepetir,
+  ocupado,
+}: {
+  p: PedidoLista;
+  onAbrir: () => void;
+  onRepetir: () => void;
+  ocupado: boolean;
+}) {
+  const entregado = p.estado === "entregado";
+
+  return (
+    <div
+      className="order-history-card"
+      role="button"
+      tabIndex={0}
+      onClick={onAbrir}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") onAbrir();
+      }}
+    >
+      <img
+        src={
+          p.restaurante_logo ||
+          `https://picsum.photos/seed/restaurante-${p.id}/120/120`
+        }
+        alt={p.restaurante_nombre}
+        className="order-history-img"
+      />
+      <div className="order-history-info">
+        <span className="order-history-name">{p.restaurante_nombre}</span>
+        <span className="order-history-meta">Pedido {p.codigo}</span>
+        <span className="order-history-meta">
+          {formatFechaHora(p.fecha_creacion)}
+        </span>
+        <span
+          className={
+            entregado
+              ? "order-history-badge entregado"
+              : "order-history-badge cancelado"
+          }
+        >
+          {etiquetaFinal(p.estado)}
+        </span>
+      </div>
+      <div className="order-history-right">
+        <span className="order-history-price">
+          {formatXAF(p.total)} <ChevronRight size={14} />
+        </span>
+        {entregado && (
+          <button
+            type="button"
+            className="reorder-btn"
+            disabled={ocupado}
+            onClick={(e) => {
+              e.stopPropagation(); // no abrir el seguimiento al tocar este botón
+              onRepetir();
+            }}
+          >
+            <RotateCw size={13} />
+            {ocupado ? "Añadiendo..." : "Volver a pedir"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function Pedidos() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const { repetir, ocupado, aviso, modalConfirmacion } = useRepetirPedido();
+
   const [tab, setTab] = useState<Tab>("activos");
+  const [datos, setDatos] = useState<Datos | null>(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-  const pedidoActivo = pedidosMock.find(
-    (p) =>
-      p.estado === "en_camino" ||
-      p.estado === "preparando" ||
-      p.estado === "confirmado",
-  );
+  useEffect(() => {
+    const cargar = () =>
+      axios
+        .get(`${API_URL}/api/cliente/pedidos`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setDatos(res.data);
+          setError("");
+        })
+        .catch(() => setError("No se pudieron cargar tus pedidos"))
+        .finally(() => setCargando(false));
 
-  const historial = pedidosMock.filter((p) => p.estado === "entregado");
-  const cancelados = pedidosMock.filter((p) => p.estado === "cancelado");
+    cargar();
+    // Se actualiza sola para ver los cambios de estado sin recargar
+    const intervalo = setInterval(cargar, 15000);
+    return () => clearInterval(intervalo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const abrir = (id: number) => navigate(`/cliente/pedidos/${id}`);
+
+  const renderHistorial = (lista: PedidoLista[]) =>
+    lista.map((p) => (
+      <TarjetaHistorial
+        key={p.id}
+        p={p}
+        onAbrir={() => abrir(p.id)}
+        onRepetir={() => repetir(p.id)}
+        ocupado={ocupado === p.id}
+      />
+    ));
 
   return (
     <div className="pedidos-page">
-      {/* Encabezado */}
       <section className="pedidos-header">
         <div>
           <h1 className="pedidos-title">Mis pedidos</h1>
@@ -159,7 +273,6 @@ export default function Pedidos() {
         </div>
       </section>
 
-      {/* Tabs */}
       <div className="pedidos-tabs">
         <button
           type="button"
@@ -168,7 +281,9 @@ export default function Pedidos() {
         >
           <Package size={16} />
           Activos
-          {pedidoActivo && <span className="pedidos-tab-dot" />}
+          {datos && datos.activos.length > 0 && (
+            <span className="pedidos-tab-dot" />
+          )}
         </button>
         <button
           type="button"
@@ -190,213 +305,91 @@ export default function Pedidos() {
         </button>
       </div>
 
-      {/* Contenido: Activos */}
-      {tab === "activos" && (
+      {aviso && <p className="pedidos-warning">{aviso}</p>}
+      {cargando && <p className="pedidos-status">Cargando tus pedidos...</p>}
+      {!cargando && !datos && error && (
+        <p className="pedidos-status error">{error}</p>
+      )}
+
+      {datos && tab === "activos" && (
         <>
-          {pedidoActivo ? (
-            <section className="pedidos-section">
-              <div className="pedidos-section-header">
-                <h3>Pedido en camino</h3>
-                <button type="button" className="pedidos-link-btn">
-                  Ver detalles
-                </button>
-              </div>
-
-              <div className="active-order-card">
-                <div className="active-order-top">
-                  <img
-                    src={pedidoActivo.imagen}
-                    alt={pedidoActivo.restaurante}
-                    className="active-order-img"
-                  />
-                  <div className="active-order-info">
-                    <span className="active-order-name">
-                      {pedidoActivo.restaurante}
-                    </span>
-                    <span className="active-order-meta">
-                      Pedido {pedidoActivo.numero}
-                    </span>
-                    <span className="active-order-meta">
-                      {pedidoActivo.fecha}
-                    </span>
-                    <span className="active-order-status">
-                      {estadoLabel(pedidoActivo.estado)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Stepper de estado */}
-                <div className="order-stepper">
-                  {pasosEstado.map((paso, i) => {
-                    const currentIndex =
-                      pasoIndexPorEstado[pedidoActivo.estado];
-                    const isDone = i <= currentIndex;
-                    const Icon = paso.icon;
-                    return (
-                      <div className="order-step" key={paso.key}>
-                        <div
-                          className={
-                            isDone ? "order-step-icon done" : "order-step-icon"
-                          }
-                        >
-                          <Icon size={14} />
-                        </div>
-                        <span
-                          className={
-                            isDone
-                              ? "order-step-label done"
-                              : "order-step-label"
-                          }
-                        >
-                          {paso.label}
-                        </span>
-                        {i < pasosEstado.length - 1 && (
-                          <div
-                            className={
-                              isDone
-                                ? "order-step-line done"
-                                : "order-step-line"
-                            }
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Info de entrega + repartidor */}
-                {pedidoActivo.llegadaEstimada && (
-                  <div className="active-order-delivery">
-                    <div className="active-order-delivery-info">
-                      <Truck size={16} className="active-order-delivery-icon" />
-                      <div className="active-order-delivery-text">
-                        <span className="active-order-delivery-label">
-                          Llegada estimada
-                        </span>
-                        <span className="active-order-delivery-value">
-                          {pedidoActivo.llegadaEstimada}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="active-order-courier">
-                      <img
-                        src={pedidoActivo.repartidorImg}
-                        alt={pedidoActivo.repartidor}
-                        className="active-order-courier-img"
-                      />
-                      <div className="active-order-delivery-text">
-                        <span className="active-order-delivery-value">
-                          {pedidoActivo.repartidor}
-                        </span>
-                        <span className="active-order-delivery-label">
-                          Tu repartidor
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <button type="button" className="contact-btn">
-                        Contactar
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </section>
-          ) : (
-            <p className="pedidos-empty-text">
-              No tienes pedidos activos en este momento.
-            </p>
-          )}
-
-          {/* Historial reciente (siempre visible bajo Activos) */}
-          <section className="pedidos-section pedidos-section-last">
-            <div className="pedidos-section-header">
-              <h3>Historial reciente</h3>
-              <button type="button" className="pedidos-link-btn">
-                Ver todo
+          {datos.activos.length === 0 ? (
+            <div className="pedidos-empty">
+              <p className="pedidos-empty-text">
+                No tienes pedidos en curso en este momento.
+              </p>
+              <button
+                type="button"
+                className="pedidos-empty-btn"
+                onClick={() => navigate("/cliente/restaurantes")}
+              >
+                Ver restaurantes
               </button>
             </div>
-            <div className="order-history-list">
-              {pedidosMock
-                .filter((p) => p.id !== pedidoActivo?.id)
-                .map((p) => (
-                  <OrderHistoryCard key={p.id} pedido={p} />
+          ) : (
+            <section className="pedidos-section">
+              <div className="pedidos-section-header">
+                <h3>
+                  {datos.activos.length === 1
+                    ? "Pedido en curso"
+                    : "Pedidos en curso"}
+                </h3>
+              </div>
+              <div className="active-order-list">
+                {datos.activos.map((p) => (
+                  <TarjetaActiva key={p.id} p={p} onAbrir={() => abrir(p.id)} />
                 ))}
-            </div>
-          </section>
+              </div>
+            </section>
+          )}
+
+          {datos.historial.length > 0 && (
+            <section className="pedidos-section pedidos-section-last">
+              <div className="pedidos-section-header">
+                <h3>Historial reciente</h3>
+                <button
+                  type="button"
+                  className="pedidos-link-btn"
+                  onClick={() => setTab("historial")}
+                >
+                  Ver todo
+                </button>
+              </div>
+              <div className="order-history-list">
+                {renderHistorial(datos.historial.slice(0, 3))}
+              </div>
+            </section>
+          )}
         </>
       )}
 
-      {/* Contenido: Historial */}
-      {tab === "historial" && (
+      {datos && tab === "historial" && (
         <section className="pedidos-section pedidos-section-last">
-          {historial.length > 0 ? (
-            <div className="order-history-list">
-              {historial.map((p) => (
-                <OrderHistoryCard key={p.id} pedido={p} />
-              ))}
-            </div>
-          ) : (
+          {datos.historial.length === 0 ? (
             <p className="pedidos-empty-text">
               Aún no tienes pedidos entregados.
             </p>
-          )}
-        </section>
-      )}
-
-      {/* Contenido: Cancelados */}
-      {tab === "cancelados" && (
-        <section className="pedidos-section pedidos-section-last">
-          {cancelados.length > 0 ? (
-            <div className="order-history-list">
-              {cancelados.map((p) => (
-                <OrderHistoryCard key={p.id} pedido={p} />
-              ))}
-            </div>
           ) : (
-            <p className="pedidos-empty-text">No tienes pedidos cancelados.</p>
+            <div className="order-history-list">
+              {renderHistorial(datos.historial)}
+            </div>
           )}
         </section>
       )}
-    </div>
-  );
-}
 
-function OrderHistoryCard({ pedido }: { pedido: Pedido }) {
-  const esCancelado = pedido.estado === "cancelado";
+      {datos && tab === "cancelados" && (
+        <section className="pedidos-section pedidos-section-last">
+          {datos.cancelados.length === 0 ? (
+            <p className="pedidos-empty-text">No tienes pedidos cancelados.</p>
+          ) : (
+            <div className="order-history-list">
+              {renderHistorial(datos.cancelados)}
+            </div>
+          )}
+        </section>
+      )}
 
-  return (
-    <div className="order-history-card">
-      <img
-        src={pedido.imagen}
-        alt={pedido.restaurante}
-        className="order-history-img"
-      />
-      <div className="order-history-info">
-        <span className="order-history-name">{pedido.restaurante}</span>
-        <span className="order-history-meta">Pedido {pedido.numero}</span>
-        <span className="order-history-meta">{pedido.fecha}</span>
-        <span
-          className={
-            esCancelado
-              ? "order-history-badge cancelado"
-              : "order-history-badge entregado"
-          }
-        >
-          {estadoLabel(pedido.estado)}
-        </span>
-      </div>
-      <div className="order-history-right">
-        <span className="order-history-price">
-          {formatXAF(pedido.total)} <ChevronRight size={14} />
-        </span>
-        {!esCancelado && (
-          <button type="button" className="reorder-btn">
-            <RotateCw size={13} />
-            Volver a pedir
-          </button>
-        )}
-      </div>
+      {modalConfirmacion}
     </div>
   );
 }

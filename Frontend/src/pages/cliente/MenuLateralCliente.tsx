@@ -16,30 +16,36 @@ import {
 import { NavLink } from "react-router-dom";
 import { getUser } from "../../utils/auth";
 import "../../styles/cliente/MenuLateralCliente.css";
-import avatar from "../../assets/6.jpg";
 
 interface MenuLateralClienteProps {
   open: boolean;
   onClose: () => void;
   onLogoutClick: () => void;
+  noLeidas?: number;
 }
 
-const usuario = {
-  nombre: "Juan Pérez",
-  rol: "Cliente",
-  telefono: "+240 555 123 456",
-  avatar: avatar,
-};
+interface DatosUsuario {
+  nombre?: string | null;
+  telefono?: string | null;
+}
 
-const notificacionesSinLeer = 3;
+function datosUsuario() {
+  const u = getUser() as DatosUsuario | null;
+
+  return {
+    nombre: u?.nombre || "Mi cuenta",
+    telefono: u?.telefono || "",
+  };
+}
 
 export default function MenuLateralCliente({
   open,
   onClose,
   onLogoutClick,
+  noLeidas = 0,
 }: MenuLateralClienteProps) {
   const navigate = useNavigate();
-  const user = getUser();
+  const usuario = datosUsuario();
 
   if (!open) return null;
 
@@ -67,18 +73,17 @@ export default function MenuLateralCliente({
           className="cliente-drawer-user"
           onClick={() => ir("/cliente/perfil/editar-perfil")}
         >
-          <img
-            src={usuario.avatar}
-            alt={usuario.nombre}
-            className="cliente-drawer-avatar"
-          />
+          <div className="cliente-drawer-avatar fallback">
+            {usuario.nombre.charAt(0).toUpperCase()}
+          </div>
           <div className="cliente-drawer-user-info">
-            <span className="cliente-drawer-user-name">{user.nombre}</span>
-            <span className="cliente-drawer-user-role">{user.rol}</span>
-
-            <span className="cliente-drawer-user-phone">
-              <Phone size={14} /> {user.telefono}
-            </span>
+            <span className="cliente-drawer-user-name">{usuario.nombre}</span>
+            <span className="cliente-drawer-user-role">Cliente</span>
+            {usuario.telefono && (
+              <span className="cliente-drawer-user-phone">
+                <Phone size={12} /> {usuario.telefono}
+              </span>
+            )}
           </div>
           <ChevronRight size={18} className="cliente-drawer-chevron" />
         </button>
@@ -144,9 +149,9 @@ export default function MenuLateralCliente({
             onClick={onClose}
           >
             <Bell size={19} /> Notificaciones
-            {notificacionesSinLeer > 0 && (
+            {noLeidas > 0 && (
               <span className="cliente-drawer-badge">
-                {notificacionesSinLeer}
+                {noLeidas > 9 ? "9+" : noLeidas}
               </span>
             )}
           </NavLink>

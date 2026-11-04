@@ -1,10 +1,11 @@
 import { db } from "../../config/db";
+import { condicionLiberado } from "../ventanasService";
 
 // ===== Lectura (la usa el repartidor desde su app) =====
 
 export const listarNotificaciones = async (repartidorId: number) => {
   const [rows]: any = await db.query(
-    `SELECT id, tipo, titulo, mensaje, leida, pedido_id, fecha_creacion
+    `SELECT id, tipo, titulo, mensaje, leida, pedido_id, reporte_id, fecha_creacion
      FROM notificaciones_repartidor
      WHERE repartidor_id = ?
      ORDER BY fecha_creacion DESC
@@ -17,10 +18,12 @@ export const listarNotificaciones = async (repartidorId: number) => {
 
 export const contarNoLeidas = async (repartidorId: number) => {
   const [rows]: any = await db.query(
-    `SELECT COUNT(*) AS total FROM notificaciones_repartidor
+    `SELECT COUNT(*) AS total
+     FROM notificaciones_repartidor
      WHERE repartidor_id = ? AND leida = FALSE`,
     [repartidorId],
   );
+
   return Number(rows[0].total);
 };
 
@@ -29,31 +32,57 @@ export const marcarComoLeida = async (
   repartidorId: number,
 ) => {
   const [result]: any = await db.query(
-    `UPDATE notificaciones_repartidor SET leida = TRUE WHERE id = ? AND repartidor_id = ?`,
+    `UPDATE notificaciones_repartidor
+     SET leida = TRUE
+     WHERE id = ? AND repartidor_id = ?`,
     [notificacionId, repartidorId],
   );
-  if (result.affectedRows === 0) throw new Error("Notificación no encontrada");
+
+  if (result.affectedRows === 0) {
+    throw new Error("Notificación no encontrada");
+  }
+
   return { ok: true };
 };
 
 export const marcarTodasComoLeidas = async (repartidorId: number) => {
   await db.query(
-    `UPDATE notificaciones_repartidor SET leida = TRUE WHERE repartidor_id = ?`,
+    `UPDATE notificaciones_repartidor
+     SET leida = TRUE
+     WHERE repartidor_id = ?`,
     [repartidorId],
   );
+
   return { ok: true };
 };
 
 // ===== Creación (la llaman otros servicios cuando ocurre un evento) =====
 
-// Avisa a todos los repartidores disponibles de que hay un pedido nuevo para recoger
+// Avisa a los repartidores disponibles cuando un pedido está liberado
 export const notificarNuevoPedido = async (pedidoId: number) => {
+  // Comprobar si el pedido ya está liberado para reparto
+  const liberado = condicionLiberado("p");
+
+  const [liberadoYa]: any = await db.query(
+    `SELECT 1
+     FROM pedidos p
+     WHERE p.id = ?
+       AND ${liberado.sql}`,
+    [pedidoId, ...liberado.params],
+  );
+
+  // Si todavía no está liberado, no se envía ninguna notificación
+  if (liberadoYa.length === 0) return;
+
   // Si ya se avisó de este pedido, no se repite
   const [yaAvisado]: any = await db.query(
-    `SELECT id FROM notificaciones_repartidor
-     WHERE pedido_id = ? AND tipo = 'nuevo_pedido' LIMIT 1`,
+    `SELECT id
+     FROM notificaciones_repartidor
+     WHERE pedido_id = ? AND tipo = 'nuevo_pedido'
+     LIMIT 1`,
     [pedidoId],
   );
+
   if (yaAvisado.length > 0) return;
 
   const [rows]: any = await db.query(
@@ -63,13 +92,22 @@ export const notificarNuevoPedido = async (pedidoId: number) => {
      WHERE p.id = ?`,
     [pedidoId],
   );
+
   if (rows.length === 0) return;
 
   await db.query(
-    `INSERT INTO notificaciones_repartidor (repartidor_id, tipo, titulo, mensaje, pedido_id)
-     SELECT u.id, 'nuevo_pedido', 'Nuevo pedido disponible', ?, ?
+    `INSERT INTO notificaciones_repartidor
+       (repartidor_id, tipo, titulo, mensaje, pedido_id)
+     SELECT
+       u.id,
+       'nuevo_pedido',
+       'Nuevo pedido disponible',
+       ?,
+       ?
      FROM usuarios u
-     WHERE u.rol = 'repartidor' AND u.disponible = 1 AND u.notificaciones_activas = 1`,
+     WHERE u.rol = 'repartidor'
+       AND u.disponible = 1
+       AND u.notificaciones_activas = 1`,
     [`${rows[0].restaurante_nombre} · ${rows[0].codigo}`, pedidoId],
   );
 };
@@ -80,15 +118,19 @@ export const notificarEntregaRegistrada = async (
   pedidoId: number,
 ) => {
   const [rows]: any = await db.query(
-    `SELECT codigo, costo_envio FROM pedidos WHERE id = ?`,
+    `SELECT codigo, costo_envio
+     FROM pedidos
+     WHERE id = ?`,
     [pedidoId],
   );
+
   if (rows.length === 0) return;
 
   const ganancia = Number(rows[0].costo_envio).toLocaleString("es-ES");
 
   await db.query(
-    `INSERT INTO notificaciones_repartidor (repartidor_id, tipo, titulo, mensaje, pedido_id)
+    `INSERT INTO notificaciones_repartidor
+       (repartidor_id, tipo, titulo, mensaje, pedido_id)
      VALUES (?, 'entrega_registrada', 'Entrega registrada', ?, ?)`,
     [repartidorId, `${rows[0].codigo} · ganaste ${ganancia} XAF`, pedidoId],
   );

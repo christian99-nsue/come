@@ -119,6 +119,43 @@
   padding: 6px;
 }
 
+.favorito-card {
+  cursor: pointer;
+}
+
+.favorito-card.cerrado {
+  opacity: 0.6;
+}
+
+.favoritos-status {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  line-height: 1.5;
+  margin: 24px 16px;
+}
+
+.favoritos-status.error {
+  color: #dc2626;
+}
+
+.favoritos-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.favoritos-empty-btn {
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 @media (max-width: 430px) {
   .favoritos-page {
     max-width: 100%;

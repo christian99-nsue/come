@@ -150,7 +150,11 @@ export default function Login() {
         {/* Crear cuenta */}
         <p className="login-signup-text">
           ¿No tienes una cuenta?{" "}
-          <button type="button" className="login-signup-link">
+          <button
+            type="button"
+            className="login-signup-link"
+            onClick={() => navigate("/crear-cuenta")}
+          >
             Crear cuenta
           </button>
         </p>

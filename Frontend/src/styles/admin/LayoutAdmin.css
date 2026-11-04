@@ -108,6 +108,127 @@ button.admin-nav-item {
   color: #16a34a;
 }
 
+/* Interruptor Abierto / Cerrado */
+.admin-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.admin-status-bar.open {
+  background-color: #ecfdf3;
+  border-color: #bbf7d0;
+}
+
+.admin-status-text {
+  display: flex;
+  gap: 15px;
+  min-width: 0;
+}
+
+.admin-status-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.admin-status-bar.open .admin-status-title {
+  color: #16a34a;
+}
+
+.admin-status-sub {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.admin-status-warning {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #92400e;
+  background-color: #fef3c7;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 0 16px 8px;
+}
+
+.admin-status-warning.error {
+  color: #b91c1c;
+  background-color: #fef2f2;
+}
+
+/* Evita que el encabezado fijo tape la barra de estado */
+.admin-status-bar {
+  position: relative;
+  z-index: 1;
+  margin-top: 76px;
+}
+
+.admin-suspended-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.admin-suspended-banner strong {
+  font-size: 14px;
+}
+
+.admin-banner-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-expiry-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 12px 16px 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.admin-expiry-banner strong {
+  font-size: 14px;
+}
+
+.admin-banner-btn.amber {
+  background-color: #d97706;
+}
+
+/* Mantiene el espacio correcto en pantallas pequeñas */
+@media (max-width: 430px) {
+  .admin-status-bar {
+    margin-top: 85px;
+  }
+}
+
 @media (max-width: 430px) {
   .admin-app-header,
   .admin-bottom-nav {

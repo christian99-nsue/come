@@ -20,6 +20,16 @@ const API_URL = import.meta.env.VITE_API_URL;
 type Plan = "semanal" | "mensual";
 type MetodoPago = "efectivo" | "transferencia" | "tarjeta";
 
+interface Solicitud {
+  id: number;
+  plan: Plan;
+  monto: number;
+  metodo_pago: MetodoPago;
+  referencia: string | null;
+  estado: "pendiente" | "confirmado" | "rechazado";
+  motivo_rechazo: string | null;
+  fecha_solicitud: string;
+}
 interface Suscripcion {
   plan: Plan | null;
   estado: "activa" | "vencida" | "cancelada" | null;
@@ -28,6 +38,7 @@ interface Suscripcion {
   fecha_renovacion: string | null;
   restaurante_nombre: string;
   restaurante_logo: string | null;
+  solicitud: Solicitud | null;
 }
 
 const beneficios: {
@@ -103,6 +114,7 @@ export default function SuscripcionAdmin() {
   const [cargando, setCargando] = useState(true);
   const [cambiando, setCambiando] = useState(false);
   const [error, setError] = useState("");
+  const [referencia, setReferencia] = useState("");
 
   const [mostrarSeleccionMetodo, setMostrarSeleccionMetodo] = useState(false);
 
@@ -126,8 +138,14 @@ export default function SuscripcionAdmin() {
       if (res.data.metodo_pago) {
         setMetodoElegido(res.data.metodo_pago);
       }
-    } catch {
-      setError("No se pudo cargar la información de suscripción");
+    } catch (err: unknown) {
+      if (axios.isAxiosError<{ message?: string }>(err)) {
+        setError(
+          err.response?.data?.message || "No se pudo cargar tu suscripcion",
+        );
+      } else {
+        setError("No se pudo cargartu suscripcion");
+      }
     } finally {
       setCargando(false);
     }
@@ -171,36 +189,27 @@ export default function SuscripcionAdmin() {
     };
   }, [token]);
 
+  // 4) Reemplaza la función confirmarCambioPlan completa
   const confirmarCambioPlan = async () => {
     if (!suscripcion) return;
-
     setCambiando(true);
     setError("");
-
     try {
-      await axios.patch(
-        `${API_URL}/api/admin/suscripcion/plan`,
-        {
-          plan: planSeleccionado,
-          metodo_pago: metodoElegido,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      await axios.post(
+        `${API_URL}/api/admin/suscripcion/solicitud`,
+        { plan: planSeleccionado, metodo_pago: metodoElegido, referencia },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-
       setMostrarSeleccionMetodo(false);
-
+      setReferencia("");
       await cargarSuscripcion();
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
+    } catch (err: unknown) {
+      if (axios.isAxiosError<{ message?: string }>(err)) {
         setError(
-          error.response?.data?.message || "No se pudo activar la suscripción",
+          err.response?.data?.message || "No se pudo enviar la solicitud",
         );
       } else {
-        setError("No se pudo activar la suscripción");
+        setError("No se pudo enviar la solicitud");
       }
     } finally {
       setCambiando(false);
@@ -239,8 +248,9 @@ export default function SuscripcionAdmin() {
     ? planesDisponibles.find((p) => p.id === suscripcion.plan)
     : null;
 
-  const hayCambioPendiente =
-    !tieneSuscripcion || planSeleccionado !== suscripcion.plan;
+  const solicitud = suscripcion.solicitud;
+  const hayPendiente = solicitud?.estado === "pendiente";
+  const esRenovacion = planSeleccionado === suscripcion.plan;
 
   return (
     <div className="admin-page">
@@ -320,8 +330,28 @@ export default function SuscripcionAdmin() {
 
       {tieneSuscripcion && planActual && (
         <>
+          {solicitud?.estado === "pendiente" && (
+            <div className="susc-solicitud pendiente">
+              <strong>Solicitud pendiente de confirmación</strong>
+              <span>
+                {planesDisponibles.find((p) => p.id === solicitud.plan)?.label}{" "}
+                · {solicitud.monto.toLocaleString("es-ES")} XAF ·{" "}
+                {metodosPago.find((m) => m.id === solicitud.metodo_pago)?.label}
+                {solicitud.referencia ? ` · Ref: ${solicitud.referencia}` : ""}
+              </span>
+              <span>Activaremos tu plan en cuanto confirmemos tu pago.</span>
+            </div>
+          )}
+          {solicitud?.estado === "rechazado" && (
+            <div className="susc-solicitud rechazada">
+              <strong>Tu última solicitud fue rechazada</strong>
+              {solicitud.motivo_rechazo && (
+                <span>Motivo: {solicitud.motivo_rechazo}</span>
+              )}
+              <span>Puedes enviar una nueva solicitud.</span>
+            </div>
+          )}
           <h3 className="admin-section-title-sm">Plan actual</h3>
-
           <div className="susc-plan-actual-card">
             <div className="susc-plan-actual-header">
               <span className="susc-plan-actual-icon">
@@ -443,11 +473,14 @@ export default function SuscripcionAdmin() {
         type="button"
         className="admin-btn-primary"
         onClick={() => setMostrarSeleccionMetodo(true)}
-        disabled={!hayCambioPendiente}
+        disabled={hayPendiente}
       >
-        <CreditCard size={16} />
-
-        {tieneSuscripcion ? "Cambiar plan" : "Elegir plan"}
+        <CreditCard size={16} />{" "}
+        {hayPendiente
+          ? "Solicitud pendiente"
+          : esRenovacion
+            ? "Renovar plan"
+            : "Cambiar plan"}
       </button>
 
       {mostrarSeleccionMetodo && (
@@ -460,21 +493,16 @@ export default function SuscripcionAdmin() {
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="susc-metodo-title">Elige tu método de pago</h3>
-
             <p className="susc-metodo-subtitle">
-              {tieneSuscripcion
-                ? "Selecciona cómo deseas pagar el cambio de plan."
-                : `Selecciona cómo deseas pagar el ${
-                    planesDisponibles.find((p) => p.id === planSeleccionado)
-                      ?.label
-                  }.`}
+              {planesDisponibles.find((p) => p.id === planSeleccionado)?.label}{" "}
+              ·{" "}
+              {planesDisponibles.find((p) => p.id === planSeleccionado)?.precio}
             </p>
 
             <div className="susc-metodo-list">
               {metodosPago.map((m) => {
                 const Icon = m.icon;
                 const activo = metodoElegido === m.id;
-
                 return (
                   <button
                     key={m.id}
@@ -487,11 +515,9 @@ export default function SuscripcionAdmin() {
                     <span className="admin-icon-box">
                       <Icon size={17} />
                     </span>
-
                     <span className="admin-menu-label" style={{ flex: 1 }}>
                       {m.label}
                     </span>
-
                     <span
                       className={
                         activo ? "admin-radio-dot active" : "admin-radio-dot"
@@ -502,6 +528,29 @@ export default function SuscripcionAdmin() {
               })}
             </div>
 
+            <label className="susc-referencia">
+              <span className="susc-referencia-label">
+                Referencia del pago (opcional)
+              </span>
+              <input
+                className="admin-form-input"
+                value={referencia}
+                onChange={(e) => setReferencia(e.target.value)}
+                maxLength={100}
+                placeholder="Ej: número de transferencia"
+              />
+              <span className="admin-form-hint">
+                Tu plan se activará cuando confirmemos tu pago. Si ya tienes
+                días vigentes, el nuevo periodo se suma al final.
+              </span>
+            </label>
+
+            {error && (
+              <p className="pedidos-status-text pedidos-status-error">
+                {error}
+              </p>
+            )}
+
             <div className="susc-metodo-actions">
               <button
                 type="button"
@@ -510,18 +559,13 @@ export default function SuscripcionAdmin() {
               >
                 Cancelar
               </button>
-
               <button
                 type="button"
                 className="admin-btn-primary"
                 onClick={confirmarCambioPlan}
                 disabled={cambiando}
               >
-                {cambiando
-                  ? "Confirmando..."
-                  : tieneSuscripcion
-                    ? "Confirmar cambio"
-                    : "Activar suscripción"}
+                {cambiando ? "Enviando..." : "Enviar solicitud"}
               </button>
             </div>
           </div>

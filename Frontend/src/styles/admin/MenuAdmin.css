@@ -75,6 +75,7 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  margin-left: 10px;
 }
 
 .menu-category-chip.active {

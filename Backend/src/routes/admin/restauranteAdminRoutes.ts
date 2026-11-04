@@ -1,7 +1,6 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
 import * as restauranteService from "../../services/admin/restauranteAdminService";
-import horariosAdminRoutes from "./horariosAdminRoutes";
 import { verificarTokenAdmin } from "../../middlewares/authAdmin";
 
 const router = Router();
@@ -30,7 +29,5 @@ router.patch("/", async (req: Request, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 });
-
-router.use("/horarios", horariosAdminRoutes);
 
 export default router;

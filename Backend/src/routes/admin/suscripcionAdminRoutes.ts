@@ -9,28 +9,28 @@ router.use(verificarTokenAdmin);
 router.get("/", async (req: Request, res: Response) => {
   try {
     const restauranteId = (req as any).restauranteId;
-    const suscripcion =
-      await suscripcionService.obtenerSuscripcion(restauranteId);
-    res.json(suscripcion);
+    res.json(await suscripcionService.obtenerSuscripcion(restauranteId));
   } catch (error: any) {
-    console.error("ERROR SUSCRIPCIÓN:", error);
-    res.status(500).json({ message: error.message });
+    res.status(404).json({ message: error.message });
   }
 });
 
-router.patch("/plan", async (req: Request, res: Response) => {
+router.post("/solicitud", async (req: Request, res: Response) => {
   try {
     const restauranteId = (req as any).restauranteId;
-    const { plan, metodo_pago } = req.body;
-    const resultado = await suscripcionService.cambiarPlan(
-      restauranteId,
-      plan,
-      metodo_pago,
-    );
-    res.json(resultado);
+    const { plan, metodo_pago, referencia } = req.body ?? {};
+    res
+      .status(201)
+      .json(
+        await suscripcionService.solicitarPlan(
+          restauranteId,
+          plan,
+          metodo_pago,
+          referencia,
+        ),
+      );
   } catch (error: any) {
-    console.error("ERROR SUSCRIPCIÓN:", error);
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

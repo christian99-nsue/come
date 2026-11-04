@@ -300,3 +300,43 @@
 .susc-metodo-actions > button {
   flex: 1;
 }
+
+.susc-solicitud {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.susc-solicitud strong {
+  font-size: 13px;
+}
+
+.susc-solicitud.pendiente {
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+
+.susc-solicitud.rechazada {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.susc-referencia {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.susc-referencia-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}

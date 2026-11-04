@@ -1,16 +1,12 @@
 import { db } from "../../config/db";
+import { PLANES, esPlan } from "../../config/planes";
 
-type Plan = "semanal" | "mensual";
-type MetodoPago = "efectivo" | "transferencia" | "tarjeta";
-
-const DIAS_POR_PLAN: Record<Plan, number> = {
-  semanal: 7,
-  mensual: 30,
-};
+const METODOS = ["efectivo", "transferencia", "tarjeta"];
 
 export const obtenerSuscripcion = async (restauranteId: number) => {
   const [rows]: any = await db.query(
-    `SELECT s.id, s.plan, s.estado, s.metodo_pago, s.fecha_inicio, s.fecha_renovacion,
+    `SELECT s.id, s.plan, s.metodo_pago, s.fecha_inicio, s.fecha_renovacion,
+            CASE WHEN s.estado = 'activa' AND s.fecha_renovacion < CURDATE() THEN 'vencida' ELSE s.estado END AS estado,
             r.nombre AS restaurante_nombre, r.logo AS restaurante_logo
      FROM suscripciones s
      JOIN restaurantes r ON r.id = s.restaurante_id
@@ -21,91 +17,78 @@ export const obtenerSuscripcion = async (restauranteId: number) => {
   );
 
   if (rows.length === 0) {
-    const [restaurantes]: any = await db.query(
-      `SELECT nombre AS restaurante_nombre, logo AS restaurante_logo
-       FROM restaurantes
-       WHERE id = ?`,
-      [restauranteId],
+    throw new Error(
+      "Tu restaurante todavía no tiene una suscripción. Contacta con soporte para activarla.",
     );
-
-    if (restaurantes.length === 0) {
-      throw new Error("Restaurante no encontrado");
-    }
-
-    return {
-      plan: null,
-      estado: null,
-      metodo_pago: null,
-      fecha_inicio: null,
-      fecha_renovacion: null,
-      restaurante_nombre: restaurantes[0].restaurante_nombre,
-      restaurante_logo: restaurantes[0].restaurante_logo,
-    };
   }
 
-  return rows[0];
-};
-
-export const cambiarPlan = async (
-  restauranteId: number,
-  nuevoPlan: Plan,
-  metodoPago: MetodoPago,
-) => {
-  if (!metodoPago) {
-    throw new Error("Debes seleccionar un método de pago");
-  }
-
-  if (!DIAS_POR_PLAN[nuevoPlan]) {
-    throw new Error("Plan no válido");
-  }
-
-  const hoy = new Date();
-  const fechaRenovacion = new Date(hoy);
-
-  fechaRenovacion.setDate(fechaRenovacion.getDate() + DIAS_POR_PLAN[nuevoPlan]);
-
-  const fechaInicio = hoy.toISOString().slice(0, 10);
-  const fechaRenovacionStr = fechaRenovacion.toISOString().slice(0, 10);
-
-  const [rows]: any = await db.query(
-    `SELECT id
-     FROM suscripciones
-     WHERE restaurante_id = ?
-     LIMIT 1`,
+  // La última solicitud de pago: sirve para mostrar si está pendiente o fue rechazada
+  const [sol]: any = await db.query(
+    `SELECT id, plan, monto, metodo_pago, referencia, estado, motivo_rechazo, fecha_solicitud
+     FROM pagos_suscripcion WHERE restaurante_id = ? ORDER BY id DESC LIMIT 1`,
     [restauranteId],
   );
 
-  if (rows.length === 0) {
-    await db.query(
-      `INSERT INTO suscripciones
-       (restaurante_id, plan, estado, metodo_pago, fecha_inicio, fecha_renovacion)
-       VALUES (?, ?, 'activa', ?, ?, ?)`,
-      [restauranteId, nuevoPlan, metodoPago, fechaInicio, fechaRenovacionStr],
+  return {
+    ...rows[0],
+    solicitud:
+      sol.length > 0 ? { ...sol[0], monto: Number(sol[0].monto) } : null,
+  };
+};
+
+// Ya no activa nada: deja una solicitud pendiente que el equipo de la plataforma confirma al recibir el pago
+export const solicitarPlan = async (
+  restauranteId: number,
+  plan: unknown,
+  metodoPago: unknown,
+  referencia: unknown,
+) => {
+  if (!esPlan(plan)) throw new Error("Elige un plan válido");
+  if (typeof metodoPago !== "string" || !METODOS.includes(metodoPago)) {
+    throw new Error("Debes seleccionar un método de pago");
+  }
+  if (
+    referencia !== undefined &&
+    referencia !== null &&
+    typeof referencia !== "string"
+  ) {
+    throw new Error("La referencia no es válida");
+  }
+  const ref = String(referencia ?? "").trim();
+  if (ref.length > 100)
+    throw new Error("La referencia es demasiado larga (máximo 100 caracteres)");
+
+  const conexion = await db.getConnection();
+  try {
+    await conexion.beginTransaction();
+
+    // Bloquea al restaurante: dos solicitudes a la vez no pueden crear dos pendientes
+    await conexion.query(
+      "SELECT id FROM restaurantes WHERE id = ? FOR UPDATE",
+      [restauranteId],
     );
 
-    return {
-      ok: true,
-      nuevoPlan,
-      fechaRenovacion: fechaRenovacionStr,
-      creada: true,
-    };
+    const [pendiente]: any = await conexion.query(
+      "SELECT id FROM pagos_suscripcion WHERE restaurante_id = ? AND estado = 'pendiente' LIMIT 1",
+      [restauranteId],
+    );
+    if (pendiente.length > 0)
+      throw new Error("Ya tienes una solicitud pendiente de confirmación");
+
+    // El monto sale del servidor, nunca del navegador
+    await conexion.query(
+      `INSERT INTO pagos_suscripcion (restaurante_id, plan, monto, metodo_pago, referencia, origen)
+       VALUES (?, ?, ?, ?, ?, 'solicitud')`,
+      [restauranteId, plan, PLANES[plan].precio, metodoPago, ref || null],
+    );
+
+    await conexion.commit();
+  } catch (error) {
+    await conexion.rollback();
+    throw error;
+  } finally {
+    conexion.release();
   }
 
-  await db.query(
-    `UPDATE suscripciones
-     SET plan = ?,
-         metodo_pago = ?,
-         fecha_inicio = ?,
-         fecha_renovacion = ?,
-         estado = 'activa'
-     WHERE restaurante_id = ?`,
-    [nuevoPlan, metodoPago, fechaInicio, fechaRenovacionStr, restauranteId],
-  );
-
-  return {
-    ok: true,
-    nuevoPlan,
-    fechaRenovacion: fechaRenovacionStr,
-    creada: false,
-  };
+  return { ok: true, plan, monto: PLANES[plan].precio };
 };

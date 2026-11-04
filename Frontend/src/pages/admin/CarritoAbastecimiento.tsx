@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft, Minus, Plus, X, Clock } from "lucide-react";
-import { useAbastecimientoCart } from "../../context/AbastecimientoCartContext";
+import { useAbastecimientoCart } from "../../context/useAbastecimientoCart";
 import "../../styles/admin/AdminShared.css";
 import "../../styles/admin/CarritoAbastecimiento.css";
 
@@ -41,7 +41,7 @@ export default function CarritoAbastecimiento() {
     try {
       const turno = turnosMock.find((t) => t.id === turnoSeleccionado);
 
-      await axios.post(
+      const res = await axios.post(
         `${API_URL}/api/admin/abastecimiento/pedidos`,
         {
           items: items.map((i) => ({
@@ -54,7 +54,9 @@ export default function CarritoAbastecimiento() {
       );
 
       vaciarCarrito();
-      navigate("/admin/abastecimiento", { replace: true });
+      navigate(`/admin/abastecimiento/pedidos/${res.data.id}`, {
+        replace: true,
+      });
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(

@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Bell, ShoppingCart, Megaphone, Boxes, CheckCheck } from "lucide-react";
+import {
+  Bell,
+  ShoppingCart,
+  Megaphone,
+  Boxes,
+  CheckCheck,
+  CreditCard,
+} from "lucide-react";
 import "../../styles/admin/AdminShared.css";
 import "../../styles/admin/NotificacionesAdmin.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 type Tab = "todas" | "pedido" | "sistema";
-type TipoNotif = "pedido" | "sistema" | "abastecimiento";
+type TipoNotif = "pedido" | "sistema" | "abastecimiento" | "suscripcion";
 
 interface Notificacion {
   id: number;
@@ -41,6 +48,9 @@ function iconoPara(tipo: TipoNotif) {
 
     case "abastecimiento":
       return <Boxes size={17} />;
+
+    case "suscripcion":
+      return <CreditCard size={17} />;
 
     default:
       return <Megaphone size={17} />;
@@ -118,7 +128,9 @@ export default function NotificacionesAdmin() {
     if (n.tipo === "pedido" && n.referencia_id) {
       navigate(`/admin/pedidos/${n.referencia_id}`);
     } else if (n.tipo === "abastecimiento" && n.referencia_id) {
-      navigate("/admin/abastecimiento");
+      navigate(`/admin/abastecimiento/pedidos/${n.referencia_id}`);
+    } else if (n.tipo === "suscripcion") {
+      navigate("/admin/suscripcion");
     }
   };
 

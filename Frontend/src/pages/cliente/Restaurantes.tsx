@@ -1,156 +1,142 @@
-import { useState } from "react";
-import {
-  ArrowLeft,
-  Map,
-  Search,
-  SlidersHorizontal,
-  Star,
-  Heart,
-  ChevronDown,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import banner from "../../assets/banner23.png";
-import burger from "../../assets/burger1.png";
-import pizza from "../../assets/pizza.png";
-import bebida from "../../assets/bebida.jpg";
-import postre from "../../assets/postre1.png";
-import saludable from "../../assets/saludable.jpg";
-import burgerHouse from "../../assets/burger-house.jpg";
-import pizzaTop from "../../assets/pizza-top.jpg";
-import wokExpress from "../../assets/wok-express.jpg";
-import shawarma from "../../assets/shawarma.png";
-import chicken from "../../assets/chicken.png";
-import "../../styles/cliente/restaurantes.css";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { categoriasRestaurantes as categorias } from "../../data/categoriasRestaurantes";
+import axios from "axios";
+import { ArrowLeft, Search, Star } from "lucide-react";
+import { formatXAF } from "../../utils/carritoCalculos";
+import CorazonFavorito from "../../components/common/CorazonFavorito";
+import { guardarFavorito } from "../../utils/favoritos";
+import BannerVentanas from "../../components/common/BannerVentanas";
+import "../../styles/cliente/Restaurantes.css";
 
-interface Categoria {
-  id: string;
-  nombre: string;
-  icono: { src: string };
-}
+const API_URL = import.meta.env.VITE_API_URL;
 
-interface Restaurante {
-  id: string;
+interface RestauranteLista {
+  id: number;
   nombre: string;
-  categorias: string;
+  logo: string | null;
+  foto_portada: string | null;
+  categorias_texto: string | null;
   rating: number;
-  reviews: number;
-  tiempoMin: number;
-  tiempoMax: number;
+  reviews_count: number;
+  tiempo_min: number;
+  tiempo_max: number;
+  costo_envio: number;
   pedido_minimo: number;
   abierto: boolean;
-  precio: "XAF" | "$$" | "$$$";
-  imagen: string;
-  promocionado?: boolean;
-  descuento?: string;
+  es_favorito: boolean;
+  tiene_platos: boolean;
 }
 
-type FiltroRapido =
-  | "todos"
-  | "abierto"
-  | "mejor_valorados"
-  | "entrega_rapida"
-  | "populares";
+interface ErrorRespuesta {
+  message?: string;
+}
 
-const filtrosRapidos: { id: FiltroRapido; label: string }[] = [
+const filtrosRapidos = [
   { id: "todos", label: "Todos" },
   { id: "abierto", label: "Abierto ahora" },
   { id: "mejor_valorados", label: "Mejor valorados" },
   { id: "entrega_rapida", label: "Entrega rápida" },
   { id: "populares", label: "Populares" },
+  { id: "nuevos", label: "Nuevos" },
 ];
-
-const categoriasMock: Categoria[] = [
-  { id: "todos", nombre: "Todos", icono: { src: banner } },
-  { id: "burgers", nombre: "Burgers", icono: { src: burger } },
-  { id: "pizzas", nombre: "Pizzas", icono: { src: pizza } },
-  { id: "bebidas", nombre: "Bebidas", icono: { src: bebida } },
-  { id: "postres", nombre: "Postres", icono: { src: postre } },
-  { id: "saludable", nombre: "Saludable", icono: { src: saludable } },
-];
-
-const restaurantesMock: Restaurante[] = [
-  {
-    id: "1",
-    nombre: "Burger House",
-    categorias: "Hamburguesas · Americana",
-    rating: 4.6,
-    reviews: 320,
-    tiempoMin: 20,
-    tiempoMax: 30,
-    pedido_minimo: 1500,
-    abierto: true,
-    precio: "XAF",
-    imagen: burgerHouse,
-    promocionado: true,
-    descuento: "10% de descuento",
-  },
-  {
-    id: "2",
-    nombre: "Pizza Top",
-    categorias: "Pizzas · Italiana",
-    rating: 4.5,
-    reviews: 210,
-    tiempoMin: 15,
-    tiempoMax: 25,
-    pedido_minimo: 1000,
-    abierto: true,
-    precio: "XAF",
-    imagen: pizzaTop,
-  },
-  {
-    id: "3",
-    nombre: "Wok Express",
-    categorias: "Asiática · Wok",
-    rating: 4.4,
-    reviews: 189,
-    tiempoMin: 25,
-    tiempoMax: 35,
-    pedido_minimo: 1500,
-    abierto: true,
-    precio: "XAF",
-    imagen: wokExpress,
-  },
-  {
-    id: "4",
-    nombre: "Shawarma King",
-    categorias: "Árabe · Shawarma",
-    rating: 4.7,
-    reviews: 280,
-    tiempoMin: 20,
-    tiempoMax: 30,
-    pedido_minimo: 1000,
-    abierto: true,
-    precio: "XAF",
-    imagen: shawarma,
-  },
-  {
-    id: "5",
-    nombre: "Chicken Spot",
-    categorias: "Pollo · Frito",
-    rating: 4.6,
-    reviews: 150,
-    tiempoMin: 15,
-    tiempoMax: 25,
-    pedido_minimo: 1000,
-    abierto: true,
-    precio: "XAF",
-    imagen: chicken,
-  },
-];
-
-function formatXAF(valor: number) {
-  return `${valor.toLocaleString("es-ES")} XAF`;
-}
 
 export default function Restaurantes() {
   const navigate = useNavigate();
-  const [busqueda, setBusqueda] = useState("");
-  const [categoriaActiva, setCategoriaActiva] = useState("todos");
-  const [filtroActivo, setFiltroActivo] = useState<FiltroRapido>("todos");
+  const token = localStorage.getItem("token");
+
+  const [params] = useSearchParams();
+  const filtroUrl = params.get("filtro") ?? "";
+  const categoriaUrl = params.get("categoria") ?? "";
+  const busquedaUrl = (params.get("q") ?? "").slice(0, 100);
+
+  const [busqueda, setBusqueda] = useState(busquedaUrl);
+  const [termino, setTermino] = useState(busquedaUrl.trim());
+
+  const [filtro, setFiltro] = useState(
+    filtrosRapidos.some((f) => f.id === filtroUrl) ? filtroUrl : "todos",
+  );
+
+  const [categoriaId, setCategoriaId] = useState(
+    categorias.some((c) => c.id === categoriaUrl) ? categoriaUrl : "todos",
+  );
+
+  const [restaurantes, setRestaurantes] = useState<RestauranteLista[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  const alternarFavorito = (id: number, valor: boolean) => {
+    const poner = (v: boolean) =>
+      setRestaurantes((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, es_favorito: v } : r)),
+      );
+
+    poner(valor);
+    guardarFavorito(id, valor).catch(() => poner(!valor));
+  };
+
+  // Espera un momento después de escribir antes de buscar.
+  useEffect(() => {
+    const temporizador = window.setTimeout(() => {
+      setTermino(busqueda.trim());
+    }, 350);
+
+    return () => window.clearTimeout(temporizador);
+  }, [busqueda]);
+
+  useEffect(() => {
+    let cancelado = false;
+    const controller = new AbortController();
+
+    const categoria = categorias.find((cat) => cat.id === categoriaId)?.termino;
+
+    const cargarRestaurantes = async () => {
+      try {
+        const respuesta = await axios.get<RestauranteLista[]>(
+          `${API_URL}/api/cliente/restaurantes`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: {
+              busqueda: termino || undefined,
+              categoria: categoria || undefined,
+              filtro: filtro !== "todos" ? filtro : undefined,
+            },
+            signal: controller.signal,
+          },
+        );
+
+        if (!cancelado) {
+          setRestaurantes(respuesta.data);
+          setError("");
+        }
+      } catch (err: unknown) {
+        if (cancelado || controller.signal.aborted) return;
+
+        if (axios.isAxiosError<ErrorRespuesta>(err)) {
+          setError(
+            err.response?.data?.message ||
+              "No se pudieron cargar los restaurantes",
+          );
+        } else {
+          setError("No se pudieron cargar los restaurantes");
+        }
+      } finally {
+        if (!cancelado) {
+          setCargando(false);
+        }
+      }
+    };
+
+    void cargarRestaurantes();
+
+    return () => {
+      cancelado = true;
+      controller.abort();
+    };
+  }, [termino, filtro, categoriaId, token]);
 
   return (
     <div className="restaurantes-page">
-      {/* Encabezado */}
       <section className="restaurantes-header">
         <button
           type="button"
@@ -160,22 +146,18 @@ export default function Restaurantes() {
         >
           <ArrowLeft size={22} />
         </button>
+
         <div className="restaurantes-header-text">
           <h1 className="restaurantes-title">Restaurantes</h1>
           <p className="restaurantes-subtitle">
             Descubre los mejores restaurantes cerca de ti
           </p>
         </div>
-        <button
-          type="button"
-          className="restaurantes-map-btn"
-          aria-label="Ver mapa"
-        >
-          <Map size={20} />
-        </button>
       </section>
 
-      {/* Buscador */}
+      {/* Ventanas de entrega y horarios de pedido */}
+      <BannerVentanas />
+
       <section className="restaurantes-search-row">
         <div className="restaurantes-search-input">
           <Search size={20} className="restaurantes-search-icon" />
@@ -186,121 +168,146 @@ export default function Restaurantes() {
             onChange={(e) => setBusqueda(e.target.value)}
           />
         </div>
-        <button type="button" className="restaurantes-filter-btn">
-          <SlidersHorizontal size={18} />
-          <span>Filtros</span>
-          <span className="restaurantes-filter-badge">2</span>
-        </button>
       </section>
 
-      {/* Filtros rápidos */}
       <div className="quick-filters-scroll">
         {filtrosRapidos.map((f) => (
           <button
             key={f.id}
             type="button"
             className={
-              f.id === filtroActivo
-                ? "quick-filter-chip active"
-                : "quick-filter-chip"
+              f.id === filtro ? "quick-filter-chip active" : "quick-filter-chip"
             }
-            onClick={() => setFiltroActivo(f.id)}
+            onClick={() => setFiltro(f.id)}
           >
             {f.label}
           </button>
         ))}
       </div>
 
-      {/* Categorías (mismo estilo usado en Home/Explorar) */}
       <section className="restaurantes-section">
         <div className="restaurantes-section-header">
-          <h3>Categorias</h3>
-          <button type="button" className="restaurantes-link-btn">
-            Ver todas
-          </button>
+          <h3>Categorías</h3>
         </div>
+
         <div className="restaurantes-categories-scroll">
-          {categoriasMock.map((cat) => (
+          {categorias.map((cat) => (
             <button
               key={cat.id}
               type="button"
               className={
-                cat.id === categoriaActiva
+                cat.id === categoriaId
                   ? "category-chip active"
                   : "category-chip"
               }
-              onClick={() => setCategoriaActiva(cat.id)}
+              onClick={() => setCategoriaId(cat.id)}
             >
               <span className="category-chip-emoji">
-                <img src={cat.icono.src} alt="Icono de categoria" />
+                <cat.icono size={24} strokeWidth={1.8} />
               </span>
+
               <span className="category-chip-label">{cat.nombre}</span>
             </button>
           ))}
         </div>
       </section>
 
-      {/* Contador + orden */}
-      <div className="restaurantes-results-row">
-        <span className="restaurantes-results-count">
-          {restaurantesMock.length} restaurantes encontrados
-        </span>
-        <button type="button" className="restaurantes-sort-btn">
-          Ordenar por: <span>Relevancia</span>
-          <ChevronDown size={14} />
-        </button>
-      </div>
+      {!cargando && !error && (
+        <div className="restaurantes-results-row">
+          <span className="restaurantes-results-count">
+            {restaurantes.length}{" "}
+            {restaurantes.length === 1
+              ? "restaurante encontrado"
+              : "restaurantes encontrados"}
+          </span>
+        </div>
+      )}
 
-      {/* Lista de restaurantes */}
-      <div className="nearby-list">
-        {restaurantesMock.map((r) => (
+      {cargando && (
+        <p className="restaurantes-status">Cargando restaurantes...</p>
+      )}
+
+      {error && <p className="restaurantes-status error">{error}</p>}
+
+      {!cargando && !error && restaurantes.length === 0 && (
+        <p className="restaurantes-status">
+          No encontramos restaurantes con esos filtros.
+        </p>
+      )}
+
+      <div className="restaurant-list">
+        {restaurantes.map((r) => (
           <div
             key={r.id}
-            className="restaurant-list-card"
+            className={
+              r.abierto && r.tiene_platos
+                ? "restaurant-list-card"
+                : "restaurant-list-card cerrado"
+            }
+            role="button"
+            tabIndex={0}
             onClick={() => navigate(`/cliente/restaurante/${r.id}`)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                navigate(`/cliente/restaurante/${r.id}`);
+              }
+            }}
           >
             <img
-              src={r.imagen}
+              src={
+                r.foto_portada ||
+                r.logo ||
+                `https://picsum.photos/seed/restaurante-${r.id}/400/200`
+              }
               alt={r.nombre}
               className="restaurant-list-img"
             />
+
             <div className="restaurant-list-body">
               <div className="restaurant-list-top">
                 <span className="restaurant-list-name">{r.nombre}</span>
-                {r.promocionado && (
-                  <span className="restaurant-list-promo">Promocionado</span>
-                )}
-                <button
-                  type="button"
-                  className="restaurant-list-fav"
-                  aria-label="Guardar en favoritos"
-                >
-                  <Heart size={18} />
-                </button>
+
+                <CorazonFavorito
+                  activo={r.es_favorito}
+                  onCambiar={(v) => alternarFavorito(r.id, v)}
+                />
               </div>
 
               <span className="restaurant-list-rating">
-                <Star size={13} className="restaurant-star-icon" />
-                {r.rating} ({r.reviews}) · {r.categorias}
+                {r.reviews_count > 0 ? (
+                  <>
+                    <Star size={13} className="restaurant-star-icon" />
+                    {r.rating.toFixed(1)} ({r.reviews_count})
+                  </>
+                ) : (
+                  "Nuevo"
+                )}
+
+                {r.categorias_texto ? ` · ${r.categorias_texto}` : ""}
               </span>
 
               <span className="restaurant-list-meta">
-                {r.tiempoMin}-{r.tiempoMax} min · Pedido minimo{" "}
-                {formatXAF(r.pedido_minimo)}
+                {r.tiempo_min}-{r.tiempo_max} min · Envío{" "}
+                {formatXAF(r.costo_envio)}
+                {r.pedido_minimo > 0
+                  ? ` · Mín. ${formatXAF(r.pedido_minimo)}`
+                  : ""}
               </span>
 
               <div className="restaurant-list-bottom">
                 <div className="restaurant-list-badges">
-                  {r.abierto && (
+                  {!r.tiene_platos ? (
+                    <span className="restaurant-list-badge closed">
+                      Sin platos por ahora
+                    </span>
+                  ) : r.abierto ? (
                     <span className="restaurant-list-badge open">Abierto</span>
-                  )}
-                  {r.descuento && (
-                    <span className="restaurant-list-badge discount">
-                      {r.descuento}
+                  ) : (
+                    <span className="restaurant-list-badge closed">
+                      Cerrado
                     </span>
                   )}
                 </div>
-                <span className="restaurant-list-price">{r.precio}</span>
               </div>
             </div>
           </div>

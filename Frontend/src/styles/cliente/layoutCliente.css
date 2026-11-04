@@ -31,6 +31,13 @@
   display: flex;
   gap: 15px;
   align-items: center;
+  color: #ffac39;
+}
+
+.header-brand-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffac39;
 }
 
 .header-icon-btn {
@@ -78,6 +85,13 @@
 
 .header-logo-icon {
   color: #16a34a;
+  font-weight: 600;
+}
+
+.header-logo-circle img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .header-notification-btn {

@@ -199,6 +199,30 @@
   box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
 }
 
+button.abast-pedido-card {
+  width: 100%;
+  background-color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.abast-pedido-numero {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.abast-pedido-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.abast-pedido-motivo {
+  font-size: 12px;
+  color: #b91c1c;
+}
+
 @media (max-width: 430px) {
   .abast-cart-bar {
     max-width: calc(100% - 32px);

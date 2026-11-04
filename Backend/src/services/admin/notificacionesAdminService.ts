@@ -1,6 +1,6 @@
 import { db } from "../../config/db";
 
-type TipoNotificacion = "pedido" | "sistema" | "abastecimiento";
+type TipoNotificacion = "pedido" | "sistema" | "abastecimiento" | "suscripcion";
 
 export const listarNotificaciones = async (
   restauranteId: number,
@@ -13,7 +13,9 @@ export const listarNotificaciones = async (
   `;
   const params: any[] = [restauranteId];
 
-  if (tipo) {
+  if (tipo === "sistema") {
+    sql += " AND tipo IN ('sistema', 'suscripcion')";
+  } else if (tipo) {
     sql += " AND tipo = ?";
     params.push(tipo);
   }
